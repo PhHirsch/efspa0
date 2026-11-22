@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Misión Barrio</title>
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#3b2a1c 0%,#1a120c 65%);--panel:#2a1d14;--txt:#fbf1e4;--muted:#cdb59a;--line:#5c4330;--btn:#3a2a1d;--accent:#f0a830;--accentTxt:#2a1a00;--accent2:#ffd38a;--bubble:#3a2919;--input:#1d140d;--ok:#6fe59a;--bad:#ff7a7a}
+  .map{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:10px;background:#c9b48a}
+  .tile{aspect-ratio:2.1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:26px;position:relative;overflow:hidden;color:#2a1d14;background:#f4e6c6}
+  .tile small{font-size:12px;font-weight:700;line-height:1.1;text-align:center;padding:0 2px}
+  .tile.fog{background:repeating-linear-gradient(45deg,#7a6a58,#7a6a58 8px,#857462 8px,#857462 16px);color:transparent}
+  .tile.fog:after{content:"?";color:#efe3cf;font-size:26px;font-weight:800;position:absolute}
+  .tile.new{animation:pop .6s}
+  .tile .me{position:absolute;right:3px;bottom:3px;width:34px;height:34px;border-radius:50%;overflow:hidden;border:2px solid #f0a830}
+  .tile.goal{background:#bfe3ff}
+  .river{grid-column:1/5;height:16px;border-radius:8px;background:linear-gradient(90deg,#4aa3d8,#7cc6ef,#4aa3d8)}
+  .mapcap{display:flex;justify-content:space-between;padding:6px 12px;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=1"></script>
+<script src="juego.js?v=1"></script>
+<script>
+const L = {face:"👩🏽", name:"Lucía"}, P = {face:"👦🏻", name:"Pablo (el hermano de Lucía)"}, Y = {av:true, name:"Tú"};
+const TILES = [["🏬","el centro comercial"],["🥖","la panadería"],["🎬","el cine"],["☕","las cafeterías"],["🍽️","los restaurantes"],["🏞️","el parque"],["🚏","la parada"],["💊","la farmacia"],["🏫","el instituto"],["🛒","el supermercado"],["🚇","el metro"],["📚","la biblioteca"],["🏛️","el museo"],["⛲","la plaza"],["🏠","la casa de Lucía"],["☕","el Café Azul"]];
+JUEGO.start({
+  id: "hay-estar", key: "efspa0-mision-barrio", icon: "🗺️", topic: "hay · está / están", title: "Misión Barrio",
+  intro: `<p>¡Hola! Estás en <b>Sevilla</b>, en el barrio de <b>Triana</b>. Es tu primer día del intercambio. Tu amiga <b>Lucía</b> te espera con sus amigos en el <b>Café Azul</b> – pero ¿dónde está? Tu mapa está en blanco…</p>
+    <p>Lucía te escribe mensajes. Cada respuesta correcta descubre una parte del barrio. 🗺️</p>
+    <p class="de">Du bist zum Austausch in Sevilla. Lucía wartet im Café Azul. Jede richtige Antwort deckt ein Stück deiner Karte auf. Falsche Aufgaben kommen später nochmal.</p>`,
+  rulesLabel: "La regla",
+  rules: `<h2>hay · está · están</h2>
+    <div class="rule"><b>hay</b> = es gibt. <b>hay</b> bleibt immer gleich (Singular und Plural)!<br>Danach: <b>un, una, unos, unas, dos, tres, muchos …</b> oder ein Nomen ohne Artikel.<br>
+      <span class="ex">En Triana hay un centro comercial. · Hay muchos restaurantes. · No hay estadio.</span></div>
+    <div class="rule"><b>está / están</b> = befindet sich / befinden sich (Wo ist …?)<br>Davor: <b>el, la, los, las</b>, Namen, <i>mi casa</i> … (etwas Bestimmtes, Bekanntes)<br>
+      <b>está</b> → eine Sache · <b>están</b> → mehrere Sachen<br>
+      <span class="ex">El centro comercial está al lado del parque. · Los restaurantes están en la calle Betis.</span></div>
+    <div class="rule"><b>de + el = del</b> · <b>a + el = al</b> &nbsp;(aber: de la, de los, de las)<br>
+      <span class="ex">al lado del parque · cerca de la plaza · delante del instituto</span></div>
+    <table class="t"><tr><td>cerca de</td><td>in der Nähe von</td></tr><tr><td>lejos de</td><td>weit weg von</td></tr><tr><td>al lado de</td><td>neben</td></tr><tr><td>delante de</td><td>vor</td></tr><tr><td>detrás de</td><td>hinter</td></tr><tr><td>entre … y …</td><td>zwischen … und …</td></tr></table>`,
+  stages: [
+    { label: "Parte 1", title: "Descubre la regla", go: "¡Vamos!",
+      intro: `<div class="who"><div class="face">👩🏽</div><div><b class="n">Lucía</b>¡Bienvenido/a a Triana! 😊<br>En Triana <u>hay</u> un centro comercial. El centro comercial <u>está</u> al lado del parque.<br>También <u>hay</u> muchos restaurantes. Los restaurantes <u>están</u> en la calle Betis.</div></div>
+        <p class="de">Lies Lucías Nachricht genau. Wann steht <b>hay</b>, wann <b>está / están</b>? Finde die Regel selbst heraus!</p>`,
+      tasks: [
+        { t: "choice", task: "Schau auf Lucías Nachricht:", taskDe: "", q: "Was steht nach <b>hay</b>?", keep: true, opts: ["un / muchos … (unbestimmt)", "el / los … (bestimmt)"], a: "un / muchos … (unbestimmt)", hint: "Hay <u>un</u> centro comercial, hay <u>muchos</u> restaurantes → nach hay kommt etwas Unbestimmtes." },
+        { t: "choice", q: "Und was steht vor <b>está / están</b>?", keep: true, opts: ["un / muchos … (unbestimmt)", "el / los … (bestimmt)"], a: "el / los … (bestimmt)", hint: "<u>El</u> centro comercial está …, <u>los</u> restaurantes están … → davor steht etwas Bestimmtes." },
+        { t: "choice", q: "Wann <b>está</b>, wann <b>están</b>?", keep: true, opts: ["está = eine Sache · están = mehrere", "está = Frage · están = Aussage"], a: "está = eine Sache · están = mehrere", hint: "El centro comercial está (1) – los restaurantes están (mehrere)." },
+        { t: "choice", q: "Ändert sich <b>hay</b> im Plural?", keep: true, opts: ["Nein, immer hay.", "Ja: hay → han"], a: "Nein, immer hay.", hint: "Hay un centro comercial. Hay muchos restaurantes. → hay bleibt gleich!" }
+      ] },
+    { label: "Parte 2", title: "Los mensajes de Lucía", shuffle: true,
+      intro: `<p>Lucía te escribe más mensajes. Elige: <b>hay</b>, <b>está</b> o <b>están</b>.</p><p class="de">Wähle das richtige Wort. Tipp: 📜 oben zeigt jederzeit die Regel.</p>`,
+      tasks: [
+        { t: "choice", who: L, q: "En el barrio ___ un centro comercial muy grande.", opts: ["hay", "está", "están"], a: "hay", hint: "un centro comercial → unbestimmt → hay." },
+        { t: "choice", who: L, q: "El centro comercial ___ al lado del parque.", opts: ["hay", "está", "están"], a: "está", hint: "<i>el</i> centro comercial → bestimmt, eine Sache → está." },
+        { t: "choice", who: L, q: "¿Dónde ___ los restaurantes?", opts: ["hay", "está", "están"], a: "están", hint: "Wo? + <i>los</i> restaurantes (mehrere) → están." },
+        { t: "choice", who: L, q: "___ muchos restaurantes en la calle Betis.", opts: ["Hay", "Está", "Están"], a: "Hay", hint: "muchos restaurantes → unbestimmt → hay (auch im Plural!)." },
+        { t: "choice", who: L, q: "La biblioteca ___ en la plaza.", opts: ["hay", "está", "están"], a: "está", hint: "<i>la</i> biblioteca → bestimmt → está." },
+        { t: "choice", who: L, q: "En la plaza también ___ dos cafeterías.", opts: ["hay", "está", "están"], a: "hay", hint: "dos cafeterías → Zahl = unbestimmt → hay." },
+        { t: "choice", who: Y, q: "Perdón, ¿___ una farmacia en el barrio?", opts: ["hay", "está", "están"], a: "hay", hint: "una farmacia → unbestimmt → hay." },
+        { t: "choice", who: L, q: "Mis amigos ___ en el Café Azul.", opts: ["hay", "está", "están"], a: "están", hint: "<i>mis</i> amigos → bestimmte Personen, mehrere → están." },
+        { t: "choice", who: L, q: "Mi casa ___ delante del instituto.", opts: ["hay", "está", "están"], a: "está", hint: "<i>mi</i> casa → bestimmt, eine → está." },
+        { t: "choice", who: L, q: "En Triana no ___ estadio. 😕", opts: ["hay", "está", "están"], a: "hay", hint: "Kein Artikel → hay (no hay = es gibt kein …)." }
+      ] },
+    { label: "Parte 3", title: "Preguntas por la calle", shuffle: true,
+      intro: `<p>Ahora estás en la calle y preguntas a la gente. <b>Escribe</b> la palabra que falta.</p><p class="de">Tippe das fehlende Wort. Achte auf die Akzente (Knöpfe unter dem Feld).</p>`,
+      tasks: [
+        { t: "type", who: Y, task: "hay, está o están?", q: "Perdón, ¿dónde ___ la parada de metro?", a: "está", tips: { hay: "Wo? + <i>la</i> parada (bestimmt) → está.", "están": "la parada = eine Sache → está." } },
+        { t: "type", who: Y, task: "hay, está o están?", q: "¿___ un supermercado en el barrio?", a: "hay", tips: { "está": "un supermercado → unbestimmt → hay." } },
+        { t: "type", who: { face: "👵🏼", name: "Una vecina" }, task: "hay, está o están?", q: "Las paradas de autobús ___ en la calle Pureza.", a: "están", tips: { "está": "<i>las</i> paradas = mehrere → están.", hay: "<i>las</i> paradas → bestimmt → están." } },
+        { t: "type", who: { face: "👨🏾", name: "Un chico" }, task: "hay, está o están?", q: "En la calle Betis ___ muchos restaurantes.", a: "hay", tips: { "están": "muchos restaurantes → unbestimmt → hay (auch im Plural)." } },
+        { t: "type", who: { face: "👩🏻", name: "Una chica" }, task: "de + el = ?", q: "El museo está al lado ___ parque.", qDe: "neben dem Park", a: "del", tips: { "de el": "de + el wird zusammengezogen: del.", de: "Es fehlt der Artikel: de + el = del." } },
+        { t: "type", who: { face: "👨🏻‍🏫", name: "Un profesor" }, task: "de + el / de + la?", q: "La biblioteca está cerca ___ plaza.", qDe: "in der Nähe des Platzes (la plaza)", a: "de la", tips: { del: "plaza ist weiblich (la) → de la. Nur de + el wird zu del.", de: "Es fehlt der Artikel: de la plaza." } },
+        { t: "type", who: { face: "👧🏻", name: "Marta" }, task: "hay, está o están?", q: "¡El parque ___ detrás de mi instituto!", a: "está", tips: { hay: "<i>el</i> parque → bestimmt → está." } }
+      ] },
+    { label: "Parte 4", title: "Tus mensajes", shuffle: true,
+      intro: `<p>Ahora tú escribes a Lucía. Toca las palabras en el orden correcto.</p><p class="de">Tippe die Wörter in der richtigen Reihenfolge an. Antippen in der Zeile = zurücklegen.</p>`,
+      tasks: [
+        { t: "order", who: Y, task: "Escribe:", taskDe: "In meinem Viertel gibt es einen sehr schönen Park.", words: ["En", "mi", "barrio", "hay", "un", "parque", "muy", "bonito."], a: ["En mi barrio hay un parque muy bonito.", "Hay un parque muy bonito en mi barrio."] },
+        { t: "order", who: Y, task: "Pregunta:", taskDe: "Wo ist die Bibliothek?", words: ["¿Dónde", "está", "la", "biblioteca?"], a: "¿Dónde está la biblioteca?" },
+        { t: "order", who: Y, task: "Escribe:", taskDe: "Die Haltestelle ist neben dem Supermarkt.", words: ["La", "parada", "está", "al", "lado", "del", "supermercado."], a: "La parada está al lado del supermercado." },
+        { t: "order", who: Y, task: "Escribe:", taskDe: "In der Straße gibt es viele Restaurants.", words: ["En", "la", "calle", "hay", "muchos", "restaurantes."], a: ["En la calle hay muchos restaurantes.", "Hay muchos restaurantes en la calle."] }
+      ] },
+    { label: "Parte 5", title: "¡Ay, Pablo!", shuffle: true,
+      intro: `<div class="who"><div class="face">👦🏻</div><div><b class="n">Pablo</b>¡Hola! Soy Pablo, el hermano de Lucía. ¡Yo también te ayudo! 😎</div></div><p>Pero Pablo tiene prisa y escribe con errores. Toca la palabra falsa y corrígela.</p><p class="de">Pablo macht Fehler. Tippe auf das falsche Wort und wähle die Verbesserung.</p>`,
+      tasks: [
+        { t: "error", who: P, words: ["En", "Triana", "está", "un", "centro", "comercial."], bad: 2, fix: "hay", opts: ["hay", "están", "es"], hint: "un centro comercial → unbestimmt → hay." },
+        { t: "error", who: P, words: ["¿Dónde", "hay", "la", "estación?"], bad: 1, fix: "está", opts: ["está", "están", "es"], hint: "Wo? + <i>la</i> estación → está." },
+        { t: "error", who: P, words: ["Los", "restaurantes", "está", "en", "la", "calle", "Betis."], bad: 2, fix: "están", opts: ["están", "hay", "es"], hint: "los restaurantes = mehrere → están." },
+        { t: "error", who: P, words: ["En", "la", "plaza", "están", "dos", "bares."], bad: 3, fix: "hay", opts: ["hay", "está", "son"], hint: "dos bares → unbestimmt → hay." }
+      ] },
+    { label: "Final", title: "El Café Azul", go: "¡Último mensaje!",
+      intro: `<div class="who"><div class="face">👩🏽</div><div><b class="n">Lucía</b>¡Casi estás! Último mensaje: 📍</div></div><p class="de">Fast geschafft – noch eine Nachricht!</p>`,
+      tasks: [
+        { t: "type", who: L, task: "hay, está o están?", q: "El Café Azul ___ entre la biblioteca y el cine. ☕", a: "está", tips: { hay: "<i>el</i> Café Azul → bestimmt → está.", "están": "el Café Azul = eins → está." } }
+      ] }
+  ],
+  scene: (S) => {
+    const n = S.done ? 16 : Math.min(15, Math.floor(S.solved / S.total * 16));
+    const tiles = TILES.map((t, i) => {
+      const open = i < n, cur = open && i === n - 1;
+      return `<div class="tile ${open ? "" : "fog"} ${i === 15 && open ? "goal" : ""} ${cur ? "new" : ""}">${open ? t[0] + `<small>${t[1]}</small>` : ""}${cur ? `<span class="me">${E8.myAvatar()}</span>` : ""}</div>`;
+    });
+    tiles.splice(8, 0, `<div class="river"></div>`);
+    return `<div class="map">${tiles.join("")}</div><div class="mapcap"><span>🗺️ Triana, Sevilla</span><span>${n} / 16 descubierto</span></div>`;
+  },
+  outro: `<div style="font-size:60px">☕🎉</div><h1>¡Has encontrado el Café Azul!</h1>
+    <div class="who" style="text-align:left"><div class="face">👩🏽</div><div><b class="n">Lucía</b>¡Por fin! ¡Bienvenido/a a Triana! Aquí están todos mis amigos. ¿Un chocolate con churros? 😄</div></div>
+    <div class="avbig">${E8.myAvatar()}</div>`
+});
+</script>
+</body>
+</html>

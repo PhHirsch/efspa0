@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>SimBarrio</title>
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#17385a 0%,#0b1726 65%);--panel:#132841;--txt:#eef6ff;--muted:#9fb7cf;--line:#2f4f74;--btn:#1b3657;--accent:#3fd0a0;--accentTxt:#03261a;--accent2:#9ef0d2;--bubble:#1a3452;--input:#0d1d30;--ok:#6fe59a;--bad:#ff7a7a}
+  .city{position:relative;height:190px;background:linear-gradient(180deg,#7fc6f2 0%,#cfeeff 70%);overflow:hidden}
+  .sun{position:absolute;left:24px;top:16px;font-size:40px}
+  .ground{position:absolute;left:0;right:0;bottom:0;height:46px;background:#6cb05a}
+  .street{position:absolute;left:0;right:0;bottom:16px;height:12px;background:#5b6570}
+  .blds{position:absolute;left:84px;right:10px;bottom:24px;display:flex;flex-wrap:wrap-reverse;gap:0 2px;align-content:flex-start;font-size:34px;line-height:1.05}
+  .blds span.new{animation:pop .6s}
+  .mayor{position:absolute;left:8px;bottom:22px;display:flex;flex-direction:column;align-items:center}
+  .mayor .av{width:62px;height:62px;border-radius:50%;overflow:hidden;border:3px solid #3fd0a0;background:#fff}
+  .mayor small{font-size:11px;font-weight:700;color:#132841;background:#fff;border-radius:6px;padding:0 4px;margin-top:2px}
+  .meter{display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:14px;color:var(--muted)}
+  .meter .bar{flex:1;height:12px;border-radius:8px;background:#0d1d30;overflow:hidden}
+  .meter .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffb23f,#3fd0a0)}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=1"></script>
+<script src="juego.js?v=1"></script>
+<script>
+const A = {face:"👩🏻‍💼", name:"La alcaldesa Rosa"}, V = n => ({face: n[0], name: n[1]});
+const BUILD = ["🏠","🌳","🏡","⛲","🌳","☕","🏫","🌳","📚","💊","🥖","🛒","🚉","🎬","🌳","🏢","🏬","🚲","🌷","🏟️","🌳","🏛️","🎡","🏡","🌳","🚏","🏠","🌷","🍽️","🌳","🏰"];
+JUEGO.start({
+  id: "mucho-poco", key: "efspa0-simbarrio", icon: "🏗️", topic: "mucho / poco · hay · la ciudad", title: "SimBarrio",
+  intro: `<p><b>Villaluna</b> es una ciudad pequeña en Castilla. La alcaldesa <b>Rosa</b> (die Bürgermeisterin) quiere un barrio nuevo – y tú eres el/la urbanista (Stadtplaner/in). 🏗️</p>
+    <p>Cada respuesta correcta construye (baut) algo nuevo para los vecinos. ¡Construye el mejor barrio de España!</p>
+    <p class="de">Du planst als Stadtplaner/in ein neues Viertel. Jede richtige Antwort baut etwas Neues. Falsche Aufgaben kommen später nochmal.</p>`,
+  goLabel: "¡A construir!",
+  rules: `<h2>mucho / poco</h2>
+    <div class="rule"><b>mucho</b> = viel(e) · <b>poco</b> = wenig(e)<br>Die Endung richtet sich nach dem <b>Nomen dahinter</b> (Geschlecht + Zahl):</div>
+    <table class="t"><tr><th></th><th>männlich</th><th>weiblich</th></tr>
+      <tr><td>Singular</td><td>mucho ruido · poco tráfico</td><td>mucha gente · poca basura</td></tr>
+      <tr><td>Plural</td><td>muchos parques · pocos cines</td><td>muchas cafeterías · pocas plazas</td></tr></table>
+    <div class="rule">⚠️ <b>la gente</b> ist Singular und weiblich: <span class="ex">Hay mucha gente.</span> (nicht: muchos gente)<br>
+      ⚠️ <b>el árbol</b> → <span class="ex">muchos árboles</span></div>
+    <div class="rule">Nach <b>hay</b> steht oft mucho/poco: <span class="ex">En el barrio hay muchas cafeterías y pocos parques.</span></div>`,
+  stages: [
+    { label: "Parte 1", title: "Descubre la regla", go: "¡Vamos!",
+      intro: `<div class="who"><div class="face">👩🏻‍💼</div><div><b class="n">La alcaldesa Rosa</b>Villaluna es una ciudad bonita, pero hay problemas: 😟<br>Hay <u>mucho</u> tráfico y <u>mucha</u> basura. Hay <u>muchos</u> coches y <u>muchas</u> fábricas.<br>Pero hay <u>pocos</u> parques y <u>pocas</u> cafeterías.<div class="de">el tráfico = der Verkehr · la basura = der Müll · el coche = das Auto · la fábrica = die Fabrik</div></div></div>
+        <p class="de">Schau dir die unterstrichenen Wörter an. Warum ändern sie sich? Finde die Regel heraus!</p>`,
+      tasks: [
+        { t: "choice", q: "Warum <b>mucho</b> tráfico, aber <b>mucha</b> basura?", keep: true, opts: ["el tráfico ist männlich, la basura weiblich", "basura ist ein längeres Wort"], a: "el tráfico ist männlich, la basura weiblich", hint: "el tráfico (m) → mucho · la basura (f) → mucha." },
+        { t: "choice", q: "muchos coches, muchas fábricas – was zeigt das <b>-s</b>?", keep: true, opts: ["Plural (mehrere)", "eine Frage", "etwas Negatives"], a: "Plural (mehrere)", hint: "coches, fábricas = mehrere → muchos, muchas." },
+        { t: "choice", q: "Was bedeutet <b>poco</b>?", keep: true, opts: ["wenig", "viel", "klein"], a: "wenig", hint: "pocos parques = wenige Parks. (klein = pequeño)" },
+        { t: "choice", q: "Wonach richtet sich die Endung von mucho / poco?", keep: true, opts: ["nach dem Nomen dahinter", "nach dem Verb", "nach der Person, die spricht"], a: "nach dem Nomen dahinter", hint: "mucha <u>gente</u>, muchos <u>parques</u> → das Nomen bestimmt die Endung." }
+      ] },
+    { label: "Parte 2", title: "El informe de Villaluna", shuffle: true,
+      intro: `<p>Rosa te da su informe. Elige la forma correcta.</p><p class="de">Wähle die richtige Form. Frag dich: männlich/weiblich? Einzahl/Mehrzahl? (📜 = Regel)</p>`,
+      tasks: [
+        { t: "choice", who: A, q: "En la plaza hay ___ gente.", qDe: "la gente = die Leute (Singular!)", opts: ["mucho", "mucha", "muchos", "muchas"], a: "mucha", hint: "<i>la</i> gente ist Singular und weiblich → mucha gente." },
+        { t: "choice", who: A, q: "Por la noche hay ___ ruido.", opts: ["mucho", "mucha", "muchos", "muchas"], a: "mucho", hint: "<i>el</i> ruido (m, Sg.) → mucho." },
+        { t: "choice", who: A, q: "En el centro hay ___ cafeterías bonitas.", opts: ["mucho", "mucha", "muchos", "muchas"], a: "muchas", hint: "<i>las</i> cafeterías (f, Pl.) → muchas." },
+        { t: "choice", who: A, q: "En la calle hay ___ árboles.", opts: ["mucho", "mucha", "muchos", "muchas"], a: "muchos", hint: "<i>el</i> árbol → los árboles (m, Pl.) → muchos." },
+        { t: "choice", who: A, q: "Pero hay ___ farmacias.", opts: ["poco", "poca", "pocos", "pocas"], a: "pocas", hint: "<i>las</i> farmacias (f, Pl.) → pocas." },
+        { t: "choice", who: A, q: "En Villaluna hay ___ cines.", opts: ["poco", "poca", "pocos", "pocas"], a: "pocos", hint: "<i>los</i> cines (m, Pl.) → pocos." },
+        { t: "choice", who: A, q: "En la biblioteca hay ___ ordenadores.", opts: ["poco", "poca", "pocos", "pocas"], a: "pocos", hint: "<i>los</i> ordenadores (m, Pl.) → pocos." },
+        { t: "choice", who: A, q: "En la calle Mayor hay ___ basura. 🤢", qDe: "la basura = der Müll", opts: ["poco", "poca", "pocos", "pocas", "mucha"], a: "mucha", hint: "Igitt! 🤢 → viel Müll: <i>la</i> basura (f, Sg.) → mucha." }
+      ] },
+    { label: "Parte 3", title: "¿Qué hay en el barrio nuevo?", shuffle: true,
+      intro: `<p>Los vecinos tienen ideas para el barrio nuevo. Escribe la palabra en español – <b>con artículo</b>. Ojo: después de <b>hay</b> → <b>un / una</b>.</p><p class="de">Schreib das Gebäude auf Spanisch mit Artikel. Nach hay steht un / una!</p>`,
+      tasks: [
+        { t: "type", who: V(["👴🏽", "Don Felipe"]), task: "📚 die Bibliothek", q: "En el barrio nuevo hay ___.", artHint: "¡Casi! Nach <b>hay</b> steht <b>un / una</b> (nicht el / la).", a: "una biblioteca" },
+        { t: "type", who: V(["👩🏼‍🦰", "Marta"]), task: "💊 die Apotheke", q: "En el barrio nuevo hay ___.", artHint: "¡Casi! Nach <b>hay</b> steht <b>un / una</b> (nicht el / la).", a: "una farmacia" },
+        { t: "type", who: V(["🧒🏻", "Dani"]), task: "🥖 die Bäckerei", q: "En el barrio nuevo hay ___.", artHint: "¡Casi! Nach <b>hay</b> steht <b>un / una</b> (nicht el / la).", a: "una panadería" },
+        { t: "type", who: V(["👨🏻‍🍳", "Jorge"]), task: "🛒 der Supermarkt", q: "En el barrio nuevo hay ___.", artHint: "¡Casi! Nach <b>hay</b> steht <b>un / una</b> (nicht el / la).", a: "un supermercado" },
+        { t: "type", who: V(["👩🏾", "Ana"]), task: "🏫 das Gymnasium", q: "En el barrio nuevo hay ___.", artHint: "¡Casi! Nach <b>hay</b> steht <b>un / una</b> (nicht el / la).", a: "un instituto" },
+        { t: "type", who: V(["🧑🏻‍💼", "Luis"]), task: "🚉 der Bahnhof", q: "En el barrio nuevo hay ___.", artHint: "¡Casi! Nach <b>hay</b> steht <b>un / una</b> (nicht el / la).", a: "una estación" },
+        { t: "type", who: V(["👵🏻", "Doña Carmen"]), task: "🎬 das Kino", q: "En el barrio nuevo hay ___.", artHint: "¡Casi! Nach <b>hay</b> steht <b>un / una</b> (nicht el / la).", a: "un cine" }
+      ] },
+    { label: "Parte 4", title: "El plan del barrio nuevo", shuffle: true,
+      intro: `<p>Escribe tu plan para el barrio nuevo. Escribe la forma correcta de <b>mucho</b> o <b>poco</b>.</p><p class="de">Tippe die richtige Form von mucho oder poco (viel / wenig).</p>`,
+      tasks: [
+        { t: "type", who: { av: true, name: "Tú" }, task: "viele", q: "En el barrio nuevo hay ___ parques.", a: "muchos", tips: { mucho: "parques ist Plural (m) → muchos.", muchas: "el parque ist männlich → muchos." } },
+        { t: "type", who: { av: true, name: "Tú" }, task: "wenig", q: "Hay ___ tráfico.", qDe: "el tráfico = der Verkehr", a: "poco", tips: { poca: "el tráfico ist männlich → poco.", pocos: "tráfico ist Singular → poco." } },
+        { t: "type", who: { av: true, name: "Tú" }, task: "viele", q: "Hay ___ cafeterías pequeñas.", a: "muchas", tips: { muchos: "la cafetería ist weiblich → muchas.", mucha: "cafeterías ist Plural → muchas." } },
+        { t: "type", who: { av: true, name: "Tú" }, task: "wenig", q: "Y hay ___ basura en las calles. ✨", qDe: "la basura = der Müll", a: "poca", tips: { poco: "la basura ist weiblich → poca.", pocas: "basura ist Singular → poca." } }
+      ] },
+    { label: "Parte 5", title: "Carteles para Villaluna", shuffle: true,
+      intro: `<p>Haz carteles (Plakate) para el barrio. Toca las palabras en el orden correcto.</p><p class="de">Bilde die Sätze für die Plakate.</p>`,
+      tasks: [
+        { t: "order", task: "Escribe:", taskDe: "In meinem Viertel gibt es viele Cafés und wenige Parks.", words: ["En", "mi", "barrio", "hay", "muchas", "cafeterías", "y", "pocos", "parques."], a: ["En mi barrio hay muchas cafeterías y pocos parques.", "Hay muchas cafeterías y pocos parques en mi barrio."] },
+        { t: "order", task: "Escribe:", taskDe: "Auf dem Platz sind viele Leute.", words: ["En", "la", "plaza", "hay", "mucha", "gente."], a: ["En la plaza hay mucha gente.", "Hay mucha gente en la plaza."] },
+        { t: "order", task: "Escribe:", taskDe: "In der Straße gibt es wenig Lärm.", words: ["Hay", "poco", "ruido", "en", "la", "calle."], a: ["Hay poco ruido en la calle.", "En la calle hay poco ruido."] }
+      ] },
+    { label: "Parte 6", title: "Las quejas de los vecinos", shuffle: true,
+      intro: `<p>Los vecinos escriben quejas (Beschwerden) – ¡pero con errores! Toca la palabra falsa y corrígela.</p><p class="de">Finde in jeder Beschwerde das falsche Wort und verbessere es.</p>`,
+      tasks: [
+        { t: "error", who: V(["😠", "Don Felipe"]), words: ["¡Hay", "muchos", "gente", "en", "la", "calle!"], bad: 1, fix: "mucha", opts: ["mucha", "mucho", "muchas"], hint: "la gente (f, Sg.) → mucha gente." },
+        { t: "error", who: V(["😤", "Marta"]), words: ["En", "el", "parque", "hay", "poca", "árboles."], bad: 4, fix: "pocos", opts: ["pocos", "pocas", "poco"], hint: "el árbol → los árboles (m, Pl.) → pocos." },
+        { t: "error", who: V(["🙄", "Jorge"]), words: ["Hay", "mucho", "cafeterías", "nuevas."], bad: 1, fix: "muchas", opts: ["muchas", "muchos", "mucha"], hint: "las cafeterías (f, Pl.) → muchas." },
+        { t: "error", who: V(["😩", "Doña Carmen"]), words: ["¡Hay", "muchas", "ruido", "por", "la", "noche!"], bad: 1, fix: "mucho", opts: ["mucho", "mucha", "muchos"], hint: "el ruido (m, Sg.) → mucho." }
+      ] },
+    { label: "Final", title: "La inauguración", go: "¡A la fiesta!",
+      intro: `<div class="who"><div class="face">👩🏻‍💼</div><div><b class="n">La alcaldesa Rosa</b>¡Qué bonito! El barrio nuevo está listo (fertig). Una pregunta más… 🎀</div></div>`,
+      tasks: [
+        { t: "type", who: A, task: "wenig", q: "¡Gracias! Ahora en Villaluna hay ___ basura. 🌿", qDe: "la basura = der Müll", a: "poca", tips: { poco: "la basura ist weiblich → poca.", pocas: "basura ist Singular → poca." } }
+      ] }
+  ],
+  scene: (S) => {
+    const n = S.done ? BUILD.length : Math.min(BUILD.length - 1, S.solved);
+    const happy = Math.round(20 + 80 * n / BUILD.length);
+    return `<div class="city"><div class="sun">☀️</div><div class="ground"></div><div class="street"></div>
+      <div class="mayor"><div class="av">${E8.myAvatar()}</div><small>urbanista</small></div>
+      <div class="blds">${BUILD.slice(0, n).map((b, i) => `<span class="${i === n - 1 ? "new" : ""}">${b}</span>`).join("")}</div></div>
+      <div class="meter">${happy < 50 ? "😐" : happy < 85 ? "🙂" : "😄"} Vecinos contentos <div class="bar"><i style="width:${happy}%"></i></div> ${happy} %</div>`;
+  },
+  outro: `<div style="font-size:60px">🎀🏙️🎉</div><h1>¡El barrio nuevo está listo!</h1>
+    <div class="who" style="text-align:left"><div class="face">👩🏻‍💼</div><div><b class="n">La alcaldesa Rosa</b>¡Enhorabuena! Ahora en Villaluna hay muchos parques, muchas cafeterías y poca basura. ¡Eres el/la mejor urbanista de España! 🏆</div></div>`
+});
+</script>
+</body>
+</html>

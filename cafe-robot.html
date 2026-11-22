@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Café Robot</title>
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#3a1f2e 0%,#170c13 65%);--panel:#2a1622;--txt:#fff1f6;--muted:#d4a9bf;--line:#5a2f47;--btn:#3a1f30;--accent:#ff7eb6;--accentTxt:#3a0020;--accent2:#ffc2dd;--bubble:#3a1f30;--input:#1c0d16;--ok:#6fe59a;--bad:#ff8a8a}
+  .cafe{position:relative;height:170px;background:linear-gradient(180deg,#f6d9c4 0%,#f1c9ad 62%,#7a4a2e 62%,#6a3e26 100%);overflow:hidden}
+  .sign{position:absolute;left:50%;top:8px;transform:translateX(-50%);background:#2a1622;color:#ff7eb6;font-weight:800;padding:3px 14px;border-radius:10px;font-size:15px;letter-spacing:.08em;box-shadow:0 0 10px #ff7eb6}
+  .robot{position:absolute;left:14px;bottom:56px;font-size:54px;line-height:1}
+  .robot small{display:block;font-size:11px;font-weight:700;color:#2a1622;text-align:center}
+  .robot.bug{animation:wob 1.2s infinite}
+  @keyframes wob{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+  .me{position:absolute;right:14px;bottom:56px;width:64px;height:64px;border-radius:50%;overflow:hidden;border:3px solid #ff7eb6;background:#fff}
+  .tray{position:absolute;left:90px;right:92px;bottom:12px;height:40px;border-radius:20px;background:#c9c9d1;border:3px solid #9a9aa6;display:flex;align-items:center;justify-content:space-around;padding:0 8px}
+  .tray span{font-size:26px;width:30px;text-align:center}
+  .tray span.e{opacity:.25;filter:grayscale(1)}
+  .tray span.new{animation:pop .5s}
+  .queue{position:absolute;left:96px;right:96px;bottom:60px;display:flex;justify-content:center;gap:4px;font-size:30px}
+  .stat2{display:flex;justify-content:space-between;padding:7px 12px;font-size:14px;color:var(--muted)}
+  table.v td:first-child{color:var(--muted)} table.v b{color:var(--accent)}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=1"></script>
+<script src="juego.js?v=1"></script>
+<script>
+const R = {face:"🤖", name:"RoBarista 3000"}, K = (f, n) => ({face: f, name: n}), Y = {av:true, name:"Tú"};
+const FOOD = ["☕","🍫","🥪","🍦","🥐","🧃","🍰","🥤"];
+const END = ["-o", "-as", "-a", "-amos", "-áis", "-an"];
+const TAB = (v, st, e, extra) => `<table class="t v"><tr><td>yo</td><td>${st}<b>${e[0]}</b></td></tr><tr><td>tú</td><td>${st}<b>${e[1]}</b></td></tr><tr><td>él / ella</td><td>${st}<b>${e[2]}</b></td></tr><tr><td>nosotros/-as</td><td>${st}<b>${e[3]}</b></td></tr><tr><td>vosotros/-as</td><td>${st}<b>${e[4]}</b></td></tr><tr><td>ellos / ellas</td><td>${st}<b>${e[5]}</b></td></tr></table>`;
+const IRR = `<table class="t"><tr><th></th><th>ser</th><th>estar</th><th>tener</th><th>vivir</th></tr>
+  <tr><td>yo</td><td>soy</td><td>estoy</td><td>tengo</td><td>vivo</td></tr><tr><td>tú</td><td>eres</td><td>estás</td><td>tienes</td><td>vives</td></tr>
+  <tr><td>él / ella</td><td>es</td><td>está</td><td>tiene</td><td>vive</td></tr><tr><td>nosotros/-as</td><td>somos</td><td>estamos</td><td>tenemos</td><td>vivimos</td></tr>
+  <tr><td>vosotros/-as</td><td>sois</td><td>estáis</td><td>tenéis</td><td>vivís</td></tr><tr><td>ellos / ellas</td><td>son</td><td>están</td><td>tienen</td><td>viven</td></tr></table>`;
+const end = (who, inf, st, a, hint) => ({ t: "choice", who: K("🧾", "Pedido – Bestellung"), q: `${who} + <b>${inf}</b> → ${st}___`, keep: true, opts: END, a, hint, show: `${who} → ${st}${a.slice(1)}` });
+JUEGO.start({
+  id: "verbos-cafe", key: "efspa0-cafe-robot", icon: "🤖", topic: "Verbos en presente", title: "Café Robot",
+  intro: `<p>En Madrid hay un café muy moderno: el <b>Café Robot</b>. 🤖☕ Pero hoy hay un problema: ¡el robot <b>RoBarista 3000</b> tiene un error! Solo entiende (versteht) verbos correctos.</p>
+    <p>Tú trabajas hoy en el café. Cada verbo correcto = un pedido (Bestellung) listo. ¡Los clientes tienen hambre!</p>
+    <p class="de">Der Roboter im Café hat einen Fehler und versteht nur richtig konjugierte Verben. Jede richtige Form bringt eine Bestellung aufs Tablett. Falsche Aufgaben kommen später nochmal.</p>`,
+  goLabel: "☕ ¡A trabajar!",
+  rulesLabel: "Manual del robot",
+  rules: `<h2>Verbos en presente</h2>
+    <div class="rule"><b>Verben auf -ar</b> (hablar, estudiar, trabajar, escuchar, pasar, preguntar, quedar …):<br>Stamm = Infinitiv ohne <b>-ar</b> → habl- · dann die Endung:</div>
+    ${TAB("hablar", "habl", ["o", "as", "a", "amos", "áis", "an"])}
+    <div class="rule">⚠️ Nur die <b>vosotros</b>-Form hat einen Akzent: <span class="ex">habláis, estudiáis, trabajáis</span></div>
+    <div class="rule"><b>Unregelmäßige Verben</b> und <b>vivir</b> (Verb auf -ir) musst du auswendig lernen:</div>${IRR}`,
+  stages: [
+    { label: "Parte 1", title: "El manual del robot", go: "¡Vamos!",
+      intro: `<div class="who"><div class="face">🤖</div><div><b class="n">RoBarista 3000</b>ERROR 404 – VERBO NO ENCONTRADO. 😵 Por favor, lee mi manual:</div></div>${TAB("hablar", "habl", ["o", "as", "a", "amos", "áis", "an"])}
+        <p class="de">Schau dir die Tabelle an. Was bleibt immer gleich, was ändert sich? Finde die Regel heraus!</p>`,
+      tasks: [
+        { t: "choice", q: "Wie bekommst du den Stamm <b>habl-</b>?", keep: true, opts: ["-ar vom Infinitiv streichen", "nur -r streichen", "das h streichen"], a: "-ar vom Infinitiv streichen", hint: "habl<u>ar</u> → habl- (ohne -ar)." },
+        { t: "choice", q: "Welche Endung hat <b>yo</b>?", keep: true, opts: END, a: "-o", hint: "yo habl<b>o</b>" },
+        { t: "choice", q: "Welche Endung hat <b>nosotros</b>?", keep: true, opts: END, a: "-amos", hint: "nosotros habl<b>amos</b>" },
+        { t: "choice", q: "Welche Form hat einen <b>Akzent</b>?", keep: true, opts: ["yo hablo", "nosotros hablamos", "vosotros habláis", "ellos hablan"], a: "vosotros habláis", hint: "Nur vosotros: habl<b>áis</b>." }
+      ] },
+    { label: "Parte 2", title: "Los primeros pedidos", shuffle: true,
+      intro: `<p>Los primeros clientes ya están aquí. Elige la terminación (Endung) correcta.</p><p class="de">Wähle die richtige Endung. Die Tabelle findest du jederzeit unter 📜.</p>`,
+      tasks: [
+        end("yo", "trabajar", "trabaj", "-o", "yo → -o: trabajo."),
+        end("tú", "escuchar", "escuch", "-as", "tú → -as: escuchas."),
+        end("ella", "pasar", "pas", "-a", "él / ella → -a: pasa."),
+        end("nosotros", "estudiar", "estudi", "-amos", "nosotros → -amos: estudiamos."),
+        end("vosotros", "hablar", "habl", "-áis", "vosotros → -áis (mit Akzent): habláis."),
+        end("ellos", "preguntar", "pregunt", "-an", "ellos → -an: preguntan.")
+      ] },
+    { label: "Parte 3", title: "Mucho trabajo", shuffle: true,
+      intro: `<p>¡Ahora hay mucha gente en el café! Escribe el verbo completo.</p><p class="de">Tippe die ganze Verbform. Akzente: Knöpfe unter dem Feld.</p>`,
+      tasks: [
+        { t: "type", who: K("👩🏽", "Una clienta"), task: "trabajar", q: "Mis padres ___ en Portugal.", a: "trabajan", tips: { trabaja: "mis padres = ellos → -an: trabajan.", trabajamos: "mis padres = ellos (nicht nosotros) → trabajan." } },
+        { t: "type", who: K("🧑🏻", "Un cliente"), task: "escuchar", q: "¿Tú ___ música en el café?", qDe: "la música = die Musik", a: "escuchas", tips: { escucha: "tú → -as: escuchas.", escucho: "tú → -as (yo → -o)." } },
+        { t: "type", who: K("👧🏼", "Lena"), task: "estudiar", q: "Nosotros ___ español en el instituto.", a: "estudiamos", tips: { estudian: "nosotros → -amos: estudiamos." } },
+        { t: "type", who: Y, task: "hablar", q: "¿Vosotros ___ inglés?", a: "habláis", tips: { hablan: "vosotros → -áis: habláis.", hablais: "Akzent nicht vergessen: habláis." } },
+        { t: "type", who: K("👴🏽", "Don Paco"), task: "pasar", q: "Yo ___ el verano en los Alpes.", a: "paso", tips: { pasa: "yo → -o: paso.", pasar: "Nicht den Infinitiv – yo → paso." } },
+        { t: "type", who: K("👩🏻‍🦰", "Marta"), task: "quedar", q: "Mi hermana ___ con sus amigos esta tarde.", a: "queda", tips: { quedan: "mi hermana = ella (eine Person) → queda.", quedas: "mi hermana = ella → -a: queda." } }
+      ] },
+    { label: "Parte 4", title: "Pedidos especiales", shuffle: true,
+      intro: `<div class="who"><div class="face">🤖</div><div><b class="n">RoBarista 3000</b>¡ALERTA! Pedidos especiales: verbos irregulares. 🚨</div></div>${IRR}<p class="de">Diese Verben sind besonders. Schau dir die Tabelle gut an – sie ist auch unter 📜.</p>`,
+      tasks: [
+        { t: "type", who: K("👨🏾", "Un chico"), task: "vivir", q: "¿Dónde ___ tú?", a: "vives", tips: { vivo: "tú → vives (yo → vivo).", vive: "tú → vives." } },
+        { t: "type", who: Y, task: "vivir", q: "Nosotros ___ en Höxter.", a: "vivimos", tips: { viven: "nosotros → vivimos.", vivamos: "vivir ist ein -ir-Verb: vivimos." } },
+        { t: "type", who: K("👦🏻", "Pablo"), task: "tener", q: "Yo ___ dos hermanos.", a: "tengo", tips: { tieno: "tener ist unregelmäßig: yo tengo.", tiene: "yo → tengo." } },
+        { t: "type", who: K("👵🏻", "Doña Carmen"), task: "tener", q: "¿___ vosotros un perro?", a: "tenéis", tips: { tienen: "vosotros → tenéis.", teneis: "Akzent: tenéis." } },
+        { t: "type", who: K("👧🏽", "Sara"), task: "estar", q: "Mis abuelos ___ en casa.", a: "están", tips: { "está": "mis abuelos = ellos → están.", son: "Wo? → estar: están." } },
+        { t: "type", who: K("🧒🏻", "Dani"), task: "ser", q: "Tú ___ mi mejor amigo.", a: "eres", tips: { es: "tú → eres.", "estás": "Wer jemand ist → ser: eres." } }
+      ] },
+    { label: "Parte 5", title: "Reclamaciones", shuffle: true,
+      intro: `<p>Algunos clientes escriben notas con errores. Toca el verbo falso y corrígelo.</p><p class="de">Finde in jeder Notiz das falsche Verb und verbessere es.</p>`,
+      tasks: [
+        { t: "error", who: K("😤", "Un cliente"), words: ["Nosotros", "hablan", "español."], bad: 1, fix: "hablamos", opts: ["hablamos", "habláis", "habla"], hint: "nosotros → -amos: hablamos." },
+        { t: "error", who: K("🙄", "Una clienta"), words: ["Mi", "hermana", "trabajas", "en", "una", "panadería."], bad: 2, fix: "trabaja", opts: ["trabaja", "trabajan", "trabajo"], hint: "mi hermana = ella → trabaja." },
+        { t: "error", who: K("🤨", "Un profesor"), words: ["¿Vosotros", "estudiamos", "hoy?"], bad: 1, fix: "estudiáis", opts: ["estudiáis", "estudian", "estudias"], hint: "vosotros → -áis: estudiáis." }
+      ] },
+    { label: "Final", title: "El último pedido", go: "🔧 ¡Reparar el robot!",
+      intro: `<div class="who"><div class="face">🤖</div><div><b class="n">RoBarista 3000</b>SISTEMA … 98 % … ¡Una frase más y estoy bien! 🔋</div></div>`,
+      tasks: [
+        { t: "order", task: "Escribe:", taskDe: "Meine Freunde und ich lernen jeden Tag Spanisch.", words: ["Mis", "amigos", "y", "yo", "estudiamos", "español", "todos", "los", "días."], a: ["Mis amigos y yo estudiamos español todos los días.", "Todos los días mis amigos y yo estudiamos español."] }
+      ] }
+  ],
+  scene: (S, G) => {
+    const st = G.stages[S.stage], n = st.tasks.length;
+    const done = S.done ? n : S.phase === "play" ? n - new Set(S.queue).size : 0;
+    const total = S.done ? S.total : S.solved;
+    const slots = Array.from({ length: n }, (_, i) => `<span class="${i < done ? (i === done - 1 ? "new" : "") : "e"}">${FOOD[(i + S.stage) % FOOD.length]}</span>`).join("");
+    const waiting = S.done ? "" : ["🧑🏻", "👩🏽", "👴🏼", "👧🏾", "🧔🏻"].slice(0, Math.max(1, Math.min(5, n - done))).join("");
+    return `<div class="cafe"><div class="sign">CAFÉ ROBOT</div><div class="robot ${S.done ? "" : "bug"}">🤖<small>${S.done ? "100 % ✔" : "ERROR"}</small></div>
+      <div class="queue">${waiting}</div><div class="me">${E8.myAvatar()}</div><div class="tray">${slots}</div></div>
+      <div class="stat2"><span>☕ Pedidos listos: ${total}</span><span>${S.done ? "🤖 ¡Reparado!" : "🔧 Robot: " + Math.round(total / S.total * 100) + " %"}</span></div>`;
+  },
+  outro: `<div style="font-size:60px">🤖☕🎉</div><h1>¡El robot funciona otra vez!</h1>
+    <div class="who" style="text-align:left"><div class="face">🤖</div><div><b class="n">RoBarista 3000</b>SISTEMA OK. ¡Muchas gracias! Tú eres el/la mejor camarero/a de Madrid. ☕💖</div></div>`
+});
+</script>
+</body>
+</html>

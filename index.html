@@ -79,10 +79,17 @@
 
 <script src="game.js?v=1"></script>
 <script src="bosses.js?v=1"></script>
-<script>window.VOCAB = window.VOCAB || {};</script>
+<script src="vocab-u1.js?v=1"></script>
+<script src="vocab-u2.js?v=1"></script>
+<script src="vocab-u3.js?v=1"></script>
 <script>
 /* Grammatik- und Story-Spiele (id = Spiel-ID). Vokabel-Bosse kommen automatisch aus vocab-*.js */
-const GRAMMAR = [];
+const GRAMMAR = [
+  {id:"hay-estar", unit:"u3", file:"mision-barrio.html", icon:"🗺️", topic:"hay · está / están", name:"Misión Barrio", info:"Descubre Triana y encuentra el Café Azul.", color:"linear-gradient(135deg,#5a3a18,#b8742a)"},
+  {id:"mucho-poco", unit:"u3", file:"simbarrio.html", icon:"🏗️", topic:"mucho / poco · la ciudad", name:"SimBarrio", info:"Construye un barrio nuevo para Villaluna.", color:"linear-gradient(135deg,#124a5a,#2a9a7a)"},
+  {id:"ser-estar", unit:"u3", file:"tren-nocturno.html", icon:"🚂", topic:"ser · estar", name:"El tren nocturno a Granada", info:"Abre los candados y sal del tren.", color:"linear-gradient(135deg,#1e1650,#5a3cb0)"},
+  {id:"verbos-cafe", unit:"u3", file:"cafe-robot.html", icon:"🤖", topic:"Verbos en presente", name:"Café Robot", info:"Repara el robot con verbos correctos.", color:"linear-gradient(135deg,#5a1e3a,#c0407a)"}
+];
 /* Überschriften der Unidades (Schlüssel wie in vocab-*.js bzw. GRAMMAR.unit) */
 const UNITS = {u3:"Unidad 3"};
 const BOSSCOL = {tornado:"linear-gradient(135deg,#3a4256,#6a7a96)",robot:"linear-gradient(135deg,#2a3a4a,#4a6a8a)",ghost:"linear-gradient(135deg,#2a2a5a,#5a5aa0)",bossy:"linear-gradient(135deg,#5a1e1a,#a0402a)",slime:"linear-gradient(135deg,#1e4a24,#3f8a2a)",manager:"linear-gradient(135deg,#2e1d5a,#6a3cb0)",locker:"linear-gradient(135deg,#12305a,#2a68b8)"};
@@ -127,10 +134,10 @@ function games(){
     const u = VOCAB[key], gr = GRAMMAR.filter(g => g.unit === key);
     if (!u && !gr.length) return;
     h += `<h2>${u ? u.unit : (UNITS[key] || key)}</h2>`;
+    if (gr.length) h += `<h4>Juegos</h4><div class="grid">` + gr.map(g => tile({id:g.id, href:g.file, color:g.color, icon:g.icon, topic:g.topic, name:g.name, info:g.info})).join("") + `</div>`;
     if (u) [...new Set(u.sections.map(s => s.part))].forEach(p => {
-      h += `<h4>${p}</h4><div class="grid">` + u.sections.filter(s => s.part === p).map(s => tile({id:s.id, href:"boss.html?id="+s.id, color:BOSSCOL[s.boss]||"#333", img:`<div class="bossimg">${BOSSART[s.boss]}</div>`, topic:"Jefe de vocabulario", name:s.title, info:`${s.bossName} · ${s.words.length} palabras<br>${s.pages}`})).join("") + `</div>`;
+      h += `<h4>Vocabulario · ${p}</h4><div class="grid">` + u.sections.filter(s => s.part === p).map(s => tile({id:s.id, href:"boss.html?id="+s.id, color:BOSSCOL[s.boss]||"#333", img:`<div class="bossimg">${BOSSART[s.boss]}</div>`, topic:"Jefe de vocabulario", name:s.title, info:`${s.bossName} · ${s.words.length} palabras<br>${s.pages}`})).join("") + `</div>`;
     });
-    if (gr.length) h += `<h4>Gramática y más</h4><div class="grid">` + gr.map(g => tile({id:g.id, href:g.file, color:g.color, icon:g.icon, topic:g.topic, name:g.name, info:g.info})).join("") + `</div>`;
   });
   if (!h) h = `<div class="box"><b>¡Pronto hay juegos aquí! 🎲</b><div class="de">Hier erscheinen bald die ersten Spiele.</div></div>`;
   $("games").innerHTML = h;

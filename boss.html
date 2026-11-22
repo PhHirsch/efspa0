@@ -58,7 +58,9 @@
 <main id="app"></main>
 <script src="game.js?v=1"></script>
 <script src="bosses.js?v=1"></script>
-<script>window.VOCAB = window.VOCAB || {};</script>
+<script src="vocab-u1.js?v=1"></script>
+<script src="vocab-u2.js?v=1"></script>
+<script src="vocab-u3.js?v=1"></script>
 <script>
 const $ = id => document.getElementById(id);
 const P = new URLSearchParams(location.search);
@@ -91,7 +93,7 @@ function expand(s) {
   if (!m) return [s];
   return expand(s.replace(m[0], m[1])).concat(expand(s.replace(m[0], "")));
 }
-function norm(s) { return s.toLowerCase().replace(/[’‘`´]/g, "'").replace(/[¿¡.!?]+/g, "").replace(/\s+/g, " ").trim(); }
+function norm(s) { return s.toLowerCase().replace(/[’‘`´]/g, "'").replace(/\.\.\./g, " ").replace(/[¿¡.!?,;…]+/g, " ").replace(/\s+/g, " ").trim(); }
 const noAcc = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").normalize("NFC");
 const noArt = s => s.replace(/^(el|la|los|las|un|una|unos|unas) /, "");
 function variants(es) {

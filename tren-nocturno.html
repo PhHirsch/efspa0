@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>El tren nocturno a Granada</title>
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#2c1f52 0%,#0e0a1d 65%);--panel:#1d1638;--txt:#f3efff;--muted:#ab9fd0;--line:#3e3370;--btn:#2a2150;--accent:#f2c230;--accentTxt:#2a2000;--accent2:#ffe08a;--bubble:#2a2150;--input:#130f26;--ok:#6fe59a;--bad:#ff7a8a}
+  .night{position:relative;height:178px;background:linear-gradient(180deg,#0d0b24,#24195a 80%);overflow:hidden}
+  .stars{position:absolute;inset:0;background-image:radial-gradient(1.5px 1.5px at 20px 30px,#fff,transparent),radial-gradient(1px 1px at 120px 60px,#fff,transparent),radial-gradient(1.5px 1.5px at 260px 20px,#fff,transparent),radial-gradient(1px 1px at 400px 50px,#fff,transparent),radial-gradient(1.5px 1.5px at 560px 26px,#fff,transparent),radial-gradient(1px 1px at 700px 70px,#fff,transparent);opacity:.8}
+  .moon{position:absolute;right:26px;top:14px;font-size:34px}
+  .hills{position:absolute;left:0;right:0;bottom:26px;height:40px;background:#17123a;border-radius:50% 50% 0 0/100% 100% 0 0}
+  .rail{position:absolute;left:0;right:0;bottom:18px;height:6px;background:repeating-linear-gradient(90deg,#6b5a3a 0 8px,#3a2f1e 8px 14px)}
+  .train{position:absolute;left:10px;right:10px;bottom:24px;display:flex;gap:6px;align-items:flex-end}
+  .wag{flex:1;height:74px;border-radius:10px 10px 4px 4px;background:#7a2a2a;border:2px solid #b8503a;position:relative;display:flex;align-items:center;justify-content:center;gap:4px}
+  .wag.loco{flex:.8;background:#3a3a4a;border-color:#6a6a80;border-radius:24px 10px 4px 4px}
+  .wag .win{width:22px;height:20px;border-radius:4px;background:#ffd96a;opacity:.85}
+  .wag .lock{position:absolute;top:-14px;right:-6px;font-size:22px}
+  .wag .num{position:absolute;bottom:2px;left:6px;font-size:11px;color:#ffd9c0;font-weight:700}
+  .wag.now{box-shadow:0 0 0 3px #f2c230,0 0 18px rgba(242,194,48,.6)}
+  .wag .me{width:38px;height:38px;border-radius:50%;overflow:hidden;border:2px solid #f2c230}
+  .codebar{display:flex;justify-content:center;align-items:center;gap:10px;padding:10px;font-size:15px;color:var(--muted)}
+  .digit{width:38px;height:46px;border-radius:8px;background:#0d0b24;border:2px solid #3e3370;display:grid;place-items:center;font-size:26px;font-weight:800;color:#f2c230;font-family:Menlo,Consolas,monospace}
+  .digit.open{animation:pop .5s;border-color:#f2c230}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=1"></script>
+<script src="juego.js?v=1"></script>
+<script>
+const C = {face:"👩🏻‍✈️", name:"Carmen, la revisora"}, Y = {av:true, name:"Tú"}, P = (f, n) => ({face: f, name: n});
+const CODES = ["482", "715", "369", "250", "914", "7"];
+JUEGO.start({
+  id: "ser-estar", key: "efspa0-tren-nocturno", icon: "🚂", topic: "ser · estar", title: "El tren nocturno a Granada",
+  intro: `<p>Viajas en el <b>tren nocturno</b> de Madrid a Granada. 🌙 Te duermes… Cuando te despiertas, ¡todas las puertas están cerradas! 🔒</p>
+    <p>En el tren hay notas de la revisora <b>Carmen</b> con acertijos (Rätsel). Cada vagón tiene un candado con código. Cada respuesta correcta te da un número del código.</p>
+    <p class="de">el tren = der Zug · el vagón = der Waggon · la revisora = die Schaffnerin · el candado = das Schloss · la maleta = der Koffer<br>Du wachst im Nachtzug auf – alle Türen sind verschlossen. Jede richtige Antwort verrät eine Ziffer des Zahlenschlosses. Falsche Aufgaben kommen später nochmal.</p>`,
+  goLabel: "🔦 ¡Busca la primera nota!",
+  rulesLabel: "La nota de Carmen",
+  rules: `<h2>ser · estar</h2>
+    <div class="rule"><b>ser</b> = sein – <b>wer / was / woher / wie (Eigenschaft)</b><br>Name, Herkunft, Beruf, Charakter, Aussehen<br>
+      <span class="ex">Soy Carmen. Soy de Granada. Soy revisora. Soy simpática.</span></div>
+    <div class="rule"><b>estar</b> = sein – <b>wo</b> etwas ist + <b>wie es jemandem geht</b> (Zustand jetzt)<br>
+      <span class="ex">Estoy en el tren. Granada está en Andalucía. Estoy muy bien. ¿Cómo estás?</span></div>
+    <table class="t"><tr><th></th><th>ser</th><th>estar</th></tr>
+      <tr><td>yo</td><td>soy</td><td>estoy</td></tr><tr><td>tú</td><td>eres</td><td>estás</td></tr>
+      <tr><td>él / ella / usted</td><td>es</td><td>está</td></tr><tr><td>nosotros/-as</td><td>somos</td><td>estamos</td></tr>
+      <tr><td>vosotros/-as</td><td>sois</td><td>estáis</td></tr><tr><td>ellos / ellas / ustedes</td><td>son</td><td>están</td></tr></table>`,
+  stages: [
+    { label: "Vagón 1", title: "La primera nota", go: "¡Vamos!",
+      intro: `<div class="who"><div class="face">📝</div><div><b class="n">La nota de Carmen</b>¡Hola! <u>Soy</u> Carmen. <u>Soy</u> de Granada. <u>Soy</u> revisora y <u>soy</u> simpática. 😉<br>Ahora <u>estoy</u> en el vagón 5. <u>Estoy</u> muy bien. ¿Y tú? ¿Cómo <u>estás</u>?</div></div>
+        <p class="de">Carmen benutzt zwei Verben für „sein“: <b>ser</b> (soy) und <b>estar</b> (estoy, estás). Wann nimmt sie welches? Finde es heraus!</p>`,
+      tasks: [
+        { t: "choice", q: "<i>Soy de Granada.</i> → Woher jemand kommt:", keep: true, opts: ["ser", "estar"], a: "ser", hint: "Soy de Granada → Herkunft → ser." },
+        { t: "choice", q: "<i>Soy revisora.</i> → Was jemand ist (Beruf):", keep: true, opts: ["ser", "estar"], a: "ser", hint: "Soy revisora → Beruf → ser." },
+        { t: "choice", q: "<i>Estoy en el vagón 5.</i> → Wo jemand ist:", keep: true, opts: ["ser", "estar"], a: "estar", hint: "Estoy en el vagón 5 → Ort → estar." },
+        { t: "choice", q: "<i>Estoy muy bien. ¿Cómo estás?</i> → Wie es jemandem geht:", keep: true, opts: ["ser", "estar"], a: "estar", hint: "Estoy muy bien → Befinden → estar." },
+        { t: "choice", q: "<i>Soy simpática.</i> → Wie jemand ist (Charakter):", keep: true, opts: ["ser", "estar"], a: "ser", hint: "Soy simpática → Eigenschaft → ser." }
+      ] },
+    { label: "Vagón 2", title: "Las formas", shuffle: true,
+      intro: `<p>¡El primer candado está abierto! 🔓 En el vagón 2 hay otra nota con una tabla.</p>
+        <table class="t"><tr><th></th><th>ser</th><th>estar</th></tr><tr><td>yo</td><td>soy</td><td>estoy</td></tr><tr><td>tú</td><td>eres</td><td>estás</td></tr><tr><td>él / ella</td><td>es</td><td>está</td></tr><tr><td>nosotros</td><td>somos</td><td>estamos</td></tr><tr><td>vosotros</td><td>sois</td><td>estáis</td></tr><tr><td>ellos / ellas</td><td>son</td><td>están</td></tr></table>
+        <p class="de">Wähle die richtige Form. Erst überlegen: ser oder estar? Dann: welche Person?</p>`,
+      tasks: [
+        { t: "choice", who: Y, q: "Yo ___ de Alemania.", opts: ["soy", "estoy", "es", "está"], a: "soy", hint: "Herkunft → ser · yo → soy." },
+        { t: "choice", who: Y, q: "Nosotros ___ en el vagón 2.", opts: ["somos", "estamos", "están", "son"], a: "estamos", hint: "Wo? → estar · nosotros → estamos." },
+        { t: "choice", who: C, q: "¿Tú ___ bien?", opts: ["eres", "estás", "está", "es"], a: "estás", hint: "Wie geht's? → estar · tú → estás." },
+        { t: "choice", who: P("🧔🏻", "Un chico"), q: "Carmen ___ muy simpática.", opts: ["es", "está", "eres", "estás"], a: "es", hint: "Charakter → ser · Carmen (ella) → es." },
+        { t: "choice", who: C, q: "Los chicos del vagón 3 ___ de Francia.", opts: ["son", "están", "somos", "estáis"], a: "son", hint: "Herkunft → ser · ellos → son." },
+        { t: "choice", who: C, q: "¿Vosotros ___ bien?", opts: ["sois", "estáis", "están", "son"], a: "estáis", hint: "Wie geht's? → estar · vosotros → estáis." },
+        { t: "choice", who: Y, q: "¿Dónde ___ mi maleta? 🧳", opts: ["es", "está", "son", "están"], a: "está", hint: "Wo? → estar · mi maleta (eine) → está." }
+      ] },
+    { label: "Vagón 3", title: "La gente del tren", shuffle: true,
+      intro: `<p>En el vagón 3 hay muchas personas. Escucha y <b>escribe</b> la forma de <b>ser</b> o <b>estar</b>.</p><p class="de">Tippe die richtige Form von ser oder estar. Akzente: Knöpfe unter dem Feld.</p>`,
+      tasks: [
+        { t: "type", who: P("👧🏼", "Lena"), q: "Mi amigo Leo ___ de Höxter.", a: "es", tips: { "está": "de Höxter = Herkunft → ser: es." } },
+        { t: "type", who: P("👨🏽‍🦳", "Don Paco"), q: "Ahora el tren ___ en Córdoba.", a: "está", tips: { es: "Wo ist der Zug? → estar: está." } },
+        { t: "type", who: P("👩🏻‍🦱", "Sara"), q: "Nosotras ___ hermanas.", a: "somos", tips: { estamos: "Wer/was wir sind → ser: somos." } },
+        { t: "type", who: C, q: "¡Buenas noches! ¿Cómo ___ vosotros?", a: "estáis", tips: { sois: "Wie geht's? → estar: estáis." } },
+        { t: "type", who: Y, q: "Hoy yo ___ fatal. 🤢", a: "estoy", tips: { soy: "Wie es mir heute geht → estar: estoy." } },
+        { t: "type", who: P("👨🏽‍🦳", "Don Paco"), q: "Granada ___ en Andalucía.", a: "está", tips: { es: "Wo liegt etwas? → estar: está." } },
+        { t: "type", who: P("👧🏼", "Lena"), q: "Las maletas ___ en el pasillo.", qDe: "el pasillo = der Gang", a: "están", tips: { son: "Wo? → estar: están.", "está": "las maletas = mehrere → están." } }
+      ] },
+    { label: "Vagón 4", title: "Notas con errores", shuffle: true,
+      intro: `<p>¡Uy! En el vagón 4 las notas tienen errores. Toca la palabra falsa y corrígela.</p><p class="de">Tippe auf das falsche Wort und wähle die Verbesserung.</p>`,
+      tasks: [
+        { t: "error", who: P("🧒🏽", "Un niño"), words: ["Yo", "soy", "en", "el", "vagón", "4."], bad: 1, fix: "estoy", opts: ["estoy", "está", "es"], hint: "Wo? → estar: estoy." },
+        { t: "error", who: P("👩🏼", "Una señora"), words: ["Marta", "está", "de", "Sevilla."], bad: 1, fix: "es", opts: ["es", "son", "estoy"], hint: "Herkunft → ser: es." },
+        { t: "error", who: P("👦🏾", "Un chico"), words: ["Mi", "hermano", "está", "profesor."], bad: 2, fix: "es", opts: ["es", "son", "eres"], hint: "Beruf → ser: es." },
+        { t: "error", who: P("👴🏻", "Un abuelo"), words: ["¿Dónde", "son", "las", "maletas?"], bad: 1, fix: "están", opts: ["están", "está", "sois"], hint: "Wo? → estar · las maletas → están." }
+      ] },
+    { label: "Vagón 5", title: "¡Encuentra a Carmen!", shuffle: true,
+      intro: `<p>¡Último vagón! Carmen está aquí – pero duerme (schläft). 😴 Escribe las frases correctas para despertarla.</p><p class="de">Bilde die Sätze in der richtigen Reihenfolge.</p>`,
+      tasks: [
+        { t: "order", task: "Escribe:", taskDe: "Carmen ist aus Granada und ist im Zug.", words: ["Carmen", "es", "de", "Granada", "y", "está", "en", "el", "tren."], a: "Carmen es de Granada y está en el tren." },
+        { t: "order", task: "Escribe:", taskDe: "Wir sind Freunde und sind in Spanien.", words: ["Somos", "amigos", "y", "estamos", "en", "España."], a: "Somos amigos y estamos en España." },
+        { t: "order", task: "Escribe:", taskDe: "Der Bahnhof ist in der Nähe der Alhambra.", words: ["La", "estación", "está", "cerca", "de", "la", "Alhambra."], a: "La estación está cerca de la Alhambra." }
+      ] },
+    { label: "Final", title: "¿Dónde estamos?", go: "🚪 ¡Abrir la puerta!",
+      intro: `<div class="who"><div class="face">👩🏻‍✈️</div><div><b class="n">Carmen</b>¡Uy, perdón! 😅 Las puertas… ¡Ahora están abiertas! Mira por la ventana…</div></div>`,
+      tasks: [
+        { t: "type", who: Y, q: "¡Por fin! Nosotros ___ en Granada. 🏰", a: "estamos", tips: { somos: "Wo? → estar: estamos." } }
+      ] }
+  ],
+  scene: (S, G) => {
+    const st = G.stages[S.stage];
+    const doneHere = S.done ? st.tasks.length : S.phase === "play" ? st.tasks.length - new Set(S.queue).size : 0;
+    const code = CODES[S.stage], shown = Math.min(code.length, Math.floor(doneHere / st.tasks.length * code.length + 1e-9));
+    const wags = [`<div class="wag loco">🚂</div>`].concat([0, 1, 2, 3, 4].map(i => {
+      const open = S.done || i < S.stage, now = !S.done && (i === Math.min(S.stage, 4));
+      return `<div class="wag ${now ? "now" : ""}"><span class="lock">${open ? "🔓" : "🔒"}</span>${now ? `<div class="me">${E8.myAvatar()}</div>` : `<i class="win"></i><i class="win"></i>`}<span class="num">${i + 1}</span></div>`;
+    }));
+    const digits = code.split("").map((d, i) => `<div class="digit ${i < shown ? "open" : ""}">${i < shown ? d : "·"}</div>`).join("");
+    return `<div class="night"><div class="stars"></div><div class="moon">🌙</div><div class="hills"></div><div class="rail"></div><div class="train">${wags.join("")}</div></div>
+      <div class="codebar">${S.done ? "🏰 ¡Granada! Todas las puertas están abiertas." : `🔒 Código ${S.stage < 5 ? "vagón " + (S.stage + 1) : "de la puerta"}: ${digits}`}</div>`;
+  },
+  outro: `<div style="font-size:60px">🏰🌅</div><h1>¡Bienvenido/a a Granada!</h1>
+    <div class="who" style="text-align:left"><div class="face">👩🏻‍✈️</div><div><b class="n">Carmen</b>¡Muchas gracias! ¡Eres genial! 😊 Mira: allí está la Alhambra. ¡Buen viaje!</div></div>`
+});
+</script>
+</body>
+</html>
