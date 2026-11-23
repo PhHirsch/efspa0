@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Los López – una familia de YouTube · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#3a0d14 0%,#120408 70%);--panel:#1c0a10;--txt:#fff1f3;--muted:#d7a8b2;--line:#4a1e28;--btn:#2a1018;--accent:#ff3b4e;--accentTxt:#fff;--accent2:#ffb3bd;--bubble:#2c121a;--input:#12060a;--ok:#6fe59a;--bad:#ffb03a}
+  .yt{background:#0f0f0f;border-radius:14px 14px 0 0;overflow:hidden}
+  .ytbar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#181818;font:600 14px system-ui;color:#fff}
+  .ytbar .logo{background:#ff0000;color:#fff;border-radius:6px;padding:1px 7px;font-size:12px}
+  .ytbar .subs{margin-left:auto;color:#aaa;font-weight:500}
+  .ytbar .subs b{color:#fff}
+  .tree{position:relative;height:200px;background:linear-gradient(#fff8e8,#ffe9c4);}
+  .tree svg{position:absolute;inset:0;width:100%;height:100%}
+  .p{position:absolute;transform:translate(-50%,-50%);text-align:center;font:700 11px system-ui;color:#5a2a10;transition:opacity .6s,transform .6s}
+  .p .f{font-size:30px;width:44px;height:44px;line-height:44px;border-radius:50%;background:#fff;border:3px solid #ff3b4e;margin:0 auto 2px;box-shadow:0 2px 6px #0003;overflow:hidden}
+  .p.off{opacity:.18;filter:grayscale(1)}
+  .p.off .f{border-color:#bbb}
+  .p .f svg{width:44px;height:44px}
+  .rec{position:absolute;right:10px;top:8px;font:700 12px system-ui;color:#ff3b4e}
+  .rec:before{content:"● ";animation:bl 1s infinite}
+  @keyframes bl{50%{opacity:.2}}
+  .cap{display:inline-block;background:#000c;color:#fff;padding:3px 10px;border-radius:4px;font-size:18px}
+  .cm{background:#222;border-radius:10px;padding:8px 12px;color:#eee;font-size:17px}
+  .cm b{color:#7ec8ff}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=11"></script>
+<script src="juego.js?v=6"></script>
+<script>
+const L = {face:"👧🏽", name:"Lucía López"}, P = {face:"👦🏽", name:"Pablo (su hermano)"}, R = {face:"🎤", name:"La reportera"}, Y = {av:true, name:"Tú (editor/a)"};
+const fan = n => ({face:"💬", name:"@" + n});
+const cap = s => `<span class="cap">${s}</span>`;
+const MI = "📌 <b>mi</b> + Singular: mi padre, mi madre · <b>mis</b> + Plural: mis padres, mis hermanas<br><span class=\"de\">mi/mis = mein/meine – es richtet sich nach dem, was folgt (eins oder mehrere).</span>";
+const TU = "📌 <b>tu</b> + Singular: tu perro · <b>tus</b> + Plural: tus abuelos <span class=\"de\">(dein/deine)</span><br>Achtung: <b>tu</b> (dein) ohne Akzent · <b>tú</b> (du) mit Akzent";
+const SU = "📌 <b>su</b> + Singular · <b>sus</b> + Plural = <b>sein / ihr</b> <span class=\"de\">(von ihm, von ihr, von ihnen)</span><br><span class=\"ex\">Lucía y su perro · Pablo y sus amigos</span>";
+const ALL = "📌 yo → <b>mi / mis</b> · tú → <b>tu / tus</b> · él / ella / ellos → <b>su / sus</b> · Singular → mi, tu, su · Plural → mis, tus, sus";
+JUEGO.start({
+  id: "posesivos", key: "efspa0-los-lopez", icon: "📱", topic: "mi · tu · su", title: "Los López – una familia de YouTube",
+  intro: `<p>📱 <b>Lucía López</b> (15 años) tiene un canal de YouTube: <b>„LosLópezTV“</b>. En sus vídeos presenta a su familia: ¡son un poco locos! 😄</p>
+    <p>Tú eres el/la nuevo/a <b>editor/a</b> del canal. Escribes los subtítulos, contestas a los fans y ayudas a una reportera. Cada respuesta correcta = ¡más suscriptores y un miembro más en el árbol genealógico! 🌳</p>
+    <p class="de">Du bist Video-Editor/in bei Lucías YouTube-Kanal. Du lernst <b>mi/mis</b> (mein), <b>tu/tus</b> (dein) und <b>su/sus</b> (sein/ihr) – Schritt für Schritt. Falsche Aufgaben kommen später nochmal.</p>`,
+  goLabel: "🎬 ¡Grabamos!", time: "ca. 20 minutos",
+  rulesLabel: "mi · tu · su",
+  rules: `<h2>Los posesivos (mein, dein, sein/ihr)</h2>
+    <table class="t"><tr><th></th><th>Singular</th><th>Plural</th></tr>
+    <tr><td>yo → mein/e</td><td><b>mi</b> padre, <b>mi</b> madre</td><td><b>mis</b> padres, <b>mis</b> hermanas</td></tr>
+    <tr><td>tú → dein/e</td><td><b>tu</b> perro, <b>tu</b> tía</td><td><b>tus</b> abuelos, <b>tus</b> tías</td></tr>
+    <tr><td>él / ella / ellos → sein/e, ihr/e</td><td><b>su</b> gato, <b>su</b> familia</td><td><b>sus</b> hijos, <b>sus</b> amigas</td></tr></table>
+    <div class="rule"><b>Regel 1:</b> Es zählt, was <b>danach</b> kommt: eins → mi/tu/su, mehrere → mis/tus/sus.</div>
+    <div class="rule"><b>Regel 2:</b> Männlich und weiblich sind gleich: <b>mi</b> padre – <b>mi</b> madre.</div>
+    <div class="rule"><b>Regel 3:</b> <b>su</b> kann „sein“ oder „ihr“ heißen: Lucía y <b>su</b> perro (ihr Hund) · Pablo y <b>su</b> perro (sein Hund).</div>`,
+  stages: [
+    { label: "Vídeo 1", title: "¡Hola, esta es mi familia!", go: "🔍 ¡A investigar!",
+      memo: `🎬 Lucía: „Hola, soy Lucía. Este es <b>mi</b> padre, Javier. Esta es <b>mi</b> madre, Carmen. Y estos son <b>mis</b> hermanos, Pablo y Ana. ¡Y este es <b>mi</b> perro, Toby! <b>Mis</b> abuelos viven en Valencia.“`,
+      intro: `<div class="who"><div class="face">👧🏽</div><div><b class="n">Lucía</b>¡Hola, editor/a! Mira mi primer vídeo. Presento a mi familia. ¿Ves cuándo digo <b>mi</b> y cuándo digo <b>mis</b>?</div></div><p class="de">Lies Lucías Text in der Box oben genau. Wann sagt sie <b>mi</b>, wann <b>mis</b>? Finde die Regel selbst heraus.</p>`,
+      tasks: [
+        { t: "choice", q: "Lucía sagt: <b>mi</b> padre, <b>mi</b> madre, <b>mi</b> perro. Was folgt nach <b>mi</b>?", keep: true, opts: ["eine Person / ein Tier (Singular)", "mehrere (Plural)"], a: "eine Person / ein Tier (Singular)", hint: "padre, madre, perro → jeweils eins → mi.", pista: "padre = ein Vater, perro = ein Hund. Eins oder mehrere?" },
+        { t: "choice", q: "Lucía sagt: <b>mis</b> hermanos, <b>mis</b> abuelos. Was folgt nach <b>mis</b>?", keep: true, opts: ["mehrere (Plural)", "eine Person (Singular)"], a: "mehrere (Plural)", hint: "hermanos, abuelos → mehrere → mis.", pista: "Die Wörter enden auf -s – wie viele sind das?" },
+        { t: "choice", q: "<b>mi</b> padre (m.) – <b>mi</b> madre (f.). Ändert sich <b>mi</b> bei männlich / weiblich?", keep: true, opts: ["Nein, immer mi", "Ja: mi padre – ma madre"], a: "Nein, immer mi", hint: "mi padre, mi madre – männlich und weiblich gleich.", pista: "Schau im Text: Wie heißt es vor padre und vor madre?" },
+        { t: "choice", who: L, q: cap("Este es ___ gato, Miau."), task: "Subtítulo:", taskDe: "Untertitel ergänzen", opts: ["mi", "mis"], a: "mi", hint: "gato → ein Kater → mi gato." },
+        { t: "choice", who: L, q: cap("Estas son ___ tías."), task: "Subtítulo:", opts: ["mis", "mi"], a: "mis", hint: "tías → mehrere → mis tías." },
+        { t: "choice", who: L, q: cap("Esta es ___ familia."), task: "Subtítulo:", opts: ["mi", "mis"], a: "mi", hint: "familia → eine Familie → mi familia." }
+      ] },
+    { label: "Vídeo 2", title: "Los subtítulos", shuffle: true, memo: MI,
+      intro: `<p>Lucía graba un vídeo nuevo – pero ¡faltan palabras en los subtítulos! Escribe <b>mi</b> o <b>mis</b>.</p><p class="de">Schreib mi oder mis in die Lücke. Frag dich: Folgt eins oder mehrere?</p>`,
+      pista: "Schau auf das Wort nach der Lücke: endet es auf -s (mehrere)? → mis. Sonst → mi.",
+      tasks: [
+        { t: "type", who: L, q: cap("___ abuela se llama Pilar."), a: "mi", show: "abuela → eine → Mi abuela" },
+        { t: "type", who: L, q: cap("___ abuelos tienen un perro."), a: "mis", show: "abuelos → mehrere → Mis abuelos" },
+        { t: "type", who: L, q: cap("___ padre es actor."), a: "mi", show: "padre → einer → Mi padre" },
+        { t: "type", who: L, q: cap("___ hermanos se llaman Pablo y Ana."), a: "mis", show: "hermanos → mehrere → Mis hermanos" },
+        { t: "type", who: L, q: cap("___ madre es médica."), a: "mi", show: "madre → eine → Mi madre" },
+        { t: "type", who: L, q: cap("___ tíos viven en Madrid."), a: "mis", show: "tíos → mehrere → Mis tíos" },
+        { t: "sort", task: "Ordena:", taskDe: "Was passt zu mi, was zu mis?", buckets: ["mi …", "mis …"], items: [["padre", 0], ["hermanas", 1], ["perro", 0], ["abuelos", 1], ["tía", 0], ["amigos", 1]], show: "mi padre · mi perro · mi tía · mis hermanas · mis abuelos · mis amigos" }
+      ] },
+    { label: "Comentarios", title: "Los fans preguntan", go: "💬 ¡A los comentarios!", memo: TU,
+      intro: `<p>¡El vídeo tiene 10.000 visitas! 🎉 Los fans escriben comentarios. Mira: los fans preguntan con <b>tu</b> y <b>tus</b>.</p><div class="cm"><b>@marta_07</b> ¿Cómo se llama <b>tu</b> perro? 🐶<br><b>@leo.bcn</b> ¿Dónde viven <b>tus</b> abuelos?</div><p class="de">tu/tus = dein/deine. Es funktioniert wie mi/mis: eins → tu, mehrere → tus.</p>`,
+      tasks: [
+        { t: "choice", q: "Was heißt <b>tu</b> perro?", keep: true, opts: ["dein Hund", "du Hund", "mein Hund"], a: "dein Hund", hint: "tu = dein.", pista: "Schau in die Merk-Box." },
+        { t: "choice", q: "<b>tu</b> oder <b>tú</b>? „___ eres muy simpática.“ (Du bist sehr nett.)", keep: true, opts: ["Tú", "Tu"], a: "Tú", hint: "„du“ = tú mit Akzent. tu ohne Akzent = dein.", pista: "Hier ist „du“ gemeint, nicht „dein“." },
+        { t: "choice", who: fan("marta_07"), q: `<div class="cm">¿Cómo se llama ___ gato? 🐱</div>`, task: "Comentario:", opts: ["tu", "tus", "tú"], a: "tu", hint: "gato → einer → tu gato." },
+        { t: "choice", who: fan("leo.bcn"), q: `<div class="cm">¿Cuántos años tienen ___ hermanos?</div>`, task: "Comentario:", opts: ["tus", "tu", "mis"], a: "tus", hint: "hermanos → mehrere → tus hermanos." },
+        { t: "type", who: fan("abu_fan"), q: `<div class="cm">¡___ abuela es genial! 😍</div>`, task: "Escribe tu o tus:", a: "tu", show: "abuela → eine → Tu abuela", pista: "abuela – eine oder mehrere?" },
+        { t: "type", who: fan("pepe_99"), q: `<div class="cm">¿___ padres hablan alemán?</div>`, task: "Escribe tu o tus:", a: "tus", show: "padres → mehrere → ¿Tus padres …?", pista: "padres endet auf -s → mehrere." }
+      ] },
+    { label: "Respuestas", title: "Lucía contesta", shuffle: true, memo: "📌 Der Fan fragt mit <b>tu/tus</b> (dein) → Lucía antwortet mit <b>mi/mis</b> (mein)<br><span class=\"ex\">¿Cómo se llama tu perro? – Mi perro se llama Toby.</span>",
+      intro: `<div class="who"><div class="face">👧🏽</div><div><b class="n">Lucía</b>¡Ayúdame a contestar a los fans, por favor! 🙏</div></div><p class="de">Der Fan sagt <b>tu/tus</b> (dein). Lucía antwortet über ihre eigene Familie → <b>mi/mis</b> (mein).</p>`,
+      pista: "Aus tu wird mi, aus tus wird mis.",
+      tasks: [
+        { t: "choice", who: fan("marta_07"), q: `<div class="cm">¿Cómo se llama tu perro?</div>`, task: "Lucía contesta:", opts: ["Mi perro se llama Toby.", "Tu perro se llama Toby.", "Mis perro se llama Toby."], a: "Mi perro se llama Toby.", hint: "tu perro → (Lucía) mi perro." },
+        { t: "choice", who: fan("leo.bcn"), q: `<div class="cm">¿Dónde viven tus abuelos?</div>`, task: "Lucía contesta:", opts: ["Mis abuelos viven en Valencia.", "Tus abuelos viven en Valencia.", "Mi abuelos viven en Valencia."], a: "Mis abuelos viven en Valencia.", hint: "tus abuelos → (Lucía) mis abuelos." },
+        { t: "type", who: fan("pepe_99"), q: `<div class="cm">¿Tus padres hablan alemán?</div><br>Lucía: ${cap("No, ___ padres hablan español e inglés.")}`, a: "mis", show: "tus padres → mis padres" },
+        { t: "type", who: fan("abu_fan"), q: `<div class="cm">¿Tu abuela tiene Instagram? 😂</div><br>Lucía: ${cap("¡Sí! ___ abuela tiene Instagram.")}`, a: "mi", show: "tu abuela → Mi abuela" },
+        { t: "order", who: L, task: "Lucía contesta:", taskDe: "Mein Bruder ist 12 Jahre alt.", words: ["Mi", "hermano", "tiene", "doce", "años."], a: "Mi hermano tiene doce años." }
+      ] },
+    { label: "Reportaje", title: "La reportera", go: "🎤 ¡Entrevista!", memo: SU,
+      intro: `<div class="who"><div class="face">🎤</div><div><b class="n">La reportera</b>¡Hola! Escribo un artículo sobre Lucía para una revista. Lucía no habla – <b>yo</b> hablo de ella. Por eso escribo <b>su</b> y <b>sus</b>.</div></div>
+        <p>Lucía dice: „<b>Mi</b> padre es actor.“ → La reportera escribe: „<b>Su</b> padre es actor.“</p><p class="de">Wenn man <b>über</b> jemanden spricht (er, sie, sie Pl.), benutzt man <b>su</b> (Singular) und <b>sus</b> (Plural). su = sein ODER ihr.</p>`,
+      tasks: [
+        { t: "choice", q: "Lucía: „<b>mi</b> padre“ → Reportera: „___ padre“", keep: true, opts: ["su", "sus", "tu"], a: "su", hint: "über Lucía sprechen → su (padre = einer).", pista: "Die Reporterin spricht ÜBER Lucía → su oder sus. padre = einer." },
+        { t: "choice", q: "Lucía: „<b>mis</b> hermanos“ → Reportera: „___ hermanos“", keep: true, opts: ["sus", "su", "mis"], a: "sus", hint: "hermanos → mehrere → sus.", pista: "hermanos = mehrere." },
+        { t: "choice", q: "„Lucía y <b>su</b> perro“ – was heißt das?", keep: true, opts: ["Lucía und ihr Hund", "Lucía und sein Hund", "Lucía und dein Hund"], a: "Lucía und ihr Hund", hint: "Lucía ist ein Mädchen → su = ihr.", pista: "Wem gehört der Hund? Lucía (sie) → ..." },
+        { t: "choice", q: "„Pablo y <b>su</b> perro“ – was heißt das?", keep: true, opts: ["Pablo und sein Hund", "Pablo und ihr Hund"], a: "Pablo und sein Hund", hint: "Pablo ist ein Junge → su = sein.", pista: "Pablo = er → sein oder ihr?" },
+        { t: "type", who: R, q: "Lucía tiene quince años. ___ madre es médica.", task: "Escribe su o sus:", a: "su", show: "madre → eine → Su madre" },
+        { t: "type", who: R, q: "___ abuelos viven en Valencia.", task: "Escribe su o sus:", a: "sus", show: "abuelos → mehrere → Sus abuelos" }
+      ] },
+    { label: "Artículo", title: "El artículo de la revista", shuffle: true, memo: SU,
+      intro: `<p>La reportera escribe el artículo. Ayúdala: ¿<b>su</b> o <b>sus</b>?</p><p class="de">Wie bei mi/mis: eins → su, mehrere → sus.</p>`,
+      pista: "Schau auf das Wort nach der Lücke: eins → su, mehrere (-s) → sus.",
+      tasks: [
+        { t: "type", who: R, q: "Pablo tiene doce años. ___ amigos se llaman Leo y Hugo.", a: "sus", show: "amigos → mehrere → Sus amigos" },
+        { t: "type", who: R, q: "Ana es la hermana pequeña. ___ gato se llama Miau.", a: "su", show: "gato → einer → Su gato" },
+        { t: "type", who: R, q: "Javier López es actor. ___ hijos son youtubers.", a: "sus", show: "hijos → mehrere → Sus hijos" },
+        { t: "type", who: R, q: "Carmen es médica. ___ hospital está en el centro.", a: "su", show: "hospital → eins → Su hospital", qDe: "el hospital = das Krankenhaus" },
+        { t: "choice", who: R, q: "Los abuelos viven en Valencia con ___ perra, Lola.", opts: ["su", "sus"], a: "su", hint: "perra → eine → su perra (auch wenn die Besitzer mehrere sind!)", pista: "Achtung: Es zählt NICHT, wie viele Besitzer es sind, sondern was danach kommt: eine perra." },
+        { t: "choice", who: R, q: "Lucía habla mucho con ___ tías.", opts: ["sus", "su"], a: "sus", hint: "tías → mehrere → sus tías." }
+      ] },
+    { label: "Errores", title: "¡Errores en los subtítulos!", shuffle: true, memo: ALL,
+      intro: `<div class="who"><div class="face">👦🏽</div><div><b class="n">Pablo</b>¡Ay! Yo escribí los subtítulos del vídeo nuevo… ¡y hay errores! 🙈 ¿Puedes corregirlos?</div></div><p class="de">Tippe auf das falsche Wort und wähle die richtige Form.</p>`,
+      pista: "Suche mi/mis, tu/tus, su/sus. Passt Singular/Plural zum Wort danach? Und passt die Person (ich, du, er/sie)?",
+      tasks: [
+        { t: "error", who: P, words: ["Mis", "hermana", "se", "llama", "Lucía."], bad: 0, fix: "Mi", opts: ["Mi", "Tus", "Su"], hint: "hermana → eine → Mi hermana." },
+        { t: "error", who: P, words: ["Mi", "padres", "son", "un", "poco", "locos."], bad: 0, fix: "Mis", opts: ["Mis", "Su", "Tu"], hint: "padres → mehrere → Mis padres." },
+        { t: "error", who: P, words: ["Lucía,", "¿cómo", "se", "llama", "su", "novio?"], bad: 4, fix: "tu", opts: ["tu", "mis", "tus"], hint: "Pablo fragt Lucía direkt (du) → tu novio." },
+        { t: "error", who: P, words: ["Ana", "tiene", "un", "gato.", "Tu", "gato", "es", "negro."], bad: 4, fix: "Su", opts: ["Su", "Sus", "Mis"], hint: "Über Ana sprechen → Su gato." },
+        { t: "error", who: P, words: ["¿Dónde", "viven", "tu", "abuelos?"], bad: 2, fix: "tus", opts: ["tus", "su", "mi"], hint: "abuelos → mehrere → tus abuelos." }
+      ] },
+    { label: "Final", title: "¡100.000 suscriptores!", go: "🏆 ¡El vídeo especial!",
+      memo: ALL,
+      intro: `<div class="who"><div class="face">👧🏽</div><div><b class="n">Lucía</b>¡Casi tenemos 100.000 suscriptores! Para el vídeo especial necesito tu ayuda con las últimas frases. 🏆</div></div>`,
+      tasks: [
+        { t: "order", who: L, task: "Escribe:", taskDe: "Meine Großeltern wohnen in Valencia.", words: ["Mis", "abuelos", "viven", "en", "Valencia."], a: "Mis abuelos viven en Valencia." },
+        { t: "order", who: fan("marta_07"), task: "Pregunta:", taskDe: "Wie heißt deine Mutter?", words: ["¿Cómo", "se", "llama", "tu", "madre?"], a: "¿Cómo se llama tu madre?" },
+        { t: "order", who: R, task: "Escribe:", taskDe: "Ihr Vater ist Schauspieler.", words: ["Su", "padre", "es", "actor."], a: "Su padre es actor." },
+        { t: "type", who: Y, task: "Y tú? Escribe mi o mis:", q: "___ familia es genial. 😄", a: "mi", show: "familia → eine → Mi familia" }
+      ] }
+  ],
+  scene: (S) => {
+    const n = S.done ? 99 : S.solved, subs = S.done ? 100000 : Math.min(99999, 1200 + Math.round(S.solved / S.total * 98000));
+    const ppl = [[40, 15, "👴🏻", "abuelo", 2], [56, 15, "👵🏻", "abuela", 4],
+      [18, 48, "🧔🏻", "tío Diego", 22], [38, 48, "👨🏽", "padre", 6], [56, 48, "👩🏽‍⚕️", "madre", 10], [84, 48, "🐕", "Toby", 14],
+      [30, 82, "👧🏽", "Lucía", 0], [46, 82, "👦🏽", "Pablo", 18], [62, 82, "👧🏻", "Ana", 28], [76, 82, "🐈‍⬛", "Miau", 36]];
+    const lines = `<svg viewBox="0 0 100 100" preserveAspectRatio="none"><g stroke="#c79a6a" stroke-width=".6" fill="none">
+      <path d="M48 15 V32 H18 V40 M38 32 V40 M40 15 H56"/><path d="M38 48 H56 M47 48 V66 H30 V74 M47 66 H62 V74 M46 66 V74"/></g></svg>`;
+    return `<div class="yt"><div class="ytbar"><span class="logo">▶</span> LosLópezTV <span class="subs"><b>${subs.toLocaleString("es-ES")}</b> suscriptores</span></div>
+      <div class="tree">${lines}<span class="rec">REC</span>${ppl.map(([x, y, f, nm, need]) => `<div class="p ${n >= need ? "" : "off"}" style="left:${x}%;top:${y}%"><div class="f">${f}</div>${nm}</div>`).join("")}
+      <div class="p" style="left:91%;top:84%"><div class="f">${E8.myAvatar()}</div>tú 🎥</div></div></div>`;
+  },
+  outro: `<div style="font-size:60px">🏆▶️🎉</div><h1>¡100.000 suscriptores!</h1>
+    <div class="who" style="text-align:left"><div class="face">👧🏽</div><div><b class="n">Lucía</b>¡Gracias, editor/a! Eres parte de la familia López ahora. ¡Hasta el próximo vídeo! 👋</div></div>`
+});
+</script>
+</body>
+</html>

@@ -1,5 +1,16 @@
 /* Cover-Grafiken für Spiele auf der Startseite (id: SVG). Ohne Eintrag wird das Emoji aus GRAMMAR.icon gezeigt. */
 window.COVERS = {
+  "posesivos": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+    <rect x="58" y="8" width="104" height="128" rx="14" fill="#111"/><rect x="64" y="20" width="92" height="104" rx="4" fill="#fff4e0"/>
+    <rect x="64" y="20" width="92" height="14" fill="#181818"/><rect x="69" y="23" width="14" height="9" rx="2" fill="#ff0000"/><path d="M74 25 L79 27.5 L74 30Z" fill="#fff"/>
+    <g stroke="#c79a6a" stroke-width="1.5" fill="none"><path d="M110 56 V70 H86 V78 M110 70 H134 V78 M110 70 V78"/></g>
+    <circle cx="100" cy="50" r="9" fill="#fff" stroke="#ff3b4e" stroke-width="2"/><circle cx="120" cy="50" r="9" fill="#fff" stroke="#ff3b4e" stroke-width="2"/>
+    <circle cx="86" cy="88" r="9" fill="#fff" stroke="#ff3b4e" stroke-width="2"/><circle cx="110" cy="88" r="9" fill="#fff" stroke="#ff3b4e" stroke-width="2"/><circle cx="134" cy="88" r="9" fill="#fff" stroke="#ff3b4e" stroke-width="2"/>
+    <g fill="#8a5a3a"><circle cx="100" cy="50" r="5"/><circle cx="120" cy="50" r="5"/><circle cx="86" cy="88" r="5"/><circle cx="110" cy="88" r="5"/><circle cx="134" cy="88" r="5"/></g>
+    <rect x="72" y="104" width="76" height="12" rx="3" fill="#000" opacity=".8"/><text x="110" y="113" font-family="system-ui" font-size="9" font-weight="bold" fill="#fff" text-anchor="middle">mi · tu · su</text>
+    <g transform="translate(174 40)"><path d="M0 8 C0 -2 14 -2 14 8 C14 -2 28 -2 28 8 C28 18 14 26 14 30 C14 26 0 18 0 8Z" fill="#ff3b4e"/></g>
+    <g transform="translate(20 70)"><rect width="30" height="20" rx="5" fill="#fff"/><path d="M6 20 L4 27 L12 20Z" fill="#fff"/><circle cx="9" cy="10" r="2" fill="#555"/><circle cx="15" cy="10" r="2" fill="#555"/><circle cx="21" cy="10" r="2" fill="#555"/></g>
+  </svg>`,
   "numeros": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
     <rect width="220" height="140" rx="10" fill="#0b0920"/>
     <g fill="#fff"><circle cx="20" cy="20" r="1.4"/><circle cx="70" cy="34" r="1"/><circle cx="120" cy="14" r="1.4"/><circle cx="196" cy="110" r="1"/><circle cx="40" cy="120" r="1.2"/><circle cx="150" cy="128" r="1"/></g>
