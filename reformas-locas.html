@@ -23,7 +23,7 @@
 <body>
 <main id="app"></main>
 <script src="game.js?v=11"></script>
-<script src="juego.js?v=5"></script>
+<script src="juego.js?v=6"></script>
 <script>
 const C = {face:"👷🏽‍♀️", name:"Carla, la arquitecta"}, Y = {av:true, name:"Tú"}, F = (f, n) => ({face: f, name: n});
 const ROOMS = [["🚪","🖼️","el pasillo"],["📦","🛋️","el salón"],["🗑️","🍳","la cocina"],["🧦","🛏️","el dormitorio"],["🪳","🛁","el baño"],["🥀","🌺","el balcón"],["🏚️","👋","los vecinos"],["💾","💻","el despacho"]];
@@ -48,7 +48,7 @@ JUEGO.start({
     <div class="rule"><b>Vor</b> dem Nomen stehen Zahlen, <b>mucho/poco</b> und <b>un/una</b>: <span class="ex">dos sillas verdes · muchos muebles modernos</span></div>
     <div class="rule">⭐ <b>Profi:</b> trabajador → trabaja<b>dora</b> · alemán → alem<b>ana</b> → alem<b>anes</b> (ohne Akzent im Plural!) · español → español<b>a</b></div>`,
   stages: [
-    { label: "Capítulo 1", title: "El pasillo – ¡Investiga!", go: "🔍 ¡A investigar!",
+    { label: "Capítulo 1", memo: `💬 <b>Carla:</b> El pasillo es <u>oscuro</u>. La puerta es <u>antigua</u>. Los muebles son <u>feos</u> y las sillas son <u>raras</u>.`, pista: `Schau auf den Artikel: el = männlich Sg. · la = weiblich Sg. · los = männlich Pl. · las = weiblich Pl.`, title: "El pasillo – ¡Investiga!", go: "🔍 ¡A investigar!",
       intro: `<div class="who"><div class="face">👷🏽‍♀️</div><div><b class="n">Carla</b>¡Hola! Mira este pasillo: El pasillo es <u>oscuro</u>. La puerta es <u>antigua</u>. Los muebles son <u>feos</u> y las sillas son <u>raras</u>. ¡Qué desastre! 😅</div></div>
         <p class="de">Wie im Regel-Detektive-Blatt: Ordne die Adjektive (mit Nomen) in die richtige Kiste und wiederhole die Regel.</p>`,
       tasks: [
@@ -58,7 +58,7 @@ JUEGO.start({
         { t: "choice", q: "Plural von <b>azul</b>?", keep: true, opts: ["azules", "azuls", "azulos"], a: "azules", hint: "Endet auf Konsonant → +es: azules." },
         { t: "choice", q: "Wo steht das Adjektiv meistens?", keep: true, opts: ["nach dem Nomen (una cama blanca)", "vor dem Nomen (una blanca cama)"], a: "nach dem Nomen (una cama blanca)", hint: "una cama blanca – das Adjektiv steht meist nach dem Nomen." }
       ] },
-    { label: "Capítulo 2", title: "El salón", shuffle: true,
+    { label: "Capítulo 2", memo: `📌 Das Adjektiv passt sich dem Nomen an: <b>-o</b> → -o / -a / -os / -as · <b>-e</b> → -e / -es · <b>Konsonant</b> → – / -es · Stellung: meist <b>nach</b> dem Nomen`, title: "El salón", shuffle: true,
       intro: `<p>¡A reformar el salón! 🛋️ Carla describe los muebles. Elige la forma correcta.</p><p class="de">Wähle die richtige Form. Frag dich: Wie heißt das Nomen – männlich/weiblich, Singular/Plural?</p>`,
       tasks: [
         ch("bonito", "Ahora el salón es muy ___.", "bonito", ["bonito", "bonita", "bonitos", "bonitas"], "<i>el</i> salón (m, Sg.) → bonito."),
@@ -72,7 +72,7 @@ JUEGO.start({
         ch("famoso", "Los cuadros son ___.", "famosos", ["famoso", "famosa", "famosos", "famosas"], "<i>los</i> cuadros (m, Pl.) → famosos.", "el cuadro = das Bild"),
         ch("feo", "¡La puerta del salón es muy ___! 🤢", "fea", ["feo", "fea", "feos", "feas"], "<i>la</i> puerta (f, Sg.) → fea.")
       ] },
-    { label: "Capítulo 3", title: "La cocina", shuffle: true,
+    { label: "Capítulo 3", memo: `📌 <b>-e</b>: grande → grande / grandes · <b>Konsonant</b>: azul → azul / azules, gris → grises · Plural: Vokal +s, Konsonant +es`, pista: `1. Endet das Adjektiv auf -o, -e oder einen Konsonanten? 2. Ist das Nomen Singular oder Plural? (las paredes, dos sillas …)`, title: "La cocina", shuffle: true,
       intro: `<p>¡La cocina! 🍳 Aquí hay adjetivos especiales: en <b>-e</b> (grande, interesante) y en <b>consonante</b> (azul, gris, normal). <b>Escribe</b> la forma correcta.</p><p class="de">Tippe die richtige Form. Tipp: Adjektive auf -e und Konsonant haben nur 2 Formen. Plural: Vokal +s, Konsonant +es.</p>`,
       tasks: [
         ty("grande", "La cocina nueva es ___.", "grande", { granda: "Adjektive auf -e haben keine weibliche Form auf -a: grande." }),
@@ -86,7 +86,7 @@ JUEGO.start({
         ty("blanco", "Los platos son ___.", "blancos", { blanco: "Los platos = Plural → blancos.", blancas: "el plato ist männlich → blancos." }, "el plato = der Teller · blanco = weiß"),
         ty("interesante", "La lámpara de la cocina es ___.", "interesante", { interesanta: "Adjektive auf -e: keine -a-Form → interesante." })
       ] },
-    { label: "Capítulo 4", title: "El dormitorio de Sara", shuffle: true,
+    { label: "Capítulo 4", memo: `📌 Stellung: Zahl / un / una / mucho + <b>Nomen</b> + <b>Adjektiv</b> · <span class="ex">dos sillas verdes</span>`, title: "El dormitorio de Sara", shuffle: true,
       intro: `<div class="who"><div class="face">👧🏻</div><div><b class="n">Sara Martín (14 años)</b>¡Hola! Este es mi dormitorio. Ahora es horrible… 😩 ¿Me ayudas a describir mi dormitorio nuevo?</div></div><p class="de">Achte auf die <b>Stellung</b>: Das Adjektiv steht nach dem Nomen. Zahlen, mucho/poco und un/una stehen davor.</p>`,
       tasks: [
         { t: "choice", who: F("👧🏻", "Sara"), q: "¿Qué es correcto?", keep: false, opts: ["una cama blanca", "una blanca cama", "blanca una cama"], a: "una cama blanca", hint: "Das Adjektiv steht nach dem Nomen: una cama blanca." },
@@ -98,7 +98,7 @@ JUEGO.start({
         { t: "order", task: "Escribe:", taskDe: "Es gibt viele moderne Möbel in der Wohnung.", words: ["Hay", "muchos", "muebles", "modernos", "en", "el", "piso."], a: ["Hay muchos muebles modernos en el piso.", "En el piso hay muchos muebles modernos."] },
         { t: "order", task: "Escribe:", taskDe: "Saras Zimmer ist groß und ruhig.", words: ["La", "habitación", "de", "Sara", "es", "grande", "y", "tranquila."], a: "La habitación de Sara es grande y tranquila." }
       ] },
-    { label: "Capítulo 5", title: "El baño", shuffle: true,
+    { label: "Capítulo 5", memo: `📌 Das Adjektiv passt sich dem Nomen an: <b>-o</b> → -o / -a / -os / -as · <b>-e</b> → -e / -es · <b>Konsonant</b> → – / -es · Stellung: meist <b>nach</b> dem Nomen`, title: "El baño", shuffle: true,
       intro: `<p>¡Uy! El ayudante Paco tiene una lista para el baño 🛁 – ¡pero con errores! Toca el adjetivo falso y corrígelo.</p><p class="de">Paco hat Fehler gemacht. Tippe auf das falsche Adjektiv und verbessere es.</p>`,
       tasks: [
         { t: "error", who: F("👨🏽‍🔧", "Paco, el ayudante"), words: ["El", "baño", "es", "muy", "pequeña."], bad: 4, fix: "pequeño", opts: ["pequeño", "pequeños", "pequeñas"], hint: "el baño (m, Sg.) → pequeño." },
@@ -109,7 +109,7 @@ JUEGO.start({
         { t: "error", who: F("👨🏽‍🔧", "Paco, el ayudante"), words: ["La", "puerta", "es", "gris", "y", "los", "armarios", "son", "gris."], bad: 8, fix: "grises", opts: ["grises", "griss", "grisos"], hint: "los armarios = Plural → grises." },
         { t: "error", who: F("👨🏽‍🔧", "Paco, el ayudante"), words: ["Las", "paredes", "son", "blancos."], bad: 3, fix: "blancas", opts: ["blancas", "blanca", "blanco"], hint: "las paredes (f, Pl.) → blancas." }
       ].map(t => Object.assign(t, { task: "la toalla = Handtuch · el espejo = Spiegel · el grifo = Wasserhahn · la ducha = Dusche" })) },
-    { label: "Capítulo 6", title: "El balcón", shuffle: true,
+    { label: "Capítulo 6", memo: `📌 Gegenteile: bonito ↔ feo · grande ↔ pequeño · moderno ↔ antiguo · raro ↔ normal`, title: "El balcón", shuffle: true,
       intro: `<p>Ahora el balcón 🌺. Carla prueba tu vocabulario: ¿Conoces lo contrario (das Gegenteil)? ¿Qué adjetivo pega con la foto?</p><p class="de">Gegenteile und Bedeutungen der Adjektive.</p>`,
       tasks: [
         { t: "choice", who: C, q: "Lo contrario de <b>bonito</b> es …", opts: ["feo", "grande", "raro"], a: "feo", hint: "bonito (schön) ↔ feo (hässlich)." },
@@ -121,7 +121,7 @@ JUEGO.start({
         { t: "choice", who: C, q: "🐭🐭 Las ratas del balcón son ___. 😱", opts: ["pequeñas", "pequeños", "grandes"], a: "pequeñas", hint: "la rata (f) → Plural pequeñas." },
         { t: "choice", who: C, q: "🤡 El payaso es muy ___.", qDe: "el payaso = der Clown", opts: ["gracioso", "graciosa", "feo"], a: "gracioso", hint: "witzig = gracioso; el payaso (m) → gracioso." }
       ] },
-    { label: "Capítulo 7", title: "Los vecinos", shuffle: true,
+    { label: "Capítulo 7", memo: `📌 Das Adjektiv passt sich dem Nomen an: <b>-o</b> → -o / -a / -os / -as · <b>-e</b> → -e / -es · <b>Konsonant</b> → – / -es · Stellung: meist <b>nach</b> dem Nomen`, pista: `1. Ist die Person männlich oder weiblich? (la vecina, el vecino, mis amigas …) 2. Eine Person oder mehrere?`, title: "Los vecinos", shuffle: true,
       intro: `<p>¡Fiesta en la escalera! 🎉 Conoces a los vecinos del edificio. Escribe la forma correcta del adjetivo.</p><p class="de">Auch bei Personen richtet sich das Adjektiv nach Geschlecht und Zahl.</p>`,
       tasks: [
         ty("simpático", "La vecina del primero es muy ___.", "simpática", { "simpático": "la vecina (f) → simpática.", simpatica: "Akzent: simpática." }, "", F("👵🏼", "Doña Pilar (1.º)")),
@@ -133,7 +133,7 @@ JUEGO.start({
         ty("gracioso", "Mis amigas son muy ___.", "graciosas", { graciosos: "mis amigas (f, Pl.) → graciosas.", graciosa: "Plural → graciosas." }, "", F("👧🏽", "Marta (6.º)")),
         ty("nuevo", "Somos los vecinos ___ del séptimo.", "nuevos", { nuevo: "los vecinos = Plural → nuevos.", nuevas: "los vecinos (m) → nuevos." }, "", F("👨‍👩‍👧", "La familia Martín (7.º)"))
       ] },
-    { label: "Capítulo 8", title: "El despacho – Nivel Profi ⭐", shuffle: true,
+    { label: "Capítulo 8", memo: `⭐ trabajador → trabaja<b>dora</b> · alemán → alem<b>ana</b>, Pl. alem<b>anes</b> (ohne Akzent!) · español → español<b>a</b>, Pl. español<b>es</b>`, pista: `Schau in die Profi-Box: Wie bildet man die weibliche Form, wie den Plural?`, title: "El despacho – Nivel Profi ⭐", shuffle: true,
       intro: `<p>⭐ <b>Nivel Profi</b> – como la Profi-Frage de tu hoja (Arbeitsblatt). En el despacho trabajan personas de muchos países.</p>
         <table class="t"><tr><td>un chico trabajador</td><td>una chica trabaja<b>dora</b></td></tr><tr><td>un chico alemán</td><td>una chica alem<b>ana</b> · los chicos alem<b>anes</b></td></tr><tr><td>un chico español</td><td>una chica español<b>a</b></td></tr></table>
         <p class="de">Adjektive auf -or und Nationalitäten haben auch eine weibliche Form. Achtung: Im Plural fällt der Akzent weg (alemanes)!</p>`,
@@ -144,7 +144,7 @@ JUEGO.start({
         ty("alemán", "Los chicos del despacho son ___.", "alemanes", { "alemánes": "Im Plural fällt der Akzent weg: alemanes.", alemans: "Konsonant → +es: alemanes." }),
         ty("trabajador", "Mis compañeras son muy ___.", "trabajadoras", { trabajadores: "mis compañeras (f, Pl.) → trabajadoras.", trabajadora: "Plural → trabajadoras." }, "la compañera = die Kollegin")
       ] },
-    { label: "Final", title: "¡Antes y después!", go: "📺 ¡El gran final!",
+    { label: "Final", memo: `📌 Das Adjektiv passt sich dem Nomen an: <b>-o</b> → -o / -a / -os / -as · <b>-e</b> → -e / -es · <b>Konsonant</b> → – / -es · Stellung: meist <b>nach</b> dem Nomen`, pista: `Wer spricht? Sara (Mädchen) → weiblich · die Familie (wir, gemischt) → männlich Plural.`, title: "¡Antes y después!", go: "📺 ¡El gran final!",
       intro: `<div class="who"><div class="face">👷🏽‍♀️</div><div><b class="n">Carla</b>¡Lo conseguimos! 🎉 La familia Martín vuelve a casa. Las cámaras están listas… ¡Describe el piso nuevo!</div></div>`,
       tasks: [
         { t: "order", task: "Escribe:", taskDe: "Jetzt ist die Wohnung modern und sehr schön.", words: ["Ahora", "el", "piso", "es", "moderno", "y", "muy", "bonito."], a: ["Ahora el piso es moderno y muy bonito.", "Ahora el piso es muy bonito y moderno."] },

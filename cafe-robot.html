@@ -26,7 +26,7 @@
 <body>
 <main id="app"></main>
 <script src="game.js?v=11"></script>
-<script src="juego.js?v=5"></script>
+<script src="juego.js?v=6"></script>
 <script>
 const R = {face:"🤖", name:"RoBarista 3000"}, K = (f, n) => ({face: f, name: n}), Y = {av:true, name:"Tú"};
 const FOOD = ["☕","🍫","🥪","🍦","🥐","🧃","🍰","🥤"];
@@ -50,7 +50,7 @@ JUEGO.start({
     <div class="rule">⚠️ Nur die <b>vosotros</b>-Form hat einen Akzent: <span class="ex">habláis, estudiáis, trabajáis</span></div>
     <div class="rule"><b>Unregelmäßige Verben</b> und <b>vivir</b> (Verb auf -ir) musst du auswendig lernen:</div>${IRR}`,
   stages: [
-    { label: "Parte 1", title: "El manual del robot", go: "¡Vamos!",
+    { label: "Parte 1", memo: `📖 <b>hablar:</b> yo habl<b>o</b> · tú habl<b>as</b> · él/ella habl<b>a</b> · nosotros habl<b>amos</b> · vosotros habl<b>áis</b> · ellos habl<b>an</b>`, title: "El manual del robot", go: "¡Vamos!",
       intro: `<div class="who"><div class="face">🤖</div><div><b class="n">RoBarista 3000</b>ERROR 404 – VERBO NO ENCONTRADO. 😵 Por favor, lee mi manual:</div></div>${TAB("hablar", "habl", ["o", "as", "a", "amos", "áis", "an"])}
         <p class="de">Schau dir die Tabelle an. Was bleibt immer gleich, was ändert sich? Finde die Regel heraus!</p>`,
       tasks: [
@@ -59,7 +59,7 @@ JUEGO.start({
         { t: "choice", q: "Welche Endung hat <b>nosotros</b>?", keep: true, opts: END, a: "-amos", hint: "nosotros habl<b>amos</b>" },
         { t: "choice", q: "Welche Form hat einen <b>Akzent</b>?", keep: true, opts: ["yo hablo", "nosotros hablamos", "vosotros habláis", "ellos hablan"], a: "vosotros habláis", hint: "Nur vosotros: habl<b>áis</b>." }
       ] },
-    { label: "Parte 2", title: "Los primeros pedidos", shuffle: true,
+    { label: "Parte 2", memo: `📌 <b>-ar</b>: Stamm (habl-) + <b>-o · -as · -a · -amos · -áis · -an</b> (yo · tú · él/ella · nosotros · vosotros · ellos)`, title: "Los primeros pedidos", shuffle: true,
       intro: `<p>Los primeros clientes ya están aquí. Elige la terminación (Endung) correcta.</p><p class="de">Wähle die richtige Endung. Die Tabelle findest du jederzeit unter 📜.</p>`,
       tasks: [
         end("yo", "trabajar", "trabaj", "-o", "yo → -o: trabajo."),
@@ -69,7 +69,7 @@ JUEGO.start({
         end("vosotros", "hablar", "habl", "-áis", "vosotros → -áis (mit Akzent): habláis."),
         end("ellos", "preguntar", "pregunt", "-an", "ellos → -an: preguntan.")
       ] },
-    { label: "Parte 3", title: "Mucho trabajo", shuffle: true,
+    { label: "Parte 3", memo: `📌 <b>-ar</b>: Stamm (habl-) + <b>-o · -as · -a · -amos · -áis · -an</b> (yo · tú · él/ella · nosotros · vosotros · ellos)`, pista: `1. Wer ist die Person? (mis padres = ellos · mi hermana = ella) 2. Stamm = Verb ohne -ar. 3. Endung aus der Merk-Box anhängen.`, title: "Mucho trabajo", shuffle: true,
       intro: `<p>¡Ahora hay mucha gente en el café! Escribe el verbo completo.</p><p class="de">Tippe die ganze Verbform. Akzente: Knöpfe unter dem Feld.</p>`,
       tasks: [
         { t: "type", who: K("👩🏽", "Una clienta"), task: "trabajar", q: "Mis padres ___ en Portugal.", a: "trabajan", tips: { trabaja: "mis padres = ellos → -an: trabajan.", trabajamos: "mis padres = ellos (nicht nosotros) → trabajan." } },
@@ -79,7 +79,7 @@ JUEGO.start({
         { t: "type", who: K("👴🏽", "Don Paco"), task: "pasar", q: "Yo ___ el verano en los Alpes.", a: "paso", tips: { pasa: "yo → -o: paso.", pasar: "Nicht den Infinitiv – yo → paso." } },
         { t: "type", who: K("👩🏻‍🦰", "Marta"), task: "quedar", q: "Mi hermana ___ con sus amigos esta tarde.", a: "queda", tips: { quedan: "mi hermana = ella (eine Person) → queda.", quedas: "mi hermana = ella → -a: queda." } }
       ] },
-    { label: "Parte 4", title: "Pedidos especiales", shuffle: true,
+    { label: "Parte 4", memo: `📌 <b>ser</b>: soy, eres, es, somos, sois, son · <b>estar</b>: estoy, estás, está, estamos, estáis, están · <b>tener</b>: tengo, tienes, tiene, tenemos, tenéis, tienen · <b>vivir</b>: vivo, vives, vive, vivimos, vivís, viven`, pista: `1. Wer ist die Person? (mis abuelos = ellos …) 2. Schau in die Merk-Box: Welche Form passt?`, title: "Pedidos especiales", shuffle: true,
       intro: `<div class="who"><div class="face">🤖</div><div><b class="n">RoBarista 3000</b>¡ALERTA! Pedidos especiales: verbos irregulares. 🚨</div></div>${IRR}<p class="de">Diese Verben sind besonders. Schau dir die Tabelle gut an – sie ist auch unter 📜.</p>`,
       tasks: [
         { t: "type", who: K("👨🏾", "Un chico"), task: "vivir", q: "¿Dónde ___ tú?", a: "vives", tips: { vivo: "tú → vives (yo → vivo).", vive: "tú → vives." } },
@@ -89,14 +89,14 @@ JUEGO.start({
         { t: "type", who: K("👧🏽", "Sara"), task: "estar", q: "Mis abuelos ___ en casa.", a: "están", tips: { "está": "mis abuelos = ellos → están.", son: "Wo? → estar: están." } },
         { t: "type", who: K("🧒🏻", "Dani"), task: "ser", q: "Tú ___ mi mejor amigo.", a: "eres", tips: { es: "tú → eres.", "estás": "Wer jemand ist → ser: eres." } }
       ] },
-    { label: "Parte 5", title: "Reclamaciones", shuffle: true,
+    { label: "Parte 5", memo: `📌 <b>-ar</b>: Stamm (habl-) + <b>-o · -as · -a · -amos · -áis · -an</b> (yo · tú · él/ella · nosotros · vosotros · ellos)`, title: "Reclamaciones", shuffle: true,
       intro: `<p>Algunos clientes escriben notas con errores. Toca el verbo falso y corrígelo.</p><p class="de">Finde in jeder Notiz das falsche Verb und verbessere es.</p>`,
       tasks: [
         { t: "error", who: K("😤", "Un cliente"), words: ["Nosotros", "hablan", "español."], bad: 1, fix: "hablamos", opts: ["hablamos", "habláis", "habla"], hint: "nosotros → -amos: hablamos." },
         { t: "error", who: K("🙄", "Una clienta"), words: ["Mi", "hermana", "trabajas", "en", "una", "panadería."], bad: 2, fix: "trabaja", opts: ["trabaja", "trabajan", "trabajo"], hint: "mi hermana = ella → trabaja." },
         { t: "error", who: K("🤨", "Un profesor"), words: ["¿Vosotros", "estudiamos", "hoy?"], bad: 1, fix: "estudiáis", opts: ["estudiáis", "estudian", "estudias"], hint: "vosotros → -áis: estudiáis." }
       ] },
-    { label: "Final", title: "El último pedido", go: "🔧 ¡Reparar el robot!",
+    { label: "Final", memo: `📌 <b>-ar</b>: Stamm (habl-) + <b>-o · -as · -a · -amos · -áis · -an</b> (yo · tú · él/ella · nosotros · vosotros · ellos)`, pista: `Mis amigos y yo = nosotros. Fang mit „Mis“ an.`, title: "El último pedido", go: "🔧 ¡Reparar el robot!",
       intro: `<div class="who"><div class="face">🤖</div><div><b class="n">RoBarista 3000</b>SISTEMA … 98 % … ¡Una frase más y estoy bien! 🔋</div></div>`,
       tasks: [
         { t: "order", task: "Escribe:", taskDe: "Meine Freunde und ich lernen jeden Tag Spanisch.", words: ["Mis", "amigos", "y", "yo", "estudiamos", "español", "todos", "los", "días."], a: ["Mis amigos y yo estudiamos español todos los días.", "Todos los días mis amigos y yo estudiamos español."] }

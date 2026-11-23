@@ -24,7 +24,7 @@
 <body>
 <main id="app"></main>
 <script src="game.js?v=11"></script>
-<script src="juego.js?v=5"></script>
+<script src="juego.js?v=6"></script>
 <script>
 const A = {face:"👩🏻‍💼", name:"La alcaldesa Rosa"}, V = n => ({face: n[0], name: n[1]});
 const BUILD = ["🏠","🌳","🏡","⛲","🌳","☕","🏫","🌳","📚","💊","🥖","🛒","🚉","🎬","🌳","🏢","🏬","🚲","🌷","🏟️","🌳","🏛️","🎡","🏡","🌳","🚏","🏠","🌷","🍽️","🌳","🏰"];
@@ -43,7 +43,7 @@ JUEGO.start({
       ⚠️ <b>el árbol</b> → <span class="ex">muchos árboles</span></div>
     <div class="rule">Nach <b>hay</b> steht oft mucho/poco: <span class="ex">En el barrio hay muchas cafeterías y pocos parques.</span></div>`,
   stages: [
-    { label: "Parte 1", title: "Descubre la regla", go: "¡Vamos!",
+    { label: "Parte 1", memo: `💬 <b>Rosa:</b> Hay <u>mucho</u> tráfico y <u>mucha</u> basura. Hay <u>muchos</u> coches y <u>muchas</u> fábricas. Pero hay <u>pocos</u> parques y <u>pocas</u> cafeterías.`, title: "Descubre la regla", go: "¡Vamos!",
       intro: `<div class="who"><div class="face">👩🏻‍💼</div><div><b class="n">La alcaldesa Rosa</b>Villaluna es una ciudad bonita, pero hay problemas: 😟<br>Hay <u>mucho</u> tráfico y <u>mucha</u> basura. Hay <u>muchos</u> coches y <u>muchas</u> fábricas.<br>Pero hay <u>pocos</u> parques y <u>pocas</u> cafeterías.<div class="de">el tráfico = der Verkehr · la basura = der Müll · el coche = das Auto · la fábrica = die Fabrik</div></div></div>
         <p class="de">Schau dir die unterstrichenen Wörter an. Warum ändern sie sich? Finde die Regel heraus!</p>`,
       tasks: [
@@ -52,7 +52,7 @@ JUEGO.start({
         { t: "choice", q: "Was bedeutet <b>poco</b>?", keep: true, opts: ["wenig", "viel", "klein"], a: "wenig", hint: "pocos parques = wenige Parks. (klein = pequeño)" },
         { t: "choice", q: "Wonach richtet sich die Endung von mucho / poco?", keep: true, opts: ["nach dem Nomen dahinter", "nach dem Verb", "nach der Person, die spricht"], a: "nach dem Nomen dahinter", hint: "mucha <u>gente</u>, muchos <u>parques</u> → das Nomen bestimmt die Endung." }
       ] },
-    { label: "Parte 2", title: "El informe de Villaluna", shuffle: true,
+    { label: "Parte 2", memo: `📌 Endung nach dem Nomen: <b>mucho</b> (m, Sg.) · <b>mucha</b> (f, Sg.) · <b>muchos</b> (m, Pl.) · <b>muchas</b> (f, Pl.) – genauso <b>poco/poca/pocos/pocas</b> · ⚠️ la gente = Singular!`, title: "El informe de Villaluna", shuffle: true,
       intro: `<p>Rosa te da su informe. Elige la forma correcta.</p><p class="de">Wähle die richtige Form. Frag dich: männlich/weiblich? Einzahl/Mehrzahl? (📜 = Regel)</p>`,
       tasks: [
         { t: "choice", who: A, q: "En la plaza hay ___ gente.", qDe: "la gente = die Leute (Singular!)", opts: ["mucho", "mucha", "muchos", "muchas"], a: "mucha", hint: "<i>la</i> gente ist Singular und weiblich → mucha gente." },
@@ -64,7 +64,7 @@ JUEGO.start({
         { t: "choice", who: A, q: "En la biblioteca hay ___ ordenadores.", opts: ["poco", "poca", "pocos", "pocas"], a: "pocos", hint: "<i>los</i> ordenadores (m, Pl.) → pocos." },
         { t: "choice", who: A, q: "En la calle Mayor hay ___ basura. 🤢", qDe: "la basura = der Müll", opts: ["poco", "poca", "pocos", "pocas", "mucha"], a: "mucha", hint: "Igitt! 🤢 → viel Müll: <i>la</i> basura (f, Sg.) → mucha." }
       ] },
-    { label: "Parte 3", title: "¿Qué hay en el barrio nuevo?", shuffle: true,
+    { label: "Parte 3", memo: `📌 Nach <b>hay</b> steht <b>un</b> (männlich) oder <b>una</b> (weiblich) – nicht el / la!`, pista: `Wie heißt das Wort auf Spanisch? (Vokabeln Unidad 3, Primer paso) Ist es männlich → un, weiblich → una? Tipp: Wörter auf -a sind meist weiblich, auf -o meist männlich.`, title: "¿Qué hay en el barrio nuevo?", shuffle: true,
       intro: `<p>Los vecinos tienen ideas para el barrio nuevo. Escribe la palabra en español – <b>con artículo</b>. Ojo: después de <b>hay</b> → <b>un / una</b>.</p><p class="de">Schreib das Gebäude auf Spanisch mit Artikel. Nach hay steht un / una!</p>`,
       tasks: [
         { t: "type", who: V(["👴🏽", "Don Felipe"]), task: "📚 die Bibliothek", q: "En el barrio nuevo hay ___.", artHint: "¡Casi! Nach <b>hay</b> steht <b>un / una</b> (nicht el / la).", a: "una biblioteca" },
@@ -75,7 +75,7 @@ JUEGO.start({
         { t: "type", who: V(["🧑🏻‍💼", "Luis"]), task: "🚉 der Bahnhof", q: "En el barrio nuevo hay ___.", artHint: "¡Casi! Nach <b>hay</b> steht <b>un / una</b> (nicht el / la).", a: "una estación" },
         { t: "type", who: V(["👵🏻", "Doña Carmen"]), task: "🎬 das Kino", q: "En el barrio nuevo hay ___.", artHint: "¡Casi! Nach <b>hay</b> steht <b>un / una</b> (nicht el / la).", a: "un cine" }
       ] },
-    { label: "Parte 4", title: "El plan del barrio nuevo", shuffle: true,
+    { label: "Parte 4", memo: `📌 Endung nach dem Nomen: <b>mucho</b> (m, Sg.) · <b>mucha</b> (f, Sg.) · <b>muchos</b> (m, Pl.) · <b>muchas</b> (f, Pl.) – genauso <b>poco/poca/pocos/pocas</b> · ⚠️ la gente = Singular!`, pista: `1. Männlich oder weiblich? (el parque, la cafetería …) 2. Singular oder Plural? 3. viel → mucho… · wenig → poco…`, title: "El plan del barrio nuevo", shuffle: true,
       intro: `<p>Escribe tu plan para el barrio nuevo. Escribe la forma correcta de <b>mucho</b> o <b>poco</b>.</p><p class="de">Tippe die richtige Form von mucho oder poco (viel / wenig).</p>`,
       tasks: [
         { t: "type", who: { av: true, name: "Tú" }, task: "viele", q: "En el barrio nuevo hay ___ parques.", a: "muchos", tips: { mucho: "parques ist Plural (m) → muchos.", muchas: "el parque ist männlich → muchos." } },
@@ -83,14 +83,14 @@ JUEGO.start({
         { t: "type", who: { av: true, name: "Tú" }, task: "viele", q: "Hay ___ cafeterías pequeñas.", a: "muchas", tips: { muchos: "la cafetería ist weiblich → muchas.", mucha: "cafeterías ist Plural → muchas." } },
         { t: "type", who: { av: true, name: "Tú" }, task: "wenig", q: "Y hay ___ basura en las calles. ✨", qDe: "la basura = der Müll", a: "poca", tips: { poco: "la basura ist weiblich → poca.", pocas: "basura ist Singular → poca." } }
       ] },
-    { label: "Parte 5", title: "Carteles para Villaluna", shuffle: true,
+    { label: "Parte 5", memo: `📌 Endung nach dem Nomen: <b>mucho</b> (m, Sg.) · <b>mucha</b> (f, Sg.) · <b>muchos</b> (m, Pl.) · <b>muchas</b> (f, Pl.) – genauso <b>poco/poca/pocos/pocas</b> · ⚠️ la gente = Singular!`, title: "Carteles para Villaluna", shuffle: true,
       intro: `<p>Haz carteles (Plakate) para el barrio. Toca las palabras en el orden correcto.</p><p class="de">Bilde die Sätze für die Plakate.</p>`,
       tasks: [
         { t: "order", task: "Escribe:", taskDe: "In meinem Viertel gibt es viele Cafés und wenige Parks.", words: ["En", "mi", "barrio", "hay", "muchas", "cafeterías", "y", "pocos", "parques."], a: ["En mi barrio hay muchas cafeterías y pocos parques.", "Hay muchas cafeterías y pocos parques en mi barrio."] },
         { t: "order", task: "Escribe:", taskDe: "Auf dem Platz sind viele Leute.", words: ["En", "la", "plaza", "hay", "mucha", "gente."], a: ["En la plaza hay mucha gente.", "Hay mucha gente en la plaza."] },
         { t: "order", task: "Escribe:", taskDe: "In der Straße gibt es wenig Lärm.", words: ["Hay", "poco", "ruido", "en", "la", "calle."], a: ["Hay poco ruido en la calle.", "En la calle hay poco ruido."] }
       ] },
-    { label: "Parte 6", title: "Las quejas de los vecinos", shuffle: true,
+    { label: "Parte 6", memo: `📌 Endung nach dem Nomen: <b>mucho</b> (m, Sg.) · <b>mucha</b> (f, Sg.) · <b>muchos</b> (m, Pl.) · <b>muchas</b> (f, Pl.) – genauso <b>poco/poca/pocos/pocas</b> · ⚠️ la gente = Singular!`, title: "Las quejas de los vecinos", shuffle: true,
       intro: `<p>Los vecinos escriben quejas (Beschwerden) – ¡pero con errores! Toca la palabra falsa y corrígela.</p><p class="de">Finde in jeder Beschwerde das falsche Wort und verbessere es.</p>`,
       tasks: [
         { t: "error", who: V(["😠", "Don Felipe"]), words: ["¡Hay", "muchos", "gente", "en", "la", "calle!"], bad: 1, fix: "mucha", opts: ["mucha", "mucho", "muchas"], hint: "la gente (f, Sg.) → mucha gente." },
@@ -98,7 +98,7 @@ JUEGO.start({
         { t: "error", who: V(["🙄", "Jorge"]), words: ["Hay", "mucho", "cafeterías", "nuevas."], bad: 1, fix: "muchas", opts: ["muchas", "muchos", "mucha"], hint: "las cafeterías (f, Pl.) → muchas." },
         { t: "error", who: V(["😩", "Doña Carmen"]), words: ["¡Hay", "muchas", "ruido", "por", "la", "noche!"], bad: 1, fix: "mucho", opts: ["mucho", "mucha", "muchos"], hint: "el ruido (m, Sg.) → mucho." }
       ] },
-    { label: "Final", title: "La inauguración", go: "¡A la fiesta!",
+    { label: "Final", memo: `📌 Endung nach dem Nomen: <b>mucho</b> (m, Sg.) · <b>mucha</b> (f, Sg.) · <b>muchos</b> (m, Pl.) · <b>muchas</b> (f, Pl.) – genauso <b>poco/poca/pocos/pocas</b> · ⚠️ la gente = Singular!`, pista: `la basura: männlich oder weiblich? Singular oder Plural?`, title: "La inauguración", go: "¡A la fiesta!",
       intro: `<div class="who"><div class="face">👩🏻‍💼</div><div><b class="n">La alcaldesa Rosa</b>¡Qué bonito! El barrio nuevo está listo (fertig). Una pregunta más… 🎀</div></div>`,
       tasks: [
         { t: "type", who: A, task: "wenig", q: "¡Gracias! Ahora en Villaluna hay ___ basura. 🌿", qDe: "la basura = der Müll", a: "poca", tips: { poco: "la basura ist weiblich → poca.", pocas: "basura ist Singular → poca." } }

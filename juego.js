@@ -141,6 +141,11 @@
     const dots = `<div class="dots">${st.tasks.map((x, i) => `<i class="${i < doneInStage ? "d" : ""}"></i>`).join("")}</div>`;
     $("app").innerHTML = frame(`${scene()}<div class="panel"><div class="row" style="justify-content:space-between"><span class="tag">${st.label || "Parte " + (S.stage + 1)}</span><span class="small">${st.title}</span></div>${dots}
       ${st.memo ? `<div class="rule" style="font-size:16px">${st.memo}</div>` : ""}<div id="task"></div><div class="fb" id="fb"></div><div class="row c" id="nextrow"></div></div>`, { mistakes: true });
+    if (!t.pista && G.autoPista !== false) {
+      const h = t.hint && t.hint.indexOf("→") >= 0 ? t.hint.replace(/→(?!.*→)[\s\S]*$/, "→ …") : "";
+      t.pista = st.pista || (t.t === "order" ? "Fang mit dem Wort mit großem Anfangsbuchstaben (oder ¿) an. Das Wort mit Punkt bzw. Fragezeichen kommt ans Ende. – Lies den deutschen Satz genau!" : "") || h || "";
+      if (st.pista && h && t.t !== "type") t.pista = h;
+    }
     wire(); LOCK = false; JUEGO._t = t;
     ({ choice: rChoice, type: rType, order: rOrder, error: rError, sort: rSort })[t.t](t, id);
     if ($("pbtn")) $("pbtn").onclick = () => { $("pbox").style.display = "block"; $("pbtn").style.display = "none"; };
