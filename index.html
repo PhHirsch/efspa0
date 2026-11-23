@@ -161,7 +161,7 @@
 <script src="covers.js?v=12"></script>
 <script src="vocab-u1.js?v=9"></script>
 <script src="vocab-u2.js?v=9"></script>
-<script src="vocab-u3.js?v=9"></script>
+<script src="vocab-u3.js?v=10"></script>
 <script>
 /* ===== Seiten-Einstellungen (für jede Klasse anpassen) ===== */
 const SITE = { title: "ESPAÑOL EF", sub: "ESPAÑOL · EF" };
@@ -294,7 +294,6 @@ function shelves(){
   });
 }
 function select(g){
-  if (n === "home") { location.href = "home.html"; return; }
   SEL = g; try{ sessionStorage.setItem("efspa0sel", g.id); }catch(e){}
   setBg(g); feat();
   document.querySelectorAll(".card").forEach(c => c.classList.toggle("sel", c.dataset.id === g.id));
@@ -307,6 +306,7 @@ document.querySelectorAll(".nav button").forEach(b => b.onclick = () => {
   const n = b.dataset.n;
   if (n === "play") { closeShop(); window.scrollTo({top:0,behavior:"smooth"}); return; }
   if (!state()) { closeShop(); window.scrollTo({top:0,behavior:"smooth"}); if($("msg")) $("msg").textContent="Primero inicia sesión. – Bitte zuerst anmelden."; return; }
+  if (n === "home") { location.href = "home.html"; return; }
   if (n === "trophies") return openTrophies();
   tab = 0; openShop(n);
 });
