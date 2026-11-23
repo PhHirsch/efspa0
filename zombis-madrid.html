@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Doblaje: ¡Zombis en Madrid! · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#1d2a12 0%,#070a04 70%);--panel:#11160c;--txt:#f0f7e4;--muted:#a8b892;--line:#2c3a1e;--btn:#1a2212;--accent:#9be33a;--accentTxt:#142400;--accent2:#d0f59a;--bubble:#1b2414;--input:#090c05;--ok:#6fe59a;--bad:#ff7a5a}
+  .cine{position:relative;background:#000;border-radius:14px 14px 0 0;padding:10px 10px 0}
+  .scr{position:relative;height:170px;overflow:hidden;border-radius:6px;background:linear-gradient(#3a1a3a,#7a3a2a 60%,#2a1a14 61%,#1a120c)}
+  .moon{position:absolute;right:40px;top:14px;width:36px;height:36px;border-radius:50%;background:#f3eac0;box-shadow:0 0 20px #f3eac0}
+  .sky{position:absolute;left:0;right:0;bottom:66px;height:56px;background:
+    linear-gradient(#0c0608,#0c0608) 4% 100%/8% 60% no-repeat,linear-gradient(#0c0608,#0c0608) 14% 100%/6% 90% no-repeat,
+    linear-gradient(#0c0608,#0c0608) 22% 100%/10% 50% no-repeat,linear-gradient(#0c0608,#0c0608) 36% 100%/5% 100% no-repeat,
+    linear-gradient(#0c0608,#0c0608) 46% 100%/12% 70% no-repeat,linear-gradient(#0c0608,#0c0608) 62% 100%/8% 45% no-repeat,
+    linear-gradient(#0c0608,#0c0608) 74% 100%/6% 80% no-repeat,linear-gradient(#0c0608,#0c0608) 86% 100%/12% 60% no-repeat}
+  .z{position:absolute;bottom:14px;font-size:40px;transition:left 1s,opacity 1s}
+  .hero{position:absolute;bottom:14px;font-size:38px;transition:left 1s}
+  .hero .me{display:inline-block;width:38px;height:38px;border-radius:50%;overflow:hidden;background:#fff;vertical-align:bottom;border:2px solid #9be33a}
+  .sub{position:absolute;left:0;right:0;bottom:4px;text-align:center}
+  .sub span{background:#000b;color:#ffe25a;font:700 14px system-ui;padding:2px 8px;border-radius:3px}
+  .bar{display:flex;justify-content:space-between;align-items:center;padding:7px 4px 9px;color:#d0f59a;font:600 13px system-ui}
+  .clap{background:#fff;color:#111;border-radius:3px;padding:1px 8px;font:800 12px monospace}
+  .line{display:inline-block;background:#000;color:#ffe25a;font-weight:700;padding:4px 12px;border-radius:4px;font-size:18px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=11"></script>
+<script src="juego.js?v=6"></script>
+<script>
+const MA = {face:"👩🏻", name:"Marta"}, LE = {face:"👦🏽", name:"Leo"}, PR = {face:"👨🏻‍🏫", name:"El profesor Ruiz"}, ZZ = {face:"🧟", name:"Un zombi"}, DI = {face:"🎬", name:"La directora"}, Y = {av:true, name:"Tú (doblaje)"};
+const ln = s => `<span class="line">${s}</span>`;
+const PRON = "📌 yo = ich · tú = du · él = er · ella = sie · nosotros/as = wir · vosotros/as = ihr · ellos = sie (m./gemischt) · ellas = sie (nur f.)";
+const SER = "📌 <b>ser</b>: yo <b>soy</b> · tú <b>eres</b> · él/ella <b>es</b> · nosotros <b>somos</b> · vosotros <b>sois</b> · ellos/ellas <b>son</b>";
+const AR = "📌 <b>-ar</b>: habl<b>ar</b> → habl<b>o</b> · habl<b>as</b> · habl<b>a</b> · habl<b>amos</b> · habl<b>áis</b> · habl<b>an</b><br>genauso: trabajar, estudiar, escuchar, preguntar, pasar";
+const DROP = "📌 Das Pronomen fällt meistens weg – die <b>Endung</b> zeigt die Person: <span class=\"ex\">hablo</span> = ich · <span class=\"ex\">hablas</span> = du · <span class=\"ex\">hablamos</span> = wir …<br>Mit Pronomen nur zur <b>Betonung</b> oder bei <b>él / ella</b>, wenn sonst unklar.";
+JUEGO.start({
+  id: "pronombres", key: "efspa0-zombis-madrid", icon: "🧟", topic: "yo, tú… · ser · -ar", title: "Doblaje: ¡Zombis en Madrid!",
+  intro: `<p>🎬 Una película de terror: <b>„¡Zombis en Madrid!“</b> 🧟 Los zombis (Zombies) caminan por la Gran Vía y dos hermanos, <b>Marta</b> y <b>Leo</b>, tienen que escapar.</p>
+    <p>Pero ¡el guion (Drehbuch) español tiene errores y huecos! Tú trabajas en el <b>doblaje</b> (Synchronisation): completas los diálogos para los actores. Cada frase correcta = un zombi menos. 🧟❌</p>
+    <p class="de">Du synchronisierst einen spanischen Zombie-Film. Dabei lernst du die <b>Subjektpronomen</b> (yo, tú …), <b>ser</b> und die <b>-ar-Verben</b> – und warum man im Spanischen das Pronomen meistens weglässt.</p>`,
+  goLabel: "🎬 ¡Acción!", time: "ca. 20 minutos",
+  rulesLabel: "Reglas",
+  rules: `<h2>Pronomen · ser · -ar-Verben</h2>
+    <table class="t"><tr><th>Pronomen</th><th>ser</th><th>hablar</th></tr>
+    <tr><td>yo (ich)</td><td>soy</td><td>habl<b>o</b></td></tr><tr><td>tú (du)</td><td>eres</td><td>habl<b>as</b></td></tr><tr><td>él / ella (er / sie)</td><td>es</td><td>habl<b>a</b></td></tr>
+    <tr><td>nosotros/as (wir)</td><td>somos</td><td>habl<b>amos</b></td></tr><tr><td>vosotros/as (ihr)</td><td>sois</td><td>habl<b>áis</b></td></tr><tr><td>ellos / ellas (sie)</td><td>son</td><td>habl<b>an</b></td></tr></table>
+    <div class="rule">Das Pronomen fällt meist weg: <span class="ex">Soy Marta. Hablo español.</span> – Die Endung zeigt, wer gemeint ist.</div>`,
+  stages: [
+    { label: "Escena 1", title: "El reparto", go: "🎭 ¡Al casting!", memo: PRON,
+      intro: `<div class="who"><div class="face">🎬</div><div><b class="n">La directora</b>¡Bienvenido/a al doblaje! Primero: ¿quién es quién? Necesitas los pronombres. Mira la caja de arriba.</div></div><p class="de">Erst die Pronomen (ich, du, er …). Die Liste steht in der Merk-Box.</p>`,
+      pista: "Schau in die Merk-Box.",
+      tasks: [
+        { t: "choice", q: "wir (Marta und Leo) = ___", opts: ["nosotros", "vosotros", "ellos"], a: "nosotros", hint: "wir → nosotros." },
+        { t: "choice", q: "ihr = ___", opts: ["vosotros", "nosotros", "ellos"], a: "vosotros", hint: "ihr → vosotros." },
+        { t: "choice", q: "sie (Marta, eine Person) = ___", opts: ["ella", "ellas", "él"], a: "ella", hint: "sie (Singular, weiblich) → ella." },
+        { t: "choice", q: "sie (die Zombies, Plural) = ___", opts: ["ellos", "ellas", "vosotros"], a: "ellos", hint: "sie (Plural, männlich oder gemischt) → ellos." },
+        { t: "choice", q: "sie (Marta und ihre Mutter) = ___", opts: ["ellas", "ellos", "ella"], a: "ellas", hint: "nur Frauen/Mädchen → ellas." },
+        { t: "choice", q: "<b>tú</b> oder <b>tu</b>? „___ eres Leo.“ (Du bist Leo.)", opts: ["Tú", "Tu"], a: "Tú", hint: "du → tú mit Akzent. tu (ohne) = dein.", pista: "Hier ist „du“ gemeint." }
+      ] },
+    { label: "Escena 2", title: "¿Quién eres?", shuffle: true, memo: SER + "<br>" + PRON,
+      intro: `<p>Escena 2: Marta y Leo encuentran al profesor Ruiz en el metro. Se presentan con <b>ser</b>.</p><p class="de">Ergänze die passende Form von ser (sein).</p>`,
+      pista: "Wer ist gemeint? yo → soy · tú → eres · él/ella → es · nosotros → somos · vosotros → sois · ellos → son",
+      tasks: [
+        { t: "type", who: MA, q: ln("Yo ___ Marta."), a: "soy", show: "yo → soy" },
+        { t: "type", who: PR, q: ln("¿Y tú? ¿Quién ___?"), a: "eres", show: "tú → eres" },
+        { t: "type", who: MA, q: ln("Él ___ Leo, mi hermano."), a: "es", show: "él → es" },
+        { t: "type", who: LE, q: ln("Nosotros ___ de Madrid."), a: "somos", show: "nosotros → somos" },
+        { t: "type", who: PR, q: ln("¿Vosotros ___ hermanos?"), a: "sois", show: "vosotros → sois" },
+        { t: "type", who: LE, q: ln("¡Y ellos ___ zombis! 🧟🧟"), a: "son", show: "ellos → son" },
+        { t: "sort", task: "Ordena:", taskDe: "Welche Form gehört zu welchem Pronomen?", buckets: ["yo", "tú", "él / ella"], items: [["soy", 0], ["eres", 1], ["es", 2]], show: "yo soy · tú eres · él/ella es" }
+      ] },
+    { label: "Escena 3", title: "Los verbos en -ar", go: "🔍 ¡Mira el guion!",
+      memo: `📜 Guion: „Yo <b>hablo</b> con los zombis. – ¿Tú <b>hablas</b> con zombis? – Sí, y Leo también <b>habla</b> con ellos. Nosotros <b>hablamos</b> mucho. ¿Vosotros <b>habláis</b> español? – ¡Los zombis no <b>hablan</b>!“`,
+      intro: `<p>En el guion hay un verbo: <b>hablar</b> (sprechen). Mira las formas (arriba). ¿Qué terminaciones (Endungen) tiene?</p><p class="de">Finde selbst heraus: Was hängt man an den Stamm <b>habl-</b>?</p>`,
+      pista: "Such im Guion die Form nach dem Pronomen und schau auf das Ende.",
+      tasks: [
+        { t: "choice", q: "yo habl<b>___</b>", keep: true, opts: ["-o", "-a", "-as"], a: "-o", hint: "yo hablo → -o." },
+        { t: "choice", q: "tú habl<b>___</b>", keep: true, opts: ["-as", "-a", "-an"], a: "-as", hint: "tú hablas → -as." },
+        { t: "choice", q: "él / ella habl<b>___</b>", keep: true, opts: ["-a", "-o", "-amos"], a: "-a", hint: "Leo habla → -a." },
+        { t: "choice", q: "nosotros habl<b>___</b>", keep: true, opts: ["-amos", "-áis", "-an"], a: "-amos", hint: "nosotros hablamos → -amos." },
+        { t: "choice", q: "vosotros habl<b>___</b>", keep: true, opts: ["-áis", "-ais", "-amos"], a: "-áis", hint: "vosotros habláis → -áis (mit Akzent)." },
+        { t: "choice", q: "ellos / ellas habl<b>___</b>", keep: true, opts: ["-an", "-as", "-a"], a: "-an", hint: "los zombis hablan → -an." },
+        { t: "choice", q: "trabaj<b>ar</b> → nosotros ___", keep: true, opts: ["trabajamos", "trabajomos", "trabajan"], a: "trabajamos", hint: "Gleiche Endungen wie hablar: trabaj + amos.", pista: "Stamm trabaj- + Endung wie bei hablamos." }
+      ] },
+    { label: "Escena 4", title: "¡A doblar!", shuffle: true, memo: AR,
+      intro: `<p>Escena 4: ¡Los zombis están en la Puerta del Sol! Los actores necesitan sus frases. Escribe el verbo en la forma correcta.</p><p class="de">Stamm + Endung: z. B. estudiar → estudi- + -as = estudias.</p>`,
+      pista: "1. -ar weg (estudiar → estudi-). 2. Endung für die Person dran: -o, -as, -a, -amos, -áis, -an.",
+      tasks: [
+        { t: "type", who: PR, task: "trabajar", q: ln("Yo ___ en el museo."), a: "trabajo", show: "yo → trabaj-o" },
+        { t: "type", who: MA, task: "estudiar", q: ln("Leo y yo ___ en el instituto."), a: "estudiamos", show: "Leo y yo = nosotros → estudi-amos" },
+        { t: "type", who: LE, task: "escuchar", q: ln("¡Marta! ¿___ los zombis?"), a: "escuchas", show: "tú → escuch-as", qDe: "¿Hörst du die Zombies?" },
+        { t: "type", who: PR, task: "hablar", q: ln("Los zombis no ___ español."), a: "hablan", show: "ellos → habl-an" },
+        { t: "type", who: LE, task: "preguntar", q: ln("El profesor ___ mucho. 🙄"), a: "pregunta", show: "él → pregunt-a" },
+        { t: "type", who: ZZ, task: "pasar", q: ln("Nosotros ___ el día en la Gran Vía. 🧟"), a: "pasamos", show: "nosotros → pas-amos" },
+        { t: "type", who: PR, task: "trabajar", q: ln("¿Vosotros ___ también?"), a: "trabajáis", show: "vosotros → trabaj-áis", tips: { trabajais: "Mit Akzent: trabajáis." } }
+      ] },
+    { label: "Escena 5", title: "¡Sin pronombre!", go: "👄 ¡Al micrófono!", memo: DROP,
+      intro: `<div class="who"><div class="face">🎬</div><div><b class="n">La directora</b>¡Corten! (Cut!) Tus frases son muy largas: „Yo soy Marta. Yo hablo español.“ ¡Nadie habla así en español! 😅</div></div>
+        <p>En español, el pronombre normalmente <b>no</b> está: <b>Soy</b> Marta. <b>Hablo</b> español.</p><p class="de">Im Spanischen lässt man das Pronomen meistens weg – die Verbendung zeigt schon, wer gemeint ist.</p>`,
+      tasks: [
+        { t: "choice", q: "Was klingt <b>natürlich</b> auf Spanisch?", keep: true, opts: ["Soy Marta. Estudio en Madrid.", "Yo soy Marta. Yo estudio en Madrid."], a: "Soy Marta. Estudio en Madrid.", hint: "Ohne Pronomen klingt es natürlich.", pista: "Lies die Merk-Box: Das Pronomen fällt meistens weg." },
+        { t: "choice", q: "Warum braucht man das Pronomen meistens nicht?", keep: true, opts: ["Die Endung zeigt die Person.", "Spanier sind faul.", "Pronomen sind falsch."], a: "Die Endung zeigt die Person.", hint: "hablo = ich spreche – das -o zeigt: yo." },
+        { t: "choice", who: ZZ, q: ln("¡Hablamos con los zombis!"), task: "¿Quién habla?", taskDe: "Wer spricht? (Schau auf die Endung.)", opts: ["nosotros", "ellos", "yo"], a: "nosotros", hint: "-amos → nosotros." },
+        { t: "choice", q: ln("¿Escucháis la música?"), task: "¿Quién escucha?", opts: ["vosotros", "nosotros", "tú"], a: "vosotros", hint: "-áis → vosotros." },
+        { t: "choice", q: ln("Estudias mucho."), task: "¿Quién estudia?", opts: ["tú", "yo", "él"], a: "tú", hint: "-as → tú." },
+        { t: "choice", q: ln("Trabajo en un bar."), task: "¿Quién trabaja?", opts: ["yo", "él", "ellos"], a: "yo", hint: "-o → yo." },
+        { t: "choice", q: "„<b>Habla</b> inglés.“ – Hier kann es <b>er</b> oder <b>sie</b> sein. Wann sagt man <b>Ella</b> habla inglés?", keep: true, opts: ["Wenn klar sein soll, dass SIE gemeint ist", "Immer", "Nie"], a: "Wenn klar sein soll, dass SIE gemeint ist", hint: "Bei él/ella (und zur Betonung) setzt man das Pronomen, wenn sonst unklar." }
+      ] },
+    { label: "Escena 6", title: "Frases cortas", shuffle: true, memo: DROP + "<br>" + AR,
+      intro: `<p>Ahora tú escribes las frases cortas – <b>sin pronombre</b>, como en una película española de verdad.</p><p class="de">Ordne die Wörter. Es gibt kein Pronomen – die Endung reicht.</p>`,
+      pista: "Kein Pronomen: Das Verb steht am Anfang (oder nach „no“).",
+      tasks: [
+        { t: "order", who: MA, task: "Marta:", taskDe: "Ich bin Marta und ich lerne Deutsch.", words: ["Soy", "Marta", "y", "estudio", "alemán."], a: "Soy Marta y estudio alemán." },
+        { t: "order", who: LE, task: "Leo:", taskDe: "Wir sind nicht Zombies!", words: ["¡No", "somos", "zombis!"], a: "¡No somos zombis!" },
+        { t: "order", who: PR, task: "El profesor:", taskDe: "Sprecht ihr Englisch?", words: ["¿Habláis", "inglés?"], a: "¿Habláis inglés?" },
+        { t: "order", who: ZZ, task: "Un zombi:", taskDe: "Wir arbeiten jeden Tag.", words: ["Trabajamos", "todos", "los", "días."], a: "Trabajamos todos los días." },
+        { t: "type", who: Y, task: "Escribe la frase SIN pronombre:", q: ln("Yo soy de Alemania."), a: "Soy de Alemania.", show: "Soy de Alemania.", pista: "Lass „Yo“ einfach weg." }
+      ] },
+    { label: "Escena 7", title: "¡Errores en el guion!", shuffle: true, memo: SER + "<br>" + AR,
+      intro: `<p>¡Ay! Un zombi escribió partes del guion… 🧟✍️ Corrige los errores.</p><p class="de">Tippe auf das falsche Wort und wähle die richtige Form.</p>`,
+      pista: "Passt die Verbform zur Person? yo -o · tú -as · él -a · nosotros -amos · vosotros -áis · ellos -an",
+      tasks: [
+        { t: "error", who: MA, words: ["Leo", "y", "yo", "son", "hermanos."], bad: 3, fix: "somos", opts: ["somos", "sois", "es"], hint: "Leo y yo = nosotros → somos." },
+        { t: "error", who: LE, words: ["¿Tú", "hablo", "con", "los", "zombis?"], bad: 1, fix: "hablas", opts: ["hablas", "habla", "hablan"], hint: "tú → hablas." },
+        { t: "error", who: PR, words: ["Mis", "hijos", "estudia", "en", "Granada."], bad: 2, fix: "estudian", opts: ["estudian", "estudiamos", "estudio"], hint: "mis hijos = ellos → estudian." },
+        { t: "error", who: ZZ, words: ["Yo", "eres", "un", "zombi", "simpático."], bad: 1, fix: "soy", opts: ["soy", "es", "somos"], hint: "yo → soy." },
+        { t: "error", who: MA, words: ["Vosotros", "trabajan", "mucho."], bad: 1, fix: "trabajáis", opts: ["trabajáis", "trabajamos", "trabaja"], hint: "vosotros → trabajáis." }
+      ] },
+    { label: "Final", title: "La última escena", go: "🎬 ¡Última toma!", memo: DROP,
+      intro: `<div class="who"><div class="face">🎬</div><div><b class="n">La directora</b>¡La última escena! Marta y Leo están en el metro… ¡y los zombis también! 😱</div></div>`,
+      tasks: [
+        { t: "order", who: LE, task: "Leo:", taskDe: "Marta, hörst du die Zombies?", words: ["Marta,", "¿escuchas", "a", "los", "zombis?"], a: "Marta, ¿escuchas a los zombis?" },
+        { t: "order", who: MA, task: "Marta:", taskDe: "Ja! Aber wir sind schnell!", words: ["¡Sí!", "¡Pero", "somos", "rápidos!"], a: "¡Sí! ¡Pero somos rápidos!", qDe: "rápido = schnell" },
+        { t: "choice", who: ZZ, q: ln("Nosotros no ___ malos… ¡solo ___ hambre de helado! 🍦"), qDe: "malo = böse", opts: ["somos – tenemos", "son – tienen", "es – tengo"], a: "somos – tenemos", hint: "nosotros → somos, tenemos." }
+      ] }
+  ],
+  scene: (S) => {
+    const p = S.done ? 1 : S.solved / S.total, nz = S.done ? 0 : Math.max(1, 5 - Math.floor(p * 5));
+    const zs = Array.from({ length: 5 }, (_, i) => `<div class="z" style="left:${58 + i * 8}%;opacity:${i < nz ? 1 : 0}">🧟</div>`).join("");
+    const sc = S.done ? 8 : Math.min(8, S.stage + 1);
+    return `<div class="cine"><div class="scr"><div class="moon"></div><div class="sky"></div>
+      <div class="hero" style="left:${6 + p * 24}%">👩🏻👦🏽<span class="me">${E8.myAvatar()}</span></div>${zs}
+      <div class="sub"><span>${S.done ? "¡FIN! 🍦" : "🎙️ doblaje en español"}</span></div></div>
+      <div class="bar"><span class="clap">ESCENA ${sc}/8</span><span>🧟 zombis: <b>${nz}</b></span><span>🎞️ „¡Zombis en Madrid!“</span></div></div>`;
+  },
+  outro: `<div style="font-size:60px">🎬🧟🍦</div><h1>¡Película terminada!</h1>
+    <div class="who" style="text-align:left"><div class="face">🎬</div><div><b class="n">La directora</b>¡Fantástico! El doblaje es perfecto. ¡Y los zombis solo tienen hambre de helado! 😂 ¡Eres un/a artista!</div></div>`
+});
+</script>
+</body>
+</html>

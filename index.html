@@ -158,7 +158,7 @@
 
 <script src="game.js?v=11"></script>
 <script src="bosses.js?v=9"></script>
-<script src="covers.js?v=15"></script>
+<script src="covers.js?v=16"></script>
 <script src="vocab-u1.js?v=9"></script>
 <script src="vocab-u2.js?v=9"></script>
 <script src="vocab-u3.js?v=11"></script>
@@ -170,7 +170,10 @@ window.VOCAB = window.VOCAB || {}; window.COVERS = window.COVERS || {};
 /* ===== Spiele (neueste oben). icon = Emoji fürs Cover, falls es in covers.js kein eigenes Cover gibt. Vokabel-Bosse kommen automatisch aus vocab-*.js ===== */
 const GRAMMAR = [
   {id:"numeros", unit:"u1", file:"mision-marte.html", icon:"🚀", topic:"Los números 0–100", name:"Misión Marte", info:"Vuela a Marte: cuenta atrás, códigos y combustible – ¡solo con números en español!", color:"linear-gradient(135deg,#1a1540,#c4421c)", accent:"#ff6b3d", isNew:true},
+  {id:"pronombres", unit:"u2", file:"zombis-madrid.html", icon:"🧟", topic:"yo, tú… · ser · verbos en -ar", name:"Doblaje: ¡Zombis en Madrid!", info:"Doblas una película de zombis: pronombres, ser y verbos en -ar – ¡y por qué el pronombre casi siempre desaparece!", color:"linear-gradient(135deg,#1d2a12,#6a9a2a)", accent:"#9be33a", isNew:true},
   {id:"posesivos", unit:"u2", file:"los-lopez.html", icon:"📱", topic:"mi · tu · su", name:"Los López – una familia de YouTube", info:"Edita el canal de Lucía: subtítulos, comentarios de fans y un artículo – con mi/mis, tu/tus, su/sus.", color:"linear-gradient(135deg,#3a0d14,#ff3b4e)", accent:"#ffd23a", isNew:true},
+  {id:"tener-no", unit:"u2", file:"robo-movil.html", icon:"🕵️", topic:"tener · no · palabras interrogativas", name:"El robo del móvil", info:"¿Quién tiene el móvil de Sara? Interroga a 6 sospechosos y resuelve el caso.", color:"linear-gradient(135deg,#2a2010,#a07a2a)", accent:"#e8c34a", isNew:true},
+  {id:"conectores", unit:"u2", file:"sos-isla.html", icon:"🏝️", topic:"y · pero · también · con · ¿?", name:"SOS desde una isla", info:"Chatea con Inés, sola en una isla, y llama al helicóptero – con frases y conectores.", color:"linear-gradient(135deg,#0c3a4a,#2ab0a0)", accent:"#2ee6c5", isNew:true},
   {id:"hay-estar", unit:"u3", file:"mision-barrio.html", icon:"🗺️", topic:"hay · está / están", name:"Misión Barrio", info:"Descubre Chamberí (Madrid) y encuentra el Café Azul.", color:"linear-gradient(135deg,#5a3a18,#b8742a)"},
   {id:"mucho-poco", unit:"u3", file:"simbarrio.html", icon:"🏗️", topic:"mucho / poco · la ciudad", name:"SimBarrio", info:"Construye un barrio nuevo para Villaluna.", color:"linear-gradient(135deg,#124a5a,#2a9a7a)"},
   /* Bloque B – noch ausgeblendet, erst freischalten, wenn der Kurs so weit ist:

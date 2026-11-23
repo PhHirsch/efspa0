@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>SOS desde una isla · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#0c3a4a 0%,#041219 70%);--panel:#0b232c;--txt:#eafaff;--muted:#9cc6d2;--line:#1d4654;--btn:#0f2f3a;--accent:#2ee6c5;--accentTxt:#002a22;--accent2:#9ff3e4;--bubble:#123440;--input:#051a21;--ok:#6fe59a;--bad:#ffb03a}
+  .sea{position:relative;height:190px;overflow:hidden;border-radius:14px 14px 0 0;background:linear-gradient(#8fd8ff 0%,#c8eeff 55%,#2aa6c8 56%,#147a9a 100%)}
+  .sun{position:absolute;left:30px;top:18px;width:46px;height:46px;border-radius:50%;background:#ffe25a;box-shadow:0 0 30px #ffe25a}
+  .isl{position:absolute;left:50%;bottom:22px;width:230px;height:60px;margin-left:-115px;border-radius:50% 50% 40% 40%;background:#f3d58a}
+  .palm{position:absolute;left:calc(50% - 70px);bottom:66px;font-size:56px}
+  .girl{position:absolute;left:calc(50% + 10px);bottom:66px;font-size:34px}
+  .sos{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);font:900 22px system-ui;letter-spacing:.3em;color:#7a5a2a;opacity:.75}
+  .heli{position:absolute;top:22px;font-size:44px;transition:left 1s,top 1s}
+  .wave{position:absolute;left:0;right:0;bottom:0;height:22px;background:repeating-radial-gradient(circle at 10px -6px,transparent 0 12px,#ffffff55 12px 14px,transparent 14px 20px);animation:wv 3s linear infinite}
+  @keyframes wv{to{background-position:40px 0}}
+  .ph{display:flex;justify-content:space-between;padding:7px 12px;font:600 13px system-ui;background:#071a20;color:#9ff3e4;border-top:1px solid #1d4654}
+  .ph b{color:#fff}
+  .msg{display:inline-block;background:#dcf8c6;color:#14321a;border-radius:12px 12px 12px 2px;padding:7px 12px;font-size:18px;box-shadow:0 1px 2px #0003}
+  .msg.me{background:#fff;border-radius:12px 12px 2px 12px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=11"></script>
+<script src="juego.js?v=6"></script>
+<script>
+const N = {face:"👩🏽", name:"Inés (en la isla)"}, Y = {av:true, name:"Tú"}, H = {face:"👨🏻‍✈️", name:"El piloto Raúl"};
+const m = s => `<span class="msg">${s}</span>`, me = s => `<span class="msg me">${s}</span>`;
+const QW = "📌 ¿<b>Cómo</b>? wie · ¿<b>Dónde</b>? wo · ¿<b>De dónde</b>? woher · ¿<b>Quién</b>? wer · ¿<b>Con quién</b>? mit wem · ¿<b>Qué</b>? was · ¿<b>Cuántos/as</b>? wie viele · ¿<b>Por qué</b>? warum";
+const CON = "📌 <b>y</b> = und · <b>pero</b> = aber · <b>también</b> = auch · <b>con</b> = mit<br><span class=\"ex\">Tengo agua <b>y</b> un bocadillo. · Tengo un móvil, <b>pero</b> no tengo batería. · Mi perro <b>también</b> está aquí. · Estoy aquí <b>con</b> mi perro.</span>";
+const SB = "📌 Satzbau: <b>(Subjekt) – Verb – Rest</b>: <span class=\"ex\">Mi perro / se llama / Rocky.</span> · <b>no</b> vor dem Verb · Frage: <b>¿Fragewort + Verb …?</b>";
+JUEGO.start({
+  id: "conectores", key: "efspa0-sos-isla", icon: "🏝️", topic: "y · pero · también · con · ¿?", title: "SOS desde una isla",
+  intro: `<p>📱 Tu móvil suena. Un mensaje de un número desconocido: <b>„¡Hola! ¡SOS! ¿Hablas español? Necesito ayuda.“</b></p>
+    <p>Es <b>Inés</b>. Está sola en una isla pequeña con su perro. Su móvil tiene poca batería 🔋. Haz preguntas, entiende sus respuestas y manda la información al piloto del helicóptero. 🚁</p>
+    <p class="de">Ein Mädchen sitzt auf einer Insel fest. Chatte mit ihr: Stell Fragen, bau Sätze und verbinde sie mit <b>y, pero, también, con</b>. Mit jeder richtigen Antwort kommt der Hubschrauber näher.</p>`,
+  goLabel: "📱 ¡Contestar!", time: "ca. 20 minutos",
+  rulesLabel: "Reglas",
+  rules: `<h2>Sätze bauen und verbinden</h2>
+    <div class="rule"><b>y</b> = und · <b>pero</b> = aber · <b>también</b> = auch · <b>con</b> = mit</div>
+    <div class="rule"><b>y</b> wird vor i-/hi- zu <b>e</b>: Lola <b>e</b> Inés (nur zur Info)</div>
+    <div class="rule">Satzbau: Subjekt – Verb – Rest: <span class="ex">Inés tiene un perro.</span> · Das Subjekt fällt oft weg: <span class="ex">Tengo un perro.</span></div>
+    <div class="rule"><b>no</b> direkt vor dem Verb: <span class="ex">No tengo agua.</span></div>
+    <div class="rule">Fragen: ¿Fragewort + Verb …? <span class="ex">¿Dónde estás? ¿Con quién estás?</span></div>`,
+  stages: [
+    { label: "Chat 1", title: "¿Quién eres?", go: "📱 ¡Escribir!", memo: QW,
+      intro: `${m("¡Hola! ¡SOS! ¿Hablas español? Necesito ayuda. 😰")}<p>Primero, preguntas importantes. ¿Qué palabra interrogativa (Fragewort) necesitas?</p><p class="de">necesito ayuda = ich brauche Hilfe. Wähle das passende Fragewort – die Liste ist oben in der Merk-Box.</p>`,
+      pista: "Schau auf die Antwort von Inés: Name → Cómo, Ort → Dónde, Herkunft → De dónde, Zahl → Cuántos, Person → Con quién …",
+      tasks: [
+        { t: "choice", who: Y, q: me("¿___ te llamas?") + "<br><br>" + m("Me llamo Inés."), opts: ["Cómo", "Dónde", "Qué"], a: "Cómo", hint: "Name → ¿Cómo te llamas?" },
+        { t: "choice", who: Y, q: me("¿___ años tienes?") + "<br><br>" + m("Tengo dieciséis años."), opts: ["Cuántos", "Cómo", "Quién"], a: "Cuántos", hint: "Zahl → ¿Cuántos años tienes?" },
+        { t: "choice", who: Y, q: me("¿___ eres?") + "<br><br>" + m("Soy de Málaga, en Andalucía."), opts: ["De dónde", "Dónde", "Por qué"], a: "De dónde", hint: "Herkunft → ¿De dónde eres?" },
+        { t: "choice", who: Y, q: me("¿___ estás?") + "<br><br>" + m("Estoy en una isla muy pequeña. 🏝️"), opts: ["Dónde", "Cómo", "Cuántos"], a: "Dónde", hint: "Ort → ¿Dónde estás?" },
+        { t: "choice", who: Y, q: me("¿Con ___ estás?") + "<br><br>" + m("Estoy con mi perro, Rocky. 🐶"), opts: ["quién", "qué", "dónde"], a: "quién", hint: "mit wem → ¿Con quién estás?" },
+        { t: "choice", who: Y, q: me("¿___ estás en la isla?") + "<br><br>" + m("Porque mi barco está roto. ⛵💥"), qDe: "el barco = das Boot · roto = kaputt", opts: ["Por qué", "Qué", "Quién"], a: "Por qué", hint: "Grund (porque) → ¿Por qué …?" }
+      ] },
+    { label: "Chat 2", title: "y · pero · también · con", go: "🔍 ¡Mira bien!", memo: CON,
+      intro: `<p>Inés escribe mensajes largos. Usa palabras pequeñas para unir frases: <b>y, pero, también, con</b>. Mira la caja de arriba.</p><p class="de">Diese kleinen Wörter (Konnektoren) verbinden Sätze. Lies die Beispiele in der Merk-Box und beantworte die Fragen.</p>`,
+      tasks: [
+        { t: "choice", q: "<b>pero</b> heißt …", keep: true, opts: ["aber", "und", "auch"], a: "aber", hint: "pero = aber.", pista: "„Tengo un móvil, pero no tengo batería.“ – Das ist ein Gegensatz." },
+        { t: "choice", q: "<b>también</b> heißt …", keep: true, opts: ["auch", "mit", "und"], a: "auch", hint: "también = auch." },
+        { t: "choice", q: "<b>con</b> heißt …", keep: true, opts: ["mit", "aber", "auch"], a: "mit", hint: "con = mit: con mi perro." },
+        { t: "choice", q: "Welches Wort zeigt einen <b>Gegensatz</b>?", keep: true, opts: ["pero", "y", "también"], a: "pero", hint: "Gegensatz → pero (aber).", pista: "Gegensatz = etwas passt nicht zusammen: „Ich habe ein Handy, ABER keinen Akku.“" },
+        { t: "choice", who: N, q: m("Tengo agua ___ un bocadillo."), qDe: "el agua = das Wasser", opts: ["y", "pero", "con"], a: "y", hint: "zwei Dinge aufzählen → y (und)." },
+        { t: "choice", who: N, q: m("Tengo un móvil, ___ no tengo mucha batería. 🔋"), opts: ["pero", "y", "también"], a: "pero", hint: "Gegensatz → pero." },
+        { t: "choice", who: N, q: m("Estoy aquí ___ mi perro."), opts: ["con", "y", "pero"], a: "con", hint: "mit meinem Hund → con mi perro." },
+        { t: "choice", who: N, q: m("Yo tengo hambre. Mi perro ___ tiene hambre. 🍖"), opts: ["también", "pero", "con"], a: "también", hint: "der Hund auch → también." }
+      ] },
+    { label: "Chat 3", title: "Los mensajes de Inés", shuffle: true, memo: CON,
+      intro: `<p>La batería baja… 🔋 Faltan palabras en los mensajes de Inés. Escribe <b>y, pero, también</b> o <b>con</b>.</p><p class="de">Schreib das passende Verbindungswort.</p>`,
+      pista: "Aufzählung → y · Gegensatz → pero · ebenfalls → también · zusammen mit → con",
+      tasks: [
+        { t: "type", who: N, q: m("En la isla hay palmeras ___ una playa bonita."), qDe: "la palmera = die Palme", a: "y", show: "Aufzählung → y" },
+        { t: "type", who: N, q: m("La playa es bonita, ___ no hay casas."), a: "pero", show: "Gegensatz → pero" },
+        { t: "type", who: N, q: m("Hablo español ___ inglés."), a: "y", show: "Aufzählung → y" },
+        { t: "type", who: N, q: m("Rocky es mi perro. Él ___ está bien."), a: "también", show: "ebenfalls → también", tips: { tambien: "Mit Akzent: también." } },
+        { t: "type", who: N, q: m("Paso el día ___ Rocky en la playa."), a: "con", show: "zusammen mit → con" },
+        { t: "type", who: N, q: m("Tengo un bocadillo, ___ no tengo mucha agua. 💧"), a: "pero", show: "Gegensatz → pero" },
+        { t: "type", who: N, q: m("Mis padres viven en Málaga. Mi abuela ___ vive allí."), a: "también", show: "ebenfalls → también" }
+      ] },
+    { label: "Chat 4", title: "Frases largas", shuffle: true, memo: CON,
+      intro: `<p>La batería tiene solo 30 %. Inés tiene que escribir menos mensajes: ¡une dos frases en una!</p><p class="de">Verbinde zwei kurze Sätze zu einem Satz.</p>`,
+      pista: "Passt „und“, „aber“ oder „mit“? Lies beide Sätze und überleg, wie sie zusammenhängen.",
+      tasks: [
+        { t: "choice", who: N, q: m("Tengo un móvil. No tengo batería."), task: "Une las frases:", taskDe: "Verbinde die Sätze.", opts: ["Tengo un móvil, pero no tengo batería.", "Tengo un móvil y no tengo batería también.", "Tengo un móvil con no tengo batería."], a: "Tengo un móvil, pero no tengo batería.", hint: "Gegensatz → pero." },
+        { t: "choice", who: N, q: m("Estoy en la playa. Rocky está en la playa."), task: "Une las frases:", opts: ["Estoy en la playa con Rocky.", "Estoy en la playa pero Rocky.", "Estoy con en la playa Rocky."], a: "Estoy en la playa con Rocky.", hint: "zusammen → con Rocky." },
+        { t: "order", who: N, task: "Inés escribe:", taskDe: "Ich habe Hunger, aber ich habe Wasser.", words: ["Tengo", "hambre,", "pero", "tengo", "agua."], a: "Tengo hambre, pero tengo agua." },
+        { t: "order", who: N, task: "Inés escribe:", taskDe: "Ich spreche Spanisch und Englisch.", words: ["Hablo", "español", "y", "inglés."], a: "Hablo español y inglés." },
+        { t: "order", who: N, task: "Inés escribe:", taskDe: "Mein Hund ist auch hier.", words: ["Mi", "perro", "también", "está", "aquí."], a: "Mi perro también está aquí." }
+      ] },
+    { label: "Chat 5", title: "Tus preguntas", shuffle: true, memo: SB + "<br>" + QW,
+      intro: `<p>El piloto necesita más información. Escribe tus preguntas a Inés: ¡ordena las palabras!</p><p class="de">Bau die Fragen: zuerst das Fragewort, dann das Verb.</p>`,
+      pista: "Frage = ¿ + Fragewort + Verb + Rest ?",
+      tasks: [
+        { t: "order", who: Y, task: "Pregunta:", taskDe: "Was gibt es auf der Insel?", words: ["¿Qué", "hay", "en", "la", "isla?"], a: "¿Qué hay en la isla?" },
+        { t: "order", who: Y, task: "Pregunta:", taskDe: "Wie geht es dir?", words: ["¿Cómo", "estás?"], a: "¿Cómo estás?" },
+        { t: "order", who: Y, task: "Pregunta:", taskDe: "Wie viele Palmen gibt es?", words: ["¿Cuántas", "palmeras", "hay?"], a: "¿Cuántas palmeras hay?" },
+        { t: "order", who: Y, task: "Pregunta:", taskDe: "Wie ist deine Telefonnummer?", words: ["¿Cuál", "es", "tu", "número", "de", "teléfono?"], a: "¿Cuál es tu número de teléfono?" },
+        { t: "type", who: Y, task: "Escribe la palabra interrogativa:", q: me("¿___ está tu barco?") + "<br><br>" + m("Mi barco está en la playa, roto."), a: "dónde", show: "Ort → ¿Dónde está tu barco?", tips: { donde: "Mit Akzent: dónde." } }
+      ] },
+    { label: "Chat 6", title: "¡Batería al 10 %!", shuffle: true, memo: SB + "<br>" + CON,
+      intro: `<div class="who"><div class="face">👩🏽</div><div><b class="n">Inés</b>¡Rápido! Mi móvil escribe mal… ¡corrige mis mensajes, por favor! 🔋</div></div><p class="de">Die Autokorrektur hat Fehler gemacht. Tippe auf das falsche Wort und wähle das richtige.</p>`,
+      pista: "Prüfe: Passt das Verbindungswort (y / pero / también / con)? Hat das Fragewort einen Akzent?",
+      tasks: [
+        { t: "error", who: N, words: ["Tengo", "agua,", "y", "no", "tengo", "comida."], bad: 2, fix: "pero", opts: ["pero", "con", "también"], hint: "Gegensatz → pero.", qDe: "la comida = das Essen" },
+        { t: "error", who: N, words: ["Estoy", "aquí", "pero", "mi", "perro."], bad: 2, fix: "con", opts: ["con", "también", "y"], hint: "zusammen mit → con mi perro." },
+        { t: "error", who: N, words: ["Rocky", "con", "tiene", "hambre."], bad: 1, fix: "también", opts: ["también", "pero", "y"], hint: "Rocky auch → también." },
+        { t: "error", who: N, words: ["¿Donde", "está", "el", "helicóptero?"], bad: 0, fix: "¿Dónde", opts: ["¿Dónde", "¿Cómo", "¿Quién"], hint: "Fragewort mit Akzent: ¿Dónde?" },
+        { t: "error", who: N, words: ["¿Qué", "estás?", "Yo", "estoy", "muy", "mal."], bad: 0, fix: "¿Cómo", opts: ["¿Cómo", "¿Cuántos", "¿Quién"], hint: "Wie geht es dir? → ¿Cómo estás?" }
+      ] },
+    { label: "Final", title: "Mensaje al piloto", go: "🚁 ¡Llamar al helicóptero!", memo: SB + "<br>" + CON,
+      intro: `<div class="who"><div class="face">👨🏻‍✈️</div><div><b class="n">Raúl (piloto)</b>¡Hola! Soy el piloto del helicóptero. Necesito un mensaje claro con toda la información. 🚁</div></div><p class="de">Schreib dem Piloten die wichtigsten Infos in ganzen Sätzen.</p>`,
+      tasks: [
+        { t: "order", who: Y, task: "Para el piloto:", taskDe: "Die Chica heißt Inés und ist 16 Jahre alt.", words: ["La", "chica", "se", "llama", "Inés", "y", "tiene", "dieciséis", "años."], a: "La chica se llama Inés y tiene dieciséis años." },
+        { t: "order", who: Y, task: "Para el piloto:", taskDe: "Sie ist mit ihrem Hund auf der Insel.", words: ["Está", "en", "la", "isla", "con", "su", "perro."], a: "Está en la isla con su perro." },
+        { t: "order", who: Y, task: "Para el piloto:", taskDe: "Sie hat Wasser, aber sie hat kein Essen.", words: ["Tiene", "agua,", "pero", "no", "tiene", "comida."], a: "Tiene agua, pero no tiene comida." },
+        { t: "choice", who: H, q: "¡Perfecto! ¿Y el perro ___ viene en el helicóptero?", qDe: "viene = kommt (mit)", opts: ["también", "pero", "con"], a: "también", hint: "der Hund auch → también." }
+      ] }
+  ],
+  scene: (S) => {
+    const p = S.done ? 1 : S.solved / S.total, bat = S.done ? 3 : Math.max(5, Math.round(80 - p * 72));
+    const x = 100 - p * 52;
+    return `<div class="sea"><div class="sun"></div><div class="isl"></div><div class="palm">🌴</div><div class="girl">${S.done ? "🙌" : "🙋🏽‍♀️"}🐕</div><div class="sos">SOS</div><div class="wave"></div>
+      <div class="heli" style="left:calc(${x}% - 30px);top:${S.done ? 40 : 18}px">🚁</div></div>
+      <div class="ph"><span>📱 Chat con <b>Inés</b></span><span>${S.done ? "🚁 ¡Rescatada!" : `🚁 ${Math.round((1 - p) * 40)} km`}</span><span>🔋 <b>${bat} %</b></span></div>`;
+  },
+  outro: `<div style="font-size:60px">🚁🏝️🎉</div><h1>¡Inés está a salvo!</h1>
+    <div class="who" style="text-align:left"><div class="face">👩🏽</div><div><b class="n">Inés</b>¡Gracias, gracias, gracias! Rocky y yo estamos en el helicóptero. ¡Eres un héroe / una heroína! 🐶❤️</div></div>`
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>El robo del móvil · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#1d2a1c 0%,#090d08 70%);--panel:#141a12;--txt:#f1f5ea;--muted:#a9b8a0;--line:#2d3a28;--btn:#1c2619;--accent:#e8c34a;--accentTxt:#241c00;--accent2:#f5dc8a;--bubble:#1f2a1b;--input:#0b1009;--ok:#6fe59a;--bad:#ff8a7a}
+  .board{position:relative;padding:12px 10px 10px;background:#7a5634 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='5' cy='5' r='1.2' fill='%23000' opacity='.15'/%3E%3Ccircle cx='25' cy='22' r='1' fill='%23000' opacity='.12'/%3E%3C/svg%3E");border-radius:14px 14px 0 0}
+  .sus{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+  .card{position:relative;background:#fffbe9;border-radius:4px;padding:6px 2px 4px;text-align:center;font:700 11px system-ui;color:#3a2a10;box-shadow:0 2px 4px #0006;transform:rotate(var(--r))}
+  .card .f{font-size:28px;line-height:1.1}
+  .card .i{font:500 9.5px system-ui;color:#6a5a3a;line-height:1.25}
+  .card:before{content:"";position:absolute;left:50%;top:-5px;width:9px;height:9px;margin-left:-4px;border-radius:50%;background:#d33}
+  .card.x:after{content:"✕";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:58px;color:#d22;opacity:.85}
+  .card.x{opacity:.65}
+  .card.win{outline:4px solid #e8c34a;transform:rotate(0) scale(1.06)}
+  .note{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font:600 13px system-ui;color:#fff3c8}
+  .note .me{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#fff;border:2px solid #e8c34a}
+  .clue{background:#fffbe9;color:#3a2a10;border-radius:6px;padding:8px 12px;font-size:17px;box-shadow:0 2px 4px #0004}
+  @media(max-width:560px){.card .i{display:none}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=11"></script>
+<script src="juego.js?v=6"></script>
+<script>
+const SUS = [
+  ["Marcos", "👦🏻", "16 años", "🐶 perro", "2 hermanos", "🚲 sí"],
+  ["Lola", "👧🏼", "15 años", "🐱 gato", "0 hermanos", "🚲 no"],
+  ["Hugo", "🧑🏾", "17 años", "– no", "1 hermana", "🚲 sí"],
+  ["Nerea", "👩🏻‍🦱", "16 años", "🐶 perro", "1 hermano", "🚲 no"],
+  ["Dani", "👦🏽", "15 años", "🐶 perro", "0 hermanos", "🚲 sí"],
+  ["Irene", "👧🏾", "17 años", "🐱 gato", "2 hermanas", "🚲 sí"]];
+const S_ = {face:"👧🏻", name:"Sara (la cumpleañera)"}, D = {av:true, name:"Tú (detective)"}, I = {face:"👮🏽‍♀️", name:"La inspectora Gómez"};
+const who = n => { const s = SUS.find(x => x[0] === n); return {face: s[1], name: s[0]}; };
+const TENER = "📌 <b>tener</b> (haben): yo <b>tengo</b> · tú <b>tienes</b> · él/ella <b>tiene</b> · nosotros <b>tenemos</b> · vosotros <b>tenéis</b> · ellos/ellas <b>tienen</b>";
+const NO = "📌 <b>no</b> steht direkt <b>vor dem Verb</b>: <span class=\"ex\">Tengo un perro. → <b>No</b> tengo un perro.</span> · <span class=\"ex\">¿Tienes el móvil? – No, <b>no</b> tengo el móvil.</span>";
+const QW = "📌 ¿<b>Quién</b>? wer · ¿<b>Qué</b>? was · ¿<b>Dónde</b>? wo · ¿<b>De dónde</b>? woher · ¿<b>Cómo</b>? wie · ¿<b>Cuántos/Cuántas</b>? wie viele · ¿<b>Por qué</b>? warum · ¿<b>Cuál</b>? welche/r";
+let start7 = 0;
+const STAGES = [
+    { label: "Pista 1", title: "¡El móvil no está!", go: "🔍 ¡A investigar!",
+      memo: `🗒️ Sara: „Yo <b>tengo</b> un móvil nuevo. Mis amigos <b>tienen</b> móviles viejos. ¿Y tú? ¿<b>Tienes</b> un móvil nuevo? Mi hermano <b>tiene</b> un móvil rojo. Nosotros <b>tenemos</b> una fiesta hoy. ¿Vosotros <b>tenéis</b> hambre?“`,
+      intro: `<div class="who"><div class="face">👧🏻</div><div><b class="n">Sara</b>¡Hoy es mi cumpleaños y tengo una fiesta! Pero… ¡mi móvil nuevo no está! 😱 Alguien de la fiesta tiene mi móvil.</div></div>
+        <p>Tú eres el/la detective. Primero lee lo que dice Sara (arriba): ¿qué formas de <b>tener</b> usa?</p>
+        <p class="de">Heute ist Saras Geburtstag – und ihr neues Handy ist weg! Einer der 6 Gäste hat es. Lerne zuerst die Formen von <b>tener</b> (haben): Sie stehen fett in Saras Text oben.</p>`,
+      pista: "Suche in Saras Text: Welche Form steht nach yo / tú / mi hermano …?",
+      tasks: [
+        { t: "choice", q: "yo ___", keep: true, opts: ["tengo", "tienes", "tiene"], a: "tengo", hint: "„Yo tengo un móvil nuevo.“ → yo tengo." },
+        { t: "choice", q: "tú ___", keep: true, opts: ["tienes", "tiene", "tengo"], a: "tienes", hint: "„¿Tienes un móvil nuevo?“ → tú tienes." },
+        { t: "choice", q: "él / ella ___ <span class=\"de\">(mi hermano)</span>", keep: true, opts: ["tiene", "tienen", "tienes"], a: "tiene", hint: "„Mi hermano tiene …“ → él tiene." },
+        { t: "choice", q: "nosotros ___", keep: true, opts: ["tenemos", "tienemos", "tienen"], a: "tenemos", hint: "„Nosotros tenemos una fiesta.“ → tenemos (ohne i!)." },
+        { t: "choice", q: "vosotros ___", keep: true, opts: ["tenéis", "tienéis", "tienen"], a: "tenéis", hint: "„¿Vosotros tenéis hambre?“ → tenéis (ohne i, mit Akzent)." },
+        { t: "choice", q: "ellos / ellas ___ <span class=\"de\">(mis amigos)</span>", keep: true, opts: ["tienen", "tenen", "tiene"], a: "tienen", hint: "„Mis amigos tienen …“ → ellos tienen." },
+        { t: "choice", q: "Bei welchen Formen gibt es <b>kein ie</b>?", keep: true, opts: ["tengo, tenemos, tenéis", "tienes, tiene, tienen", "alle haben ie"], a: "tengo, tenemos, tenéis", hint: "tengo, tenemos, tenéis – ohne ie. tienes, tiene, tienen – mit ie.", pista: "Schau in die Merk-Box: Wo steht „ie“, wo nicht?" }
+      ] },
+    { label: "Pista 2", title: "Los sospechosos", shuffle: true, memo: TENER,
+      intro: `<div class="who"><div class="face">👮🏽‍♀️</div><div><b class="n">Inspectora Gómez</b>Hay 6 sospechosos (Verdächtige). Mira el tablero: ¿qué tienen? Escribe la forma correcta de <b>tener</b>.</div></div><p class="de">Schreib die passende Form von tener. Die Infos zu den Verdächtigen stehen auf der Pinnwand oben.</p>`,
+      pista: "Wer spricht? yo → tengo, tú → tienes, er/sie → tiene, wir → tenemos, ihr → tenéis, sie (Pl.) → tienen.",
+      tasks: [
+        { t: "type", who: who("Marcos"), q: "Yo ___ un perro y dos hermanos.", a: "tengo", show: "yo → tengo" },
+        { t: "type", who: I, q: "Lola ___ un gato.", a: "tiene", show: "Lola = ella → tiene" },
+        { t: "type", who: who("Hugo"), q: "Mi hermana y yo ___ una bicicleta.", a: "tenemos", show: "mi hermana y yo = nosotros → tenemos" },
+        { t: "type", who: D, q: "Irene, ¿___ un gato?", a: "tienes", show: "tú → tienes" },
+        { t: "type", who: I, q: "Marcos, Nerea y Dani ___ un perro.", a: "tienen", show: "ellos → tienen" },
+        { t: "type", who: D, q: "Lola y Dani, ¿vosotros ___ hermanos?", a: "tenéis", show: "vosotros → tenéis", tips: { teneis: "Mit Akzent: tenéis." } },
+        { t: "choice", who: who("Irene"), q: "Yo ___ diecisiete años.", opts: ["tengo", "tiene", "soy"], a: "tengo", hint: "Alter mit tener: Tengo diecisiete años." }
+      ] },
+    { label: "Pista 3", title: "¡Yo no tengo el móvil!", go: "🗣️ ¡Interrogatorio!", memo: NO,
+      intro: `<p>Todos dicen: <b>„¡Yo no tengo el móvil!“</b> 🙄</p><div class="clue">Tengo el móvil. → <b>No</b> tengo el móvil.<br>Hugo tiene un perro. → Hugo <b>no</b> tiene un perro.</div><p class="de">Schau genau: Wo steht <b>no</b> (nicht / kein)?</p>`,
+      tasks: [
+        { t: "choice", q: "Wo steht <b>no</b>?", keep: true, opts: ["direkt vor dem Verb", "am Satzende", "nach dem Verb"], a: "direkt vor dem Verb", hint: "No tengo … · Hugo no tiene … → no steht vor dem Verb.", pista: "Schau auf die Beispiele: Was kommt direkt nach „no“?" },
+        { t: "choice", q: "<b>no</b> heißt auf Deutsch …", keep: true, opts: ["nicht / kein / nein", "nur „nein“"], a: "nicht / kein / nein", hint: "No tengo perro. = Ich habe keinen Hund. – No. = Nein." },
+        { t: "order", who: who("Lola"), task: "Lola dice:", taskDe: "Ich habe keinen Hund.", words: ["No", "tengo", "perro."], a: "No tengo perro." },
+        { t: "order", who: who("Hugo"), task: "Hugo dice:", taskDe: "Ich habe das Handy nicht.", words: ["No", "tengo", "el", "móvil."], a: "No tengo el móvil." },
+        { t: "order", who: I, task: "La inspectora:", taskDe: "Nerea hat kein Fahrrad.", words: ["Nerea", "no", "tiene", "bicicleta."], a: "Nerea no tiene bicicleta." },
+        { t: "order", who: who("Dani"), task: "Dani:", taskDe: "Nein, ich habe keine Geschwister.", words: ["No,", "no", "tengo", "hermanos."], a: "No, no tengo hermanos." },
+        { t: "choice", who: I, q: "¿Hugo tiene mascota? – ___", opts: ["No, Hugo no tiene mascota.", "No, Hugo tiene no mascota.", "Hugo tiene mascota no."], a: "No, Hugo no tiene mascota.", hint: "no direkt vor dem Verb: Hugo no tiene …" }
+      ] },
+    { label: "Pista 4", title: "Las preguntas del detective", memo: QW,
+      intro: `<p>Un buen detective hace buenas preguntas. 🕵️ Mira las palabras interrogativas (Fragewörter) en la caja de arriba.</p><p class="de">Fragewörter haben im Spanischen immer einen Akzent. Und Fragen haben zwei Fragezeichen: ¿ … ?</p>`,
+      pista: "Schau in die Merk-Box: Welches Fragewort passt zur Antwort?",
+      tasks: [
+        { t: "choice", q: "¿___ te llamas? – Me llamo Nerea.", opts: ["Cómo", "Dónde", "Quién"], a: "Cómo", hint: "Name → ¿Cómo te llamas?" },
+        { t: "choice", q: "¿___ años tienes? – Tengo dieciséis años.", opts: ["Cuántos", "Qué", "Cómo"], a: "Cuántos", hint: "Zahl → ¿Cuántos años …?" },
+        { t: "choice", q: "¿___ vives? – Vivo en la calle Mayor.", opts: ["Dónde", "De dónde", "Cuál"], a: "Dónde", hint: "Ort → ¿Dónde vives?" },
+        { t: "choice", q: "¿___ es? – Es Hugo, el amigo de Sara.", opts: ["Quién", "Qué", "Cómo"], a: "Quién", hint: "Person → ¿Quién es?" },
+        { t: "choice", q: "¿___ eres? – Soy de México.", opts: ["De dónde", "Dónde", "Por qué"], a: "De dónde", hint: "Herkunft → ¿De dónde eres?" },
+        { t: "choice", q: "¿___ tienes en la mano? – Un bocadillo.", qDe: "la mano = die Hand", opts: ["Qué", "Quién", "Cuántos"], a: "Qué", hint: "Sache → ¿Qué tienes?" },
+        { t: "choice", q: "¿___ no tienes tu móvil? – Porque está en casa.", qDe: "porque = weil", opts: ["Por qué", "Qué", "Cómo"], a: "Por qué", hint: "Grund (porque) → ¿Por qué …?" },
+        { t: "choice", q: "¿___ es tu número de teléfono? – Es el 612 …", opts: ["Cuál", "Qué", "Cuántos"], a: "Cuál", hint: "Telefonnummer → ¿Cuál es tu número …?" }
+      ] },
+    { label: "Pista 5", title: "El interrogatorio", shuffle: true, memo: QW + "<br>" + TENER,
+      intro: `<div class="who"><div class="face">👮🏽‍♀️</div><div><b class="n">Inspectora Gómez</b>Ahora tú haces las preguntas. Ordena las palabras.</div></div><p class="de">Bau die Fragen. Das Fragewort steht am Anfang, dann das Verb.</p>`,
+      pista: "Fragewort zuerst (¿Cómo / ¿Dónde …), dann das Verb, dann der Rest.",
+      tasks: [
+        { t: "order", who: D, task: "Pregunta a Marcos:", taskDe: "Wie viele Geschwister hast du?", words: ["¿Cuántos", "hermanos", "tienes?"], a: "¿Cuántos hermanos tienes?" },
+        { t: "order", who: D, task: "Pregunta a Lola:", taskDe: "Wo wohnst du?", words: ["¿Dónde", "vives?"], a: "¿Dónde vives?" },
+        { t: "order", who: D, task: "Pregunta a Irene:", taskDe: "Hast du ein Fahrrad?", words: ["¿Tienes", "una", "bicicleta?"], a: "¿Tienes una bicicleta?" },
+        { t: "order", who: D, task: "Pregunta a Hugo:", taskDe: "Wer ist das?", words: ["¿Quién", "es?"], a: "¿Quién es?" },
+        { t: "order", who: D, task: "Pregunta a Nerea:", taskDe: "Warum hast du das Handy von Sara?", words: ["¿Por", "qué", "tienes", "el", "móvil", "de", "Sara?"], a: "¿Por qué tienes el móvil de Sara?" },
+        { t: "type", who: who("Dani"), q: "¿___ años tienes? – Tengo quince años.", task: "Escribe la palabra interrogativa:", a: "cuántos", show: "¿Cuántos años tienes?", tips: { cuantos: "Mit Akzent: cuántos." } }
+      ] },
+    { label: "Pista 6", title: "Las coartadas", shuffle: true, memo: NO + "<br>" + TENER,
+      intro: `<p>Las coartadas (Alibis) de los sospechosos tienen errores. ¿Mienten? 🤥 Corrige los errores.</p><p class="de">Tippe auf das falsche Wort und wähle die richtige Form.</p>`,
+      pista: "Prüfe: Passt die tener-Form zur Person? Steht „no“ direkt vor dem Verb?",
+      tasks: [
+        { t: "error", who: who("Marcos"), words: ["Yo", "tiene", "un", "perro."], bad: 1, fix: "tengo", opts: ["tengo", "tienes", "tenemos"], hint: "yo → tengo." },
+        { t: "error", who: who("Lola"), words: ["No,", "yo", "no", "tiene", "hermanos."], bad: 3, fix: "tengo", opts: ["tengo", "tienen", "tenéis"], hint: "yo → no tengo." },
+        { t: "error", who: who("Irene"), words: ["Mis", "hermanas", "tiene", "un", "gato."], bad: 2, fix: "tienen", opts: ["tienen", "tenemos", "tengo"], hint: "mis hermanas = ellas → tienen." },
+        { t: "error", who: who("Hugo"), words: ["Nosotros", "tienemos", "una", "bicicleta."], bad: 1, fix: "tenemos", opts: ["tenemos", "tienen", "tenéis"], hint: "nosotros → tenemos (ohne ie)." },
+        { t: "error", who: who("Nerea"), words: ["¿Donde", "está", "el", "móvil?"], bad: 0, fix: "¿Dónde", opts: ["¿Dónde", "¿Quién", "¿Cómo"], hint: "Fragewörter mit Akzent: ¿Dónde?" }
+      ] },
+    { label: "Pista 7", title: "¿Quién tiene el móvil?", go: "🧩 ¡A resolver!",
+      memo: "🧩 Lies jeden Hinweis und schau auf die Pinnwand: Wer passt noch? Durchgestrichene Personen sind raus.",
+      intro: `<div class="who"><div class="face">👮🏽‍♀️</div><div><b class="n">Inspectora Gómez</b>Tenemos 4 pistas de testigos (Zeugen). Lee las pistas y mira el tablero. ¡Elimina sospechosos!</div></div><p class="de">Jeder Hinweis streicht Verdächtige. Wer bleibt am Ende übrig?</p>`,
+      tasks: [
+        { t: "choice", q: `<div class="clue">🕵️ Pista A: „El ladrón <b>tiene</b> bicicleta.“</div>`, task: "¿Quién NO tiene bicicleta?", taskDe: "Wer hat KEIN Fahrrad? (Die sind raus.)", keep: true, opts: ["Lola y Nerea", "Marcos y Hugo", "Dani e Irene"], a: "Lola y Nerea", hint: "Lola: 🚲 no · Nerea: 🚲 no → raus.", pista: "Schau auf der Pinnwand in die Zeile 🚲." },
+        { t: "choice", q: `<div class="clue">🕵️ Pista B: „El ladrón <b>no tiene</b> gato.“</div>`, task: "¿Quién tiene gato?", taskDe: "Wer hat eine Katze? (Raus!)", keep: true, opts: ["Irene", "Marcos", "Hugo"], a: "Irene", hint: "Irene: 🐱 gato → raus. (Lola ist schon raus.)", pista: "Von den übrigen vier: Wer hat 🐱?" },
+        { t: "choice", q: `<div class="clue">🕵️ Pista C: „El ladrón <b>tiene</b> un perro.“</div>`, task: "¿Quién NO tiene perro?", taskDe: "Wer hat keinen Hund? (Raus!)", keep: true, opts: ["Hugo", "Marcos", "Dani"], a: "Hugo", hint: "Hugo: – no (keine Mascota) → raus.", pista: "Übrig sind Marcos, Hugo, Dani. Wer hat keinen 🐶?" },
+        { t: "choice", q: `<div class="clue">🕵️ Pista D: „El ladrón <b>no tiene</b> hermanos.“</div>`, task: "¿Quién tiene el móvil de Sara?", taskDe: "Wer hat das Handy?", keep: true, opts: ["Dani", "Marcos"], a: "Dani", hint: "Marcos tiene 2 hermanos. Dani: 0 hermanos → ¡Dani!", pista: "Marcos oder Dani – wer hat 0 hermanos?" }
+      ] },
+    { label: "Final", title: "La confesión", go: "🚨 ¡Habla, Dani!", memo: QW,
+      intro: `<div class="who"><div class="face">👦🏽</div><div><b class="n">Dani</b>Vale, vale… ¡sí, yo tengo el móvil! 😳 Pero tengo una razón…</div></div><p class="de">Dani gesteht! Aber warum? Stell die letzten Fragen.</p>`,
+      tasks: [
+        { t: "order", who: D, task: "Pregunta:", taskDe: "Warum hast du das Handy?", words: ["¿Por", "qué", "tienes", "el", "móvil?"], a: "¿Por qué tienes el móvil?" },
+        { t: "choice", who: who("Dani"), q: "Porque ___ una sorpresa para Sara: ¡un vídeo con todos sus amigos! 🎬", qDe: "la sorpresa = die Überraschung", opts: ["tengo", "tienen", "tiene"], a: "tengo", hint: "yo → tengo." },
+        { t: "order", who: S_, task: "Sara:", taskDe: "Ich bin nicht böse!", words: ["¡No", "estoy", "enfadada!"], a: "¡No estoy enfadada!", qDe: "enfadado/a = böse, sauer" }
+      ] }
+];
+start7 = STAGES.slice(0, 6).reduce((n, s) => n + s.tasks.length, 0);
+JUEGO.start({
+  id: "tener-no", key: "efspa0-robo-movil", icon: "🕵️", topic: "tener · no · ¿qué?", title: "El robo del móvil",
+  intro: `<p>🎂 Fiesta de cumpleaños de <b>Sara</b>. Música, helado, amigos… y de repente: ¡su <b>móvil</b> nuevo no está! 📱❌</p>
+    <p>Hay <b>6 sospechosos</b>. Tú eres el/la detective. Con <b>tener</b>, <b>no</b> y buenas <b>preguntas</b> encuentras al ladrón (Dieb). 🕵️</p>
+    <p class="de">Auf Saras Geburtstagsparty verschwindet ihr Handy. Du ermittelst: Formen von <b>tener</b>, Verneinung mit <b>no</b>, <b>Fragewörter</b> – und am Ende löst du den Fall mit der Pinnwand.</p>`,
+  goLabel: "🔍 ¡Al caso!", time: "ca. 20 minutos",
+  rulesLabel: "Reglas",
+  rules: `<h2>tener · no · Fragewörter</h2>
+    <table class="t"><tr><td>yo</td><td><b>tengo</b></td><td>nosotros/as</td><td><b>tenemos</b></td></tr><tr><td>tú</td><td><b>tienes</b></td><td>vosotros/as</td><td><b>tenéis</b></td></tr><tr><td>él / ella</td><td><b>tiene</b></td><td>ellos / ellas</td><td><b>tienen</b></td></tr></table>
+    <div class="rule">Alter mit tener: <span class="ex">Tengo quince años.</span></div>
+    <div class="rule"><b>no</b> steht direkt vor dem Verb: <span class="ex">No tengo el móvil.</span></div>
+    <div class="rule">¿Quién? wer · ¿Qué? was · ¿Dónde? wo · ¿De dónde? woher · ¿Cómo? wie · ¿Cuántos/as? wie viele · ¿Por qué? warum · ¿Cuál? welche/r – immer mit Akzent und ¿ … ?</div>`,
+  stages: STAGES,
+  scene: (S) => {
+    const k = S.done ? 4 : Math.max(0, S.solved - start7), out = { Lola: 1, Nerea: 1, Irene: 2, Hugo: 3, Marcos: 4 };
+    const rot = [-3, 2, -1, 3, -2, 1];
+    return `<div class="board"><div class="sus">${SUS.map((s, i) => `<div class="card ${out[s[0]] && k >= out[s[0]] ? "x" : ""} ${k >= 4 && s[0] === "Dani" ? "win" : ""}" style="--r:${rot[i]}deg"><div class="f">${s[1]}</div>${s[0]}<div class="i">${s.slice(2).join("<br>")}</div></div>`).join("")}</div>
+      <div class="note"><span>📱 ${k >= 4 ? "¡Caso resuelto! 🎉" : "Caso: el móvil de Sara"}</span><span>Pistas: <b>${Math.min(S.stage + (S.done ? 1 : 0), 8)}</b> / 8</span><span class="me">${E8.myAvatar()}</span></div></div>`;
+  },
+  outro: `<div style="font-size:60px">🕵️📱🎂</div><h1>¡Caso resuelto!</h1>
+    <div class="who" style="text-align:left"><div class="face">👧🏻</div><div><b class="n">Sara</b>¡Un vídeo sorpresa! ¡Qué bonito! 😍 Y tú eres el/la mejor detective del mundo. ¡Gracias!</div></div>`
+});
+</script>
+</body>
+</html>

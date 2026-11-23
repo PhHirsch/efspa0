@@ -1,5 +1,34 @@
 /* Cover-Grafiken für Spiele auf der Startseite (id: SVG). Ohne Eintrag wird das Emoji aus GRAMMAR.icon gezeigt. */
 window.COVERS = {
+  "tener-no": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+    <rect x="18" y="10" width="184" height="120" rx="8" fill="#7a5634"/>
+    <g fill="#fffbe9"><rect x="30" y="20" width="36" height="44" rx="2" transform="rotate(-4 48 42)"/><rect x="92" y="18" width="36" height="44" rx="2" transform="rotate(3 110 40)"/><rect x="154" y="20" width="36" height="44" rx="2" transform="rotate(-2 172 42)"/><rect x="40" y="76" width="36" height="44" rx="2" transform="rotate(2 58 98)"/><rect x="144" y="76" width="36" height="44" rx="2" transform="rotate(-3 162 98)"/></g>
+    <g fill="#c99a6a"><circle cx="48" cy="38" r="9"/><circle cx="110" cy="36" r="9"/><circle cx="172" cy="38" r="9"/><circle cx="58" cy="94" r="9"/><circle cx="162" cy="94" r="9"/></g>
+    <g stroke="#d22" stroke-width="1.5" fill="none"><path d="M48 42 L110 40 L172 42 M110 40 L110 84 M58 98 L110 84 L162 98"/></g>
+    <g fill="#d33"><circle cx="48" cy="20" r="3"/><circle cx="110" cy="18" r="3"/><circle cx="172" cy="20" r="3"/><circle cx="58" cy="76" r="3"/><circle cx="162" cy="76" r="3"/></g>
+    <rect x="96" y="72" width="28" height="46" rx="5" fill="#222"/><rect x="99" y="77" width="22" height="34" rx="2" fill="#3a8ad8"/><text x="110" y="100" font-family="system-ui" font-size="18" font-weight="900" fill="#fff" text-anchor="middle">?</text>
+    <g transform="translate(130 98) rotate(-30)"><circle r="14" fill="none" stroke="#e8c34a" stroke-width="5"/><circle r="11" fill="#fff" opacity=".25"/><rect x="12" y="-3" width="26" height="7" rx="3" fill="#5a3a1a"/></g>
+  </svg>`,
+  "conectores": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+    <rect width="220" height="140" rx="10" fill="#8fd8ff"/><rect y="78" width="220" height="62" fill="#1f95b8"/>
+    <circle cx="36" cy="30" r="14" fill="#ffe25a"/>
+    <ellipse cx="110" cy="96" rx="70" ry="20" fill="#f3d58a"/>
+    <path d="M90 92 C92 70 96 56 98 42" stroke="#7a5230" stroke-width="5" fill="none"/>
+    <g fill="#2aa04a"><path d="M98 42 C80 36 70 44 64 52 C76 44 88 44 98 42Z"/><path d="M98 42 C112 32 126 36 132 46 C120 38 108 40 98 42Z"/><path d="M98 42 C92 26 80 22 72 26 C84 28 92 34 98 42Z"/><path d="M98 42 C108 26 120 24 128 28 C116 30 106 34 98 42Z"/></g>
+    <text x="128" y="104" font-family="system-ui" font-size="15" font-weight="900" fill="#9a7a3a" letter-spacing="3">SOS</text>
+    <g transform="translate(160 26)"><ellipse cx="0" cy="8" rx="20" ry="9" fill="#e0492a"/><rect x="-26" y="-2" width="52" height="3" fill="#333"/><rect x="14" y="6" width="22" height="3" fill="#e0492a"/><circle cx="-8" cy="7" r="5" fill="#bde6ff"/><path d="M-10 17 L-14 22 M10 17 L14 22 M-18 22 L18 22" stroke="#333" stroke-width="2"/></g>
+    <g transform="translate(26 60)"><rect width="38" height="22" rx="8" fill="#dcf8c6"/><path d="M8 22 L4 30 L16 22Z" fill="#dcf8c6"/><text x="19" y="15" font-family="system-ui" font-size="9" font-weight="800" fill="#14321a" text-anchor="middle">pero</text></g>
+  </svg>`,
+  "pronombres": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+    <rect width="220" height="140" rx="10" fill="#000"/><rect x="10" y="10" width="200" height="102" rx="4" fill="#5a2a3a"/><rect x="10" y="80" width="200" height="32" fill="#2a1a14"/>
+    <circle cx="180" cy="30" r="12" fill="#f3eac0"/>
+    <g fill="#0c0608"><rect x="14" y="56" width="18" height="24"/><rect x="36" y="44" width="12" height="36"/><rect x="52" y="60" width="22" height="20"/><rect x="120" y="50" width="16" height="30"/><rect x="140" y="62" width="24" height="18"/><rect x="170" y="54" width="14" height="26"/></g>
+    <g transform="translate(150 70)"><circle cx="0" cy="0" r="11" fill="#8ab04a"/><rect x="-9" y="10" width="18" height="24" rx="4" fill="#4a5a7a"/><path d="M-9 14 L-26 12 M9 14 L-6 10" stroke="#8ab04a" stroke-width="5" stroke-linecap="round"/><circle cx="-4" cy="-2" r="2.5" fill="#fff"/><circle cx="4" cy="-1" r="2" fill="#fff"/><path d="M-5 5 L5 6" stroke="#300" stroke-width="2"/></g>
+    <g transform="translate(70 74)"><circle cx="0" cy="0" r="9" fill="#f2c9a0"/><path d="M-9 -2 C-8 -12 8 -12 9 -2" fill="#6a3a1a"/><rect x="-8" y="8" width="16" height="22" rx="4" fill="#d24a4a"/></g>
+    <rect x="70" y="100" width="80" height="12" rx="2" fill="#000" opacity=".7"/><text x="110" y="109" font-family="system-ui" font-size="8.5" font-weight="700" fill="#ffe25a" text-anchor="middle">¡Somos rápidos!</text>
+    <g transform="translate(14 116)"><rect width="40" height="18" fill="#fff"/><path d="M0 0 L40 0 L40 -7 L0 -4Z" fill="#222"/><g fill="#fff"><path d="M6 -4.5 L12 -5 L10 0Z"/><path d="M18 -5.5 L24 -6 L22 0Z"/><path d="M30 -6.5 L36 -7 L34 0Z"/></g><text x="20" y="13" font-family="monospace" font-size="9" font-weight="800" fill="#111" text-anchor="middle">ESP</text></g>
+    <g transform="translate(176 118)"><rect x="-6" y="-8" width="12" height="18" rx="6" fill="#ccc"/><path d="M-10 2 C-10 12 10 12 10 2" stroke="#ccc" stroke-width="2" fill="none"/></g>
+  </svg>`,
   "posesivos": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
     <rect x="58" y="8" width="104" height="128" rx="14" fill="#111"/><rect x="64" y="20" width="92" height="104" rx="4" fill="#fff4e0"/>
     <rect x="64" y="20" width="92" height="14" fill="#181818"/><rect x="69" y="23" width="14" height="9" rx="2" fill="#ff0000"/><path d="M74 25 L79 27.5 L74 30Z" fill="#fff"/>
