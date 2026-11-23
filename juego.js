@@ -75,7 +75,8 @@
   const norm = s => String(s).toLowerCase().replace(/[’‘`´]/g, "'").replace(/[¿¡.!?,;:]+/g, " ").replace(/\s+/g, " ").trim();
   const noAcc = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").normalize("NFC");
   const asList = a => Array.isArray(a) ? a : [a];
-  const solText = t => t.show || (t.q ? (t.q.indexOf("___") >= 0 ? t.q.replace(/___/g, "<b>" + asList(t.a)[0] + "</b>") : t.q + " → <b>" + asList(t.a)[0] + "</b>") : asList(t.a)[0]);
+  const cap = (q, w) => /^\s*¿?___/.test(q) ? w.charAt(0).toUpperCase() + w.slice(1) : w;
+  const solText = t => t.show || (t.q ? (t.q.indexOf("___") >= 0 ? t.q.replace(/___/g, "<b>" + cap(t.q, asList(t.a)[0]) + "</b>") : t.q + " → <b>" + asList(t.a)[0] + "</b>") : asList(t.a)[0]);
 
   let G = null, S = null, LOCK = false;
   const ALL = () => G.stages.flatMap((st, si) => st.tasks.map((t, ti) => si + "-" + ti));

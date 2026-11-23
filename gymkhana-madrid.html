@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Gymkhana por Madrid · The Hirsch Games</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#4a1c1c 0%,#1a0b0b 65%);--panel:#2e1414;--txt:#fff3ee;--muted:#d8aaa0;--line:#5e2c28;--btn:#3e1a18;--accent:#ffcf3a;--accentTxt:#2a1a00;--accent2:#ffe39a;--bubble:#3e1c1a;--input:#1e0a0a;--ok:#6fe59a;--bad:#ff8a8a}
+  .mapwrap{background:#efe4cc}
+  .mapwrap svg{display:block;width:100%;max-height:330px}
+  .stamps{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 12px;font-size:14px;color:var(--muted);flex-wrap:wrap}
+  .stamps .row2{display:flex;gap:3px;flex-wrap:wrap}
+  .stamps i{width:16px;height:16px;border-radius:50%;border:2px solid #7a3a30;display:block;font-style:normal;font-size:10px;line-height:12px;text-align:center}
+  .stamps i.d{background:#ffcf3a;border-color:#ffcf3a;color:#5a1a00}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=11"></script>
+<script src="juego.js?v=3"></script>
+<script>
+const P = {face:"👦🏻", name:"Pablo"}, Y = {av:true, name:"Tú"}, K = (f, n) => ({face: f, name: n});
+/* Stadtplan: Hauptstraße von unten (SALIDA) nach oben; 3 Querstraßen; Orte fest verteilt */
+const PL = [
+  ["💊", "la farmacia", 40, 232], ["🎬", "el cine", 360, 232],
+  ["🎭", "el teatro", 40, 162], ["📚", "la biblioteca", 360, 162],
+  ["🌳", "el parque", 40, 92], ["🏛️", "el museo", 360, 92],
+  ["⛲", "la plaza", 200, 26],
+  ["🥖", "la panadería", 140, 268], ["🍽️", "el restaurante", 260, 188], ["🚇", "el metro", 140, 118], ["☕", "la chocolatería", 260, 48]
+];
+function MAP() {
+  let s = `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg" font-family="Arial">`;
+  s += `<rect x="186" y="40" width="28" height="270" fill="#8a8f98"/><rect x="170" y="10" width="60" height="34" rx="6" fill="#c9b994"/>`;
+  [232, 162, 92].forEach((y, i) => { s += `<rect x="70" y="${y - 12}" width="260" height="24" fill="#8a8f98"/><text x="${120}" y="${y + 4}" font-size="9" fill="#fff" font-weight="700">${["1.ª calle", "2.ª calle", "3.ª calle"][i]}</text><text x="${250}" y="${y + 4}" font-size="9" fill="#fff" font-weight="700">${["1.ª calle", "2.ª calle", "3.ª calle"][i]}</text>`; });
+  s += `<path d="M200 300 L200 48" stroke="#fff" stroke-width="2" stroke-dasharray="8 8"/>`;
+  PL.forEach(([e, n, x, y]) => { s += `<g transform="translate(${x} ${y})"><circle r="17" fill="#fff" stroke="#7a3a30" stroke-width="2"/><text y="7" font-size="19" text-anchor="middle">${e}</text><text y="29" font-size="9.5" font-weight="700" fill="#3a1a14" text-anchor="middle">${n}</text></g>`; });
+  s += `<g transform="translate(200 300)"><rect x="-26" y="-6" width="52" height="16" rx="4" fill="#d8262e"/><text y="6" font-size="9" font-weight="800" fill="#fff" text-anchor="middle">SALIDA</text></g>`;
+  s += `<foreignObject x="183" y="246" width="34" height="34"><div xmlns="http://www.w3.org/1999/xhtml" style="width:34px;height:34px;border-radius:50%;overflow:hidden;border:2px solid #ffcf3a;background:#fff">${E8.myAvatar()}</div></foreignObject>`;
+  s += `<text x="392" y="314" font-size="9" fill="#7a5a50" text-anchor="end">↑ todo recto</text></svg>`;
+  return s;
+}
+const dir = (q, a, opts, hint) => ({ t: "choice", who: P, say: q, q: "¿Dónde estás? – Wo bist du?", opts, a, hint });
+const how = (goal, a, opts, hint) => ({ t: "choice", who: Y, q: `Quieres ir ${goal}. ¿Qué dice Pablo?`, opts, a, hint });
+JUEGO.start({
+  id: "ir-camino", key: "efspa0-gymkhana", icon: "🧭", topic: "ir · a + el = al · el camino", title: "Gymkhana por Madrid",
+  intro: `<p>¡Hoy hay una <b>gymkhana</b> (Schnitzeljagd) por el centro histórico de Madrid! 🧭 Tu amigo <b>Pablo</b> te manda mensajes con el camino. Tú sales de la <b>SALIDA</b> y vas siempre todo recto por la calle principal.</p>
+    <p>Cada respuesta correcta = un sello (Stempel). Con todos los sellos te espera un premio: ¡chocolate con churros! ☕🍩</p>
+    <p class="de">Folge Pablos Wegbeschreibungen auf dem Stadtplan. Du startest unten bei SALIDA und schaust nach oben. „A la derecha“ = rechts, „a la izquierda“ = links. Falsche Aufgaben kommen später nochmal.</p>`,
+  goLabel: "🧭 ¡Empezamos!", time: "ca. 20 minutos",
+  rulesLabel: "Ayuda",
+  rules: `<h2>ir · a + el = al</h2>
+    <table class="t"><tr><td>yo</td><td><b>voy</b></td></tr><tr><td>tú</td><td><b>vas</b></td></tr><tr><td>él / ella</td><td><b>va</b></td></tr><tr><td>nosotros/-as</td><td><b>vamos</b></td></tr><tr><td>vosotros/-as</td><td><b>vais</b></td></tr><tr><td>ellos / ellas</td><td><b>van</b></td></tr></table>
+    <div class="rule"><b>a + el = al</b> · aber: a la, a los, a las<br><span class="ex">Voy al cine. · Vamos a la plaza.</span></div>
+    <h2>El camino</h2>
+    <table class="t"><tr><td>todo recto</td><td>geradeaus</td></tr><tr><td>a la derecha / a la izquierda</td><td>rechts / links</td></tr><tr><td>tomar la primera calle</td><td>die erste Straße nehmen</td></tr><tr><td>girar</td><td>abbiegen</td></tr><tr><td>cruzar la calle</td><td>die Straße überqueren</td></tr><tr><td>al final de la calle</td><td>am Ende der Straße</td></tr></table>
+    <h2>ser · estar · hay</h2>
+    <div class="rule"><b>ser</b>: wer/was/wie (Eigenschaft) – <span class="ex">El Prado es un museo famoso.</span><br><b>estar</b>: wo etwas Bestimmtes ist – <span class="ex">El Prado está en el centro.</span><br><b>hay</b>: es gibt (unbestimmt) – <span class="ex">En Madrid hay muchos museos.</span></div>`,
+  stages: [
+    { label: "Prueba 1", title: "¿Adónde vas?", go: "¡Vamos!",
+      intro: `<div class="who"><div class="face">👦🏻</div><div><b class="n">Pablo</b>¡Hola! Yo <u>voy</u> a la plaza. ¿Adónde <u>vas</u> tú? Mis amigos <u>van</u> al museo y nosotros <u>vamos</u> juntos al cine. 🎬</div></div>
+        <table class="t"><tr><td>yo voy</td><td>tú vas</td><td>él / ella va</td></tr><tr><td>nosotros vamos</td><td>vosotros vais</td><td>ellos / ellas van</td></tr></table>
+        <p class="de">Das Verb <b>ir</b> (gehen, fahren) ist unregelmäßig. Schau dir die Formen gut an!</p>`,
+      tasks: [
+        { t: "choice", who: Y, q: "Yo ___ al cine.", opts: ["voy", "vas", "va", "vamos"], a: "voy", hint: "yo → voy." },
+        { t: "choice", who: P, q: "¿Adónde ___ tú?", opts: ["vas", "va", "voy", "van"], a: "vas", hint: "tú → vas." },
+        { t: "choice", who: P, q: "Nosotros ___ a la plaza.", opts: ["vamos", "van", "vais", "va"], a: "vamos", hint: "nosotros → vamos." },
+        { t: "choice", who: P, q: "Mis amigos ___ al museo.", opts: ["van", "vamos", "va", "vais"], a: "van", hint: "mis amigos = ellos → van." },
+        { t: "type", who: Y, task: "ir", q: "¿___ vosotros al teatro?", a: "vais", tips: { "váis": "vais hat keinen Akzent.", van: "vosotros → vais." } },
+        { t: "type", who: P, task: "ir", q: "Carmen ___ a la biblioteca.", a: "va", tips: { vas: "Carmen = ella → va." } }
+      ] },
+    { label: "Prueba 2", title: "a + el = al", shuffle: true,
+      intro: `<p>Pablo escribe muy rápido y se olvida de palabras. Escribe <b>al</b> o <b>a la</b>.</p><p class="de">a + el = <b>al</b> · a + la = <b>a la</b> (bleibt getrennt).</p>`,
+      tasks: [
+        { t: "type", who: P, q: "Voy ___ museo.", a: "al", tips: { "a el": "a + el wird zusammengezogen: al.", "a la": "el museo ist männlich → al." } },
+        { t: "type", who: P, q: "Vamos ___ biblioteca.", a: "a la", tips: { al: "la biblioteca ist weiblich → a la.", ala: "Getrennt schreiben: a la." } },
+        { t: "type", who: P, q: "¿Vas ___ cine?", a: "al", tips: { "a el": "a + el = al." } },
+        { t: "type", who: P, q: "Mis padres van ___ parque.", a: "al", tips: { "a el": "a + el = al.", "a la": "el parque ist männlich → al." } },
+        { t: "type", who: P, q: "Después vamos ___ plaza.", a: "a la", tips: { al: "la plaza ist weiblich → a la." } }
+      ] },
+    { label: "Prueba 3", title: "Los mensajes de Pablo", shuffle: true,
+      intro: `<p>¡Ahora mira bien el plano (Stadtplan)! Tú estás en la <b>SALIDA</b> y miras hacia arriba. Pablo te explica el camino. ¿Dónde estás al final?</p><p class="de">Du startest unten bei SALIDA. Die erste Querstraße ist die unterste.</p>`,
+      tasks: [
+        dir("Vas todo recto y tomas la primera calle a la derecha. Al final de la calle está…", "el cine", ["el cine", "la farmacia", "la biblioteca"], "1.ª calle, a la derecha → el cine."),
+        dir("Vas todo recto y giras en la segunda calle a la izquierda. Al final de la calle está…", "el teatro", ["el teatro", "la biblioteca", "el parque"], "2.ª calle, a la izquierda → el teatro."),
+        dir("Vas todo recto hasta el final de la calle. Allí está…", "la plaza", ["la plaza", "el museo", "la chocolatería"], "Todo recto hasta el final → la plaza."),
+        dir("Vas todo recto. A la izquierda, antes de la primera calle, está…", "la panadería", ["la panadería", "la farmacia", "el restaurante"], "Vor der 1. Straße links → la panadería."),
+        dir("Tomas la tercera calle a la derecha. Al final de la calle está…", "el museo", ["el museo", "el parque", "el cine"], "3.ª calle, a la derecha → el museo."),
+        dir("Vas todo recto y cruzas la primera y la segunda calle. A la izquierda está…", "el metro", ["el metro", "el teatro", "el restaurante"], "Nach der 2. Straße links → el metro."),
+        dir("Tomas la primera calle a la izquierda. Al final de la calle está…", "la farmacia", ["la farmacia", "el cine", "la panadería"], "1.ª calle, a la izquierda → la farmacia."),
+        dir("Vas todo recto y cruzas la primera calle. A la derecha está…", "el restaurante", ["el restaurante", "el cine", "la biblioteca"], "Nach der 1. Straße rechts → el restaurante."),
+        dir("Giras en la tercera calle a la izquierda. Al final de la calle está…", "el parque", ["el parque", "el museo", "el teatro"], "3.ª calle, a la izquierda → el parque."),
+        dir("Tomas la segunda calle a la derecha. Al final de la calle está…", "la biblioteca", ["la biblioteca", "el teatro", "el museo"], "2.ª calle, a la derecha → la biblioteca.")
+      ] },
+    { label: "Prueba 4", title: "Ahora explicas tú", shuffle: true,
+      intro: `<p>Ahora tú ayudas a otros chicos de la gymkhana. ¿Cómo se va…? Mira el plano.</p><p class="de">Jetzt beschreibst du den Weg. Schau auf den Stadtplan.</p>`,
+      tasks: [
+        how("al cine", "Tomas la primera calle a la derecha.", ["Tomas la primera calle a la derecha.", "Tomas la primera calle a la izquierda.", "Tomas la segunda calle a la derecha."], "Das Kino ist am Ende der 1. Straße rechts."),
+        how("a la biblioteca", "Tomas la segunda calle a la derecha.", ["Tomas la segunda calle a la derecha.", "Tomas la segunda calle a la izquierda.", "Vas todo recto hasta el final."], "Die Bibliothek ist am Ende der 2. Straße rechts."),
+        how("a la chocolatería", "Vas todo recto, cruzas la tercera calle y está a la derecha.", ["Vas todo recto, cruzas la tercera calle y está a la derecha.", "Tomas la tercera calle a la izquierda.", "Está a la izquierda, antes de la primera calle."], "Die Chocolatería ist nach der 3. Straße rechts."),
+        how("al parque", "Tomas la tercera calle a la izquierda.", ["Tomas la tercera calle a la izquierda.", "Tomas la tercera calle a la derecha.", "Tomas la primera calle a la izquierda."], "Der Park ist am Ende der 3. Straße links."),
+        { t: "order", task: "Escribe:", taskDe: "Du gehst geradeaus und nimmst die zweite Straße links.", words: ["Vas", "todo", "recto", "y", "tomas", "la", "segunda", "calle", "a", "la", "izquierda."], a: "Vas todo recto y tomas la segunda calle a la izquierda." },
+        { t: "order", task: "Pregunta:", taskDe: "Entschuldigung, wie komme ich zum Museum?", words: ["Perdón,", "¿cómo", "voy", "al", "museo?"], a: "Perdón, ¿cómo voy al museo?" },
+        { t: "order", task: "Escribe:", taskDe: "Am Ende der Straße ist die Apotheke.", words: ["Al", "final", "de", "la", "calle", "está", "la", "farmacia."], a: "Al final de la calle está la farmacia." }
+      ] },
+    { label: "Prueba 5", title: "¿ser, estar o hay?", shuffle: true,
+      intro: `<p>En la guía de Madrid hay huecos (Lücken). ¿<b>ser</b>, <b>estar</b> o <b>hay</b>?</p><p class="de">ser = wer/was/wie · estar = wo (Bestimmtes) · hay = es gibt (Unbestimmtes)</p>`,
+      tasks: [
+        { t: "choice", who: K("📖", "La guía"), q: "En el centro de Madrid ___ muchos museos.", opts: ["hay", "están", "son"], a: "hay", hint: "muchos museos → unbestimmt → hay." },
+        { t: "choice", who: K("📖", "La guía"), q: "El Prado ___ un museo muy famoso.", opts: ["es", "está", "hay"], a: "es", hint: "Was ist der Prado? → ser: es." },
+        { t: "choice", who: K("📖", "La guía"), q: "El Prado ___ en el centro.", opts: ["está", "es", "hay"], a: "está", hint: "Wo? + bestimmt (el Prado) → estar: está." },
+        { t: "choice", who: K("📖", "La guía"), q: "Madrid ___ una ciudad muy bonita.", opts: ["es", "está", "hay"], a: "es", hint: "Wie ist Madrid? (Eigenschaft) → ser: es." },
+        { t: "choice", who: P, q: "Hoy nosotros ___ en Madrid. 😎", opts: ["estamos", "somos", "hay"], a: "estamos", hint: "Wo sind wir? → estar: estamos." },
+        { t: "choice", who: Y, q: "Perdón, ¿dónde ___ la parada de metro?", opts: ["está", "es", "hay"], a: "está", hint: "Wo? + la parada → está." },
+        { t: "choice", who: Y, q: "¿___ una farmacia por aquí?", opts: ["Hay", "Está", "Es"], a: "Hay", hint: "una farmacia → unbestimmt → hay." }
+      ] },
+    { label: "Prueba 6", title: "Errores en la guía", shuffle: true,
+      intro: `<p>¡Uy! La guía de Pablo tiene errores. Toca la palabra falsa y corrígela.</p><p class="de">Finde das falsche Wort und verbessere es.</p>`,
+      tasks: [
+        { t: "error", who: K("📖", "La guía"), words: ["Voy", "a el", "teatro."], bad: 1, fix: "al", opts: ["al", "a la", "del"], hint: "a + el = al." },
+        { t: "error", who: K("📖", "La guía"), words: ["Nosotros", "vais", "al", "parque."], bad: 1, fix: "vamos", opts: ["vamos", "van", "va"], hint: "nosotros → vamos." },
+        { t: "error", who: K("📖", "La guía"), words: ["El", "museo", "es", "en", "el", "centro."], bad: 2, fix: "está", opts: ["está", "hay", "son"], hint: "Wo? → estar: está." },
+        { t: "error", who: K("📖", "La guía"), words: ["En", "Madrid", "están", "muchos", "teatros."], bad: 2, fix: "hay", opts: ["hay", "son", "está"], hint: "muchos teatros → unbestimmt → hay." }
+      ] },
+    { label: "Final", title: "¡El premio!", go: "☕ ¡A por el premio!",
+      intro: `<div class="who"><div class="face">👦🏻</div><div><b class="n">Pablo</b>¡Tienes casi todos los sellos! Último mensaje: ¿Dónde está el premio? 🏆</div></div>`,
+      tasks: [
+        dir("Vas todo recto y cruzas la tercera calle. A la derecha está el premio: ¡chocolate con churros! ☕ Estás en…", "la chocolatería", ["la chocolatería", "el museo", "la plaza"], "Nach der 3. Straße rechts → la chocolatería.")
+      ] }
+  ],
+  scene: (S) => {
+    const n = S.done ? S.total : S.solved;
+    return `<div class="mapwrap">${MAP()}</div><div class="stamps"><span>🧭 Sellos: ${n} / ${S.total}</span><span class="row2">${Array.from({ length: Math.min(S.total, 40) }, (_, i) => `<i class="${i < n ? "d" : ""}">${i < n ? "✓" : ""}</i>`).join("")}</span></div>`;
+  },
+  outro: `<div style="font-size:60px">☕🍩🏆</div><h1>¡Gymkhana completada!</h1>
+    <div class="who" style="text-align:left"><div class="face">👦🏻</div><div><b class="n">Pablo</b>¡Enhorabuena! Ya conoces el centro de Madrid. Ahora vamos a tomar chocolate con churros. ¡Qué rico! 😋</div></div>`
+});
+</script>
+</body>
+</html>

@@ -1,5 +1,12 @@
 /* Cover-Grafiken für Spiele auf der Startseite (id: SVG). Ohne Eintrag wird das Emoji aus GRAMMAR.icon gezeigt. */
 window.COVERS = {
+  "ir-camino": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+    <rect x="22" y="12" width="176" height="116" rx="10" fill="#efe4cc"/>
+    <rect x="101" y="12" width="18" height="116" fill="#8a8f98"/><rect x="22" y="40" width="176" height="14" fill="#8a8f98"/><rect x="22" y="84" width="176" height="14" fill="#8a8f98"/>
+    <path d="M110 124 L110 92 L60 92" stroke="#ffcf3a" stroke-width="4" fill="none" stroke-dasharray="7 6" stroke-linecap="round"><animate attributeName="stroke-dashoffset" values="26;0" dur="1.2s" repeatCount="indefinite"/></path>
+    <g transform="translate(46 76)"><path d="M0 18 C-12 4 -12 -8 0 -10 C12 -8 12 4 0 18 Z" fill="#e23a3a" stroke="#7a1010" stroke-width="2"/><circle cy="-2" r="4.5" fill="#fff"/><animateTransform attributeName="transform" type="translate" values="46 76;46 70;46 76" dur="1s" repeatCount="indefinite"/></g>
+    <circle cx="164" cy="28" r="10" fill="#fff" stroke="#7a3a30" stroke-width="2"/><path d="M158 30 L170 30 L168 36 L160 36 Z" fill="#5a2a14"/><path d="M162 26 q2 -6 0 -9 M166 26 q2 -6 0 -9" stroke="#999" stroke-width="1.5" fill="none"/>
+    <g transform="translate(176 106)"><circle r="14" fill="#fff" stroke="#7a3a30" stroke-width="2"/><path d="M0 -10 L4 0 L0 10 L-4 0 Z" fill="#d8262e"/><path d="M-10 0 L0 -3 L10 0 L0 3 Z" fill="#555"/></g></svg>`,
   "adjetivos": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
     <rect x="18" y="14" width="184" height="112" rx="10" fill="#1d1d22"/><rect x="24" y="20" width="172" height="90" rx="6" fill="#d9cbb0"/>
     <rect x="30" y="26" width="76" height="78" fill="#8a8480"/><rect x="112" y="26" width="78" height="78" fill="#fff3dc"><animate attributeName="fill" values="#8a8480;#fff3dc;#fff3dc" keyTimes="0;.35;1" dur="4s" repeatCount="indefinite"/></rect>
