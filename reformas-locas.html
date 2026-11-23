@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>¡Reformas Locas! · The Hirsch Games</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#14413e 0%,#0a1c1b 65%);--panel:#12302e;--txt:#effcf9;--muted:#9fc9c2;--line:#2c5e59;--btn:#18403c;--accent:#ffb02e;--accentTxt:#2a1a00;--accent2:#ffd98a;--bubble:#1a4540;--input:#0b2221;--ok:#6fe59a;--bad:#ff7a7a}
+  .plan{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:10px;background:#d9cbb0}
+  .room{position:relative;aspect-ratio:1.7;border-radius:6px;background:#9a9490;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;border:3px solid #6a5a48}
+  .room .e{font-size:24px;line-height:1;filter:grayscale(1) brightness(.85)}
+  .room small{font-size:11px;font-weight:800;color:#2a2420;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+  .room.done{background:#fff3dc}.room.done .e{filter:none}
+  .room.now{border-color:#ffb02e;box-shadow:0 0 0 3px #ffb02e inset}
+  .room .bar{position:absolute;left:0;bottom:0;height:5px;background:#ffb02e}
+  .room .me{position:absolute;right:3px;top:3px;width:30px;height:30px;border-radius:50%;overflow:hidden;border:2px solid #ffb02e;background:#fff}
+  .room.done:after{content:"✨";position:absolute;left:4px;top:2px;font-size:13px}
+  .tv{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;font-size:14px;color:var(--muted)}
+  .tv b{color:#ff5a5a}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=11"></script>
+<script src="juego.js?v=2"></script>
+<script>
+const C = {face:"👷🏽‍♀️", name:"Carla, la arquitecta"}, Y = {av:true, name:"Tú"}, F = (f, n) => ({face: f, name: n});
+const ROOMS = [["🚪","🖼️","el pasillo"],["📦","🛋️","el salón"],["🗑️","🍳","la cocina"],["🧦","🛏️","el dormitorio"],["🪳","🛁","el baño"],["🥀","🌺","el balcón"],["🏚️","👋","los vecinos"],["💾","💻","el despacho"]];
+const M4 = ["masculino singular", "femenino singular", "masculino plural", "femenino plural"];
+const ch = (base, q, a, opts, hint, qDe) => ({ t: "choice", who: C, q, qDe, opts, a, hint, task: `(${base})` });
+const ty = (base, q, a, tips, qDe, who) => ({ t: "type", who: who || C, task: `(${base})`, q, a, tips, qDe });
+JUEGO.start({
+  id: "adjetivos", key: "efspa0-reformas-locas", icon: "🛠️", topic: "Los adjetivos", title: "¡Reformas Locas!", time: "ca. 45 minutos – ¡con pausas! (Pausen sind okay, dein Spielstand bleibt in diesem Tab.)",
+  intro: `<p>📺 ¡Bienvenido/a a <b>„¡Reformas Locas!“</b>, el programa de televisión más famoso de España!</p>
+    <p>La familia Martín tiene un piso en el barrio de <b>Chamberí</b> (Madrid). El piso es muy antiguo, oscuro y feo. 😱 Tú eres el/la presentador/a del programa. Con la arquitecta <b>Carla</b> reformas el piso, habitación por habitación.</p>
+    <p>Pero ojo: en este programa solo funcionan los <b>adjetivos correctos</b>. 😉</p>
+    <p class="de">Du moderierst eine Renovierungs-Show. Jede richtige Antwort renoviert ein Stück der Wohnung – aber nur mit richtig angeglichenen Adjektiven! 9 Kapitel, ca. 45 Minuten. Falsche Aufgaben kommen später nochmal.</p>`,
+  goLabel: "🎬 ¡Acción!",
+  rulesLabel: "Los adjetivos",
+  rules: `<h2>Los adjetivos</h2>
+    <div class="rule">Das Adjektiv richtet sich in <b>Geschlecht</b> und <b>Zahl</b> nach seinem Nomen und steht meist <b>nach</b> dem Nomen.<br><span class="ex">una cama blanca · dos sillas verdes</span></div>
+    <table class="t"><tr><th></th><th>Singular</th><th>Plural</th></tr>
+      <tr><td><b>-o</b> (4 Formen)</td><td>pequeño · pequeña</td><td>pequeños · pequeñas</td></tr>
+      <tr><td><b>-e</b> (2 Formen)</td><td>grande · grande</td><td>grandes · grandes</td></tr>
+      <tr><td><b>Konsonant</b> (2 Formen)</td><td>azul · azul</td><td>azules · azules</td></tr></table>
+    <div class="rule"><b>Plural:</b> Vokal → <b>+s</b> (grande → grandes) · Konsonant → <b>+es</b> (azul → azules, gris → grises)</div>
+    <div class="rule"><b>Vor</b> dem Nomen stehen Zahlen, <b>mucho/poco</b> und <b>un/una</b>: <span class="ex">dos sillas verdes · muchos muebles modernos</span></div>
+    <div class="rule">⭐ <b>Profi:</b> trabajador → trabaja<b>dora</b> · alemán → alem<b>ana</b> → alem<b>anes</b> (ohne Akzent im Plural!) · español → español<b>a</b></div>`,
+  stages: [
+    { label: "Capítulo 1", title: "El pasillo – ¡Investiga!", go: "🔍 ¡A investigar!",
+      intro: `<div class="who"><div class="face">👷🏽‍♀️</div><div><b class="n">Carla</b>¡Hola! Mira este pasillo: El pasillo es <u>oscuro</u>. La puerta es <u>antigua</u>. Los muebles son <u>feos</u> y las sillas son <u>raras</u>. ¡Qué desastre! 😅</div></div>
+        <p class="de">Wie im Regel-Detektive-Blatt: Ordne die Adjektive (mit Nomen) in die richtige Kiste und wiederhole die Regel.</p>`,
+      tasks: [
+        { t: "sort", task: "Ordena:", taskDe: "Sortiere in die Tabelle.", buckets: M4, items: [["el pasillo oscuro", 0], ["la puerta antigua", 1], ["los muebles feos", 2], ["las sillas raras", 3], ["el baño pequeño", 0], ["la cocina moderna", 1], ["los armarios antiguos", 2], ["las mesas bonitas", 3]], show: "el pasillo oscuro · la puerta antigua · los muebles feos · las sillas raras" },
+        { t: "choice", q: "Wie viele Formen haben Adjektive auf <b>-o</b> (pequeño)?", keep: true, opts: ["4", "2", "1"], a: "4", hint: "pequeño, pequeña, pequeños, pequeñas → 4 Formen." },
+        { t: "choice", q: "<b>grande</b>: el salón grande – la cocina …?", keep: true, opts: ["la cocina grande", "la cocina granda"], a: "la cocina grande", hint: "Adjektive auf -e sind männlich und weiblich gleich." },
+        { t: "choice", q: "Plural von <b>azul</b>?", keep: true, opts: ["azules", "azuls", "azulos"], a: "azules", hint: "Endet auf Konsonant → +es: azules." },
+        { t: "choice", q: "Wo steht das Adjektiv meistens?", keep: true, opts: ["nach dem Nomen (una cama blanca)", "vor dem Nomen (una blanca cama)"], a: "nach dem Nomen (una cama blanca)", hint: "una cama blanca – das Adjektiv steht meist nach dem Nomen." }
+      ] },
+    { label: "Capítulo 2", title: "El salón", shuffle: true,
+      intro: `<p>¡A reformar el salón! 🛋️ Carla describe los muebles. Elige la forma correcta.</p><p class="de">Wähle die richtige Form. Frag dich: Wie heißt das Nomen – männlich/weiblich, Singular/Plural?</p>`,
+      tasks: [
+        ch("bonito", "Ahora el salón es muy ___.", "bonito", ["bonito", "bonita", "bonitos", "bonitas"], "<i>el</i> salón (m, Sg.) → bonito."),
+        ch("antiguo", "La mesa es ___.", "antigua", ["antiguo", "antigua", "antiguos", "antiguas"], "<i>la</i> mesa (f, Sg.) → antigua."),
+        ch("feo", "Los muebles viejos son ___.", "feos", ["feo", "fea", "feos", "feas"], "<i>los</i> muebles (m, Pl.) → feos.", "viejo = alt"),
+        ch("moderno", "Las sillas nuevas son ___.", "modernas", ["moderno", "moderna", "modernos", "modernas"], "<i>las</i> sillas (f, Pl.) → modernas."),
+        ch("nuevo", "En el salón hay un sofá ___.", "nuevo", ["nuevo", "nueva", "nuevos", "nuevas"], "<i>un</i> sofá (m, Sg.) → nuevo.", "el sofá = das Sofa"),
+        ch("raro", "Hay una lámpara muy ___.", "rara", ["raro", "rara", "raros", "raras"], "<i>una</i> lámpara (f, Sg.) → rara.", "la lámpara = die Lampe"),
+        ch("pequeño", "Hay dos ventanas ___.", "pequeñas", ["pequeño", "pequeña", "pequeños", "pequeñas"], "<i>las</i> ventanas (f, Pl.) → pequeñas.", "la ventana = das Fenster"),
+        ch("moderno", "El ordenador es muy ___.", "moderno", ["moderno", "moderna", "modernos", "modernas"], "<i>el</i> ordenador (m, Sg.) → moderno."),
+        ch("famoso", "Los cuadros son ___.", "famosos", ["famoso", "famosa", "famosos", "famosas"], "<i>los</i> cuadros (m, Pl.) → famosos.", "el cuadro = das Bild"),
+        ch("feo", "¡La puerta del salón es muy ___! 🤢", "fea", ["feo", "fea", "feos", "feas"], "<i>la</i> puerta (f, Sg.) → fea.")
+      ] },
+    { label: "Capítulo 3", title: "La cocina", shuffle: true,
+      intro: `<p>¡La cocina! 🍳 Aquí hay adjetivos especiales: en <b>-e</b> (grande, interesante) y en <b>consonante</b> (azul, gris, normal). <b>Escribe</b> la forma correcta.</p><p class="de">Tippe die richtige Form. Tipp: Adjektive auf -e und Konsonant haben nur 2 Formen. Plural: Vokal +s, Konsonant +es.</p>`,
+      tasks: [
+        ty("grande", "La cocina nueva es ___.", "grande", { granda: "Adjektive auf -e haben keine weibliche Form auf -a: grande." }),
+        ty("azul", "Las paredes son ___.", "azules", { azuls: "Konsonant am Ende → +es: azules.", azul: "Las paredes = Plural → azules." }, "la pared = die Wand"),
+        ty("gris", "Los armarios son ___.", "grises", { griss: "Konsonant → +es: grises.", gris: "Los armarios = Plural → grises." }),
+        ty("verde", "Hay una mesa ___.", "verde", { verda: "verde endet auf -e → keine -a-Form: verde." }, "verde = grün"),
+        ty("verde", "Hay dos sillas ___.", "verdes", { verde: "dos sillas = Plural → verdes.", verdas: "verde → Plural verdes (keine -a-Form)." }),
+        ty("normal", "La cocina es muy ___.", "normal", { normala: "Konsonant am Ende → männlich und weiblich gleich: normal." }),
+        ty("grande", "Hay dos ventanas ___.", "grandes", { grande: "dos ventanas = Plural → grandes.", grandas: "grande → grandes (keine -a-Form)." }),
+        ty("azul", "El frigorífico es ___.", "azul", { azula: "azul hat keine -a-Form: azul.", azules: "el frigorífico = Singular → azul." }, "el frigorífico = der Kühlschrank"),
+        ty("blanco", "Los platos son ___.", "blancos", { blanco: "Los platos = Plural → blancos.", blancas: "el plato ist männlich → blancos." }, "el plato = der Teller · blanco = weiß"),
+        ty("interesante", "La lámpara de la cocina es ___.", "interesante", { interesanta: "Adjektive auf -e: keine -a-Form → interesante." })
+      ] },
+    { label: "Capítulo 4", title: "El dormitorio de Sara", shuffle: true,
+      intro: `<div class="who"><div class="face">👧🏻</div><div><b class="n">Sara Martín (14 años)</b>¡Hola! Este es mi dormitorio. Ahora es horrible… 😩 ¿Me ayudas a describir mi dormitorio nuevo?</div></div><p class="de">Achte auf die <b>Stellung</b>: Das Adjektiv steht nach dem Nomen. Zahlen, mucho/poco und un/una stehen davor.</p>`,
+      tasks: [
+        { t: "choice", who: F("👧🏻", "Sara"), q: "¿Qué es correcto?", keep: false, opts: ["una cama blanca", "una blanca cama", "blanca una cama"], a: "una cama blanca", hint: "Das Adjektiv steht nach dem Nomen: una cama blanca." },
+        { t: "choice", who: F("👧🏻", "Sara"), q: "¿Qué es correcto?", opts: ["dos sillas verdes", "dos verdes sillas", "verdes dos sillas"], a: "dos sillas verdes", hint: "Zahl vor dem Nomen, Adjektiv danach: dos sillas verdes." },
+        { t: "order", task: "Escribe:", taskDe: "Sara hat ein weißes Bett.", words: ["Sara", "tiene", "una", "cama", "blanca."], a: "Sara tiene una cama blanca." },
+        { t: "order", task: "Escribe:", taskDe: "Im Zimmer gibt es zwei grüne Stühle.", words: ["En", "la", "habitación", "hay", "dos", "sillas", "verdes."], a: ["En la habitación hay dos sillas verdes.", "Hay dos sillas verdes en la habitación."] },
+        { t: "order", task: "Escribe:", taskDe: "Mein Schlafzimmer ist sehr klein, aber schön.", words: ["Mi", "dormitorio", "es", "muy", "pequeño,", "pero", "bonito."], a: "Mi dormitorio es muy pequeño, pero bonito." },
+        { t: "order", task: "Escribe:", taskDe: "Die neuen Schränke sind groß.", words: ["Los", "armarios", "nuevos", "son", "grandes."], a: "Los armarios nuevos son grandes." },
+        { t: "order", task: "Escribe:", taskDe: "Es gibt viele moderne Möbel in der Wohnung.", words: ["Hay", "muchos", "muebles", "modernos", "en", "el", "piso."], a: ["Hay muchos muebles modernos en el piso.", "En el piso hay muchos muebles modernos."] },
+        { t: "order", task: "Escribe:", taskDe: "Saras Zimmer ist groß und ruhig.", words: ["La", "habitación", "de", "Sara", "es", "grande", "y", "tranquila."], a: "La habitación de Sara es grande y tranquila." }
+      ] },
+    { label: "Capítulo 5", title: "El baño", shuffle: true,
+      intro: `<p>¡Uy! El ayudante Paco tiene una lista para el baño 🛁 – ¡pero con errores! Toca el adjetivo falso y corrígelo.</p><p class="de">Paco hat Fehler gemacht. Tippe auf das falsche Adjektiv und verbessere es.</p>`,
+      tasks: [
+        { t: "error", who: F("👨🏽‍🔧", "Paco, el ayudante"), words: ["El", "baño", "es", "muy", "pequeña."], bad: 4, fix: "pequeño", opts: ["pequeño", "pequeños", "pequeñas"], hint: "el baño (m, Sg.) → pequeño." },
+        { t: "error", who: F("👨🏽‍🔧", "Paco, el ayudante"), words: ["Las", "toallas", "son", "azuls."], bad: 3, fix: "azules", opts: ["azules", "azul", "azulas"], hint: "azul → Plural mit +es: azules." },
+        { t: "error", who: F("👨🏽‍🔧", "Paco, el ayudante"), words: ["El", "espejo", "es", "grando."], bad: 3, fix: "grande", opts: ["grande", "grandes", "granda"], hint: "grande endet auf -e – es gibt kein „grando“." },
+        { t: "error", who: F("👨🏽‍🔧", "Paco, el ayudante"), words: ["Los", "grifos", "son", "antiguas."], bad: 3, fix: "antiguos", opts: ["antiguos", "antiguo", "antigua"], hint: "los grifos (m, Pl.) → antiguos." },
+        { t: "error", who: F("👨🏽‍🔧", "Paco, el ayudante"), words: ["Hay", "una", "ducha", "moderno."], bad: 3, fix: "moderna", opts: ["moderna", "modernos", "modernas"], hint: "una ducha (f, Sg.) → moderna." },
+        { t: "error", who: F("👨🏽‍🔧", "Paco, el ayudante"), words: ["La", "puerta", "es", "gris", "y", "los", "armarios", "son", "gris."], bad: 8, fix: "grises", opts: ["grises", "griss", "grisos"], hint: "los armarios = Plural → grises." },
+        { t: "error", who: F("👨🏽‍🔧", "Paco, el ayudante"), words: ["Las", "paredes", "son", "blancos."], bad: 3, fix: "blancas", opts: ["blancas", "blanca", "blanco"], hint: "las paredes (f, Pl.) → blancas." }
+      ].map(t => Object.assign(t, { task: "la toalla = Handtuch · el espejo = Spiegel · el grifo = Wasserhahn · la ducha = Dusche" })) },
+    { label: "Capítulo 6", title: "El balcón", shuffle: true,
+      intro: `<p>Ahora el balcón 🌺. Carla prueba tu vocabulario: ¿Conoces lo contrario (das Gegenteil)? ¿Qué adjetivo pega con la foto?</p><p class="de">Gegenteile und Bedeutungen der Adjektive.</p>`,
+      tasks: [
+        { t: "choice", who: C, q: "Lo contrario de <b>bonito</b> es …", opts: ["feo", "grande", "raro"], a: "feo", hint: "bonito (schön) ↔ feo (hässlich)." },
+        { t: "choice", who: C, q: "Lo contrario de <b>grande</b> es …", opts: ["pequeño", "antiguo", "loco"], a: "pequeño", hint: "grande (groß) ↔ pequeño (klein)." },
+        { t: "choice", who: C, q: "Lo contrario de <b>moderno</b> es …", opts: ["antiguo", "nuevo", "normal"], a: "antiguo", hint: "moderno ↔ antiguo (alt, altertümlich)." },
+        { t: "choice", who: C, q: "Lo contrario de <b>raro</b> es …", opts: ["normal", "gracioso", "famoso"], a: "normal", hint: "raro (seltsam) ↔ normal." },
+        { t: "choice", who: C, q: "🏰 El castillo es muy ___.", opts: ["antiguo", "moderno", "pequeño"], a: "antiguo", hint: "Eine alte Burg → antiguo." },
+        { t: "choice", who: C, q: "🐘🐘 Los elefantes son ___.", opts: ["grandes", "pequeños", "grande"], a: "grandes", hint: "Elefanten sind groß, Plural → grandes." },
+        { t: "choice", who: C, q: "🐭🐭 Las ratas del balcón son ___. 😱", opts: ["pequeñas", "pequeños", "grandes"], a: "pequeñas", hint: "la rata (f) → Plural pequeñas." },
+        { t: "choice", who: C, q: "🤡 El payaso es muy ___.", qDe: "el payaso = der Clown", opts: ["gracioso", "graciosa", "feo"], a: "gracioso", hint: "witzig = gracioso; el payaso (m) → gracioso." }
+      ] },
+    { label: "Capítulo 7", title: "Los vecinos", shuffle: true,
+      intro: `<p>¡Fiesta en la escalera! 🎉 Conoces a los vecinos del edificio. Escribe la forma correcta del adjetivo.</p><p class="de">Auch bei Personen richtet sich das Adjektiv nach Geschlecht und Zahl.</p>`,
+      tasks: [
+        ty("simpático", "La vecina del primero es muy ___.", "simpática", { "simpático": "la vecina (f) → simpática.", simpatica: "Akzent: simpática." }, "", F("👵🏼", "Doña Pilar (1.º)")),
+        ty("raro", "Los vecinos del segundo son un poco ___.", "raros", { raro: "los vecinos = Plural → raros.", raras: "los vecinos (m) → raros." }, "", F("🧛🏻", "Don Drácula (2.º)")),
+        ty("gracioso", "Mi hermana es muy ___.", "graciosa", { gracioso: "mi hermana (f) → graciosa." }, "", F("👦🏽", "Leo (3.º)")),
+        ty("loco", "El vecino del tercero es un poco ___.", "loco", { loca: "el vecino (m) → loco." }, "", F("👨🏻‍🔬", "El profesor Loco (3.º)")),
+        ty("simpático", "Las chicas del cuarto son ___.", "simpáticas", { "simpáticos": "las chicas (f, Pl.) → simpáticas.", "simpática": "las chicas = Plural → simpáticas." }, "", F("👯", "Ana y Lola (4.º)")),
+        ty("famoso", "El actor del quinto es ___.", "famoso", { famosa: "el actor (m) → famoso." }, "", F("🕴️", "Un señor misterioso (5.º)")),
+        ty("gracioso", "Mis amigas son muy ___.", "graciosas", { graciosos: "mis amigas (f, Pl.) → graciosas.", graciosa: "Plural → graciosas." }, "", F("👧🏽", "Marta (6.º)")),
+        ty("nuevo", "Somos los vecinos ___ del séptimo.", "nuevos", { nuevo: "los vecinos = Plural → nuevos.", nuevas: "los vecinos (m) → nuevos." }, "", F("👨‍👩‍👧", "La familia Martín (7.º)"))
+      ] },
+    { label: "Capítulo 8", title: "El despacho – Nivel Profi ⭐", shuffle: true,
+      intro: `<p>⭐ <b>Nivel Profi</b> – como la Profi-Frage de tu hoja (Arbeitsblatt). En el despacho trabajan personas de muchos países.</p>
+        <table class="t"><tr><td>un chico trabajador</td><td>una chica trabaja<b>dora</b></td></tr><tr><td>un chico alemán</td><td>una chica alem<b>ana</b> · los chicos alem<b>anes</b></td></tr><tr><td>un chico español</td><td>una chica español<b>a</b></td></tr></table>
+        <p class="de">Adjektive auf -or und Nationalitäten haben auch eine weibliche Form. Achtung: Im Plural fällt der Akzent weg (alemanes)!</p>`,
+      tasks: [
+        ty("trabajador", "Un chico trabajador – una chica ___.", "trabajadora", { trabajador: "Adjektive auf -or bekommen ein -a: trabajadora." }, "trabajador = fleißig"),
+        ty("alemán", "Un amigo alemán – una amiga ___.", "alemana", { "alemána": "In der weiblichen Form fällt der Akzent weg: alemana.", "alemán": "Nationalitäten haben eine weibliche Form: alemana." }),
+        ty("español", "Un chico español – una chica ___.", "española", { "español": "Nationalitäten: weiblich mit -a → española." }),
+        ty("alemán", "Los chicos del despacho son ___.", "alemanes", { "alemánes": "Im Plural fällt der Akzent weg: alemanes.", alemans: "Konsonant → +es: alemanes." }),
+        ty("trabajador", "Mis compañeras son muy ___.", "trabajadoras", { trabajadores: "mis compañeras (f, Pl.) → trabajadoras.", trabajadora: "Plural → trabajadoras." }, "la compañera = die Kollegin")
+      ] },
+    { label: "Final", title: "¡Antes y después!", go: "📺 ¡El gran final!",
+      intro: `<div class="who"><div class="face">👷🏽‍♀️</div><div><b class="n">Carla</b>¡Lo conseguimos! 🎉 La familia Martín vuelve a casa. Las cámaras están listas… ¡Describe el piso nuevo!</div></div>`,
+      tasks: [
+        { t: "order", task: "Escribe:", taskDe: "Jetzt ist die Wohnung modern und sehr schön.", words: ["Ahora", "el", "piso", "es", "moderno", "y", "muy", "bonito."], a: ["Ahora el piso es moderno y muy bonito.", "Ahora el piso es muy bonito y moderno."] },
+        { t: "order", task: "Escribe:", taskDe: "Die Küche ist groß und die Wände sind blau.", words: ["La", "cocina", "es", "grande", "y", "las", "paredes", "son", "azules."], a: "La cocina es grande y las paredes son azules." },
+        { t: "type", who: F("👧🏻", "Sara"), task: "(bonito)", q: "¡Mi habitación nueva es muy ___! 😍", a: "bonita", tips: { bonito: "mi habitación (f) → bonita." } },
+        { t: "type", who: F("👨‍👩‍👧", "La familia Martín"), task: "(contento)", q: "¡Estamos muy ___! ¡Gracias!", qDe: "contento = froh, zufrieden", a: "contentos", tips: { contento: "estamos (wir, Plural) → contentos.", contentas: "Die Familie (gemischt) → contentos." } }
+      ] }
+  ],
+  scene: (S) => {
+    const st = S.stage;
+    const cells = ROOMS.map((r, i) => {
+      const done = S.done || i < st, now = !S.done && i === Math.min(st, 7) && st < 8;
+      return `<div class="room ${done ? "done" : ""} ${now ? "now" : ""}"><span class="e">${done ? r[1] : r[0]}</span><small>${r[2]}</small>${now ? `<span class="me">${E8.myAvatar()}</span>` : ""}</div>`;
+    }).join("");
+    const pct = Math.round((S.done ? S.total : S.solved) / S.total * 100);
+    return `<div class="plan">${cells}</div><div class="tv"><span><b>● REC</b> ¡Reformas Locas! · Chamberí, Madrid</span><span>🛠️ Reforma: ${pct} %</span></div>`;
+  },
+  outro: `<div style="font-size:60px">🏠✨📺</div><h1>¡Reforma terminada!</h1>
+    <div class="who" style="text-align:left"><div class="face">👨‍👩‍👧</div><div><b class="n">La familia Martín</b>¡Increíble! Ahora el piso es moderno, grande y muy bonito – ¡y nada oscuro! ¡Muchas gracias! 🥰</div></div>
+    <p class="de">Tipp: Spiel die Fehler-Kiste und die Vokabel-Bosse von Unidad 3 – und bau mit deinen Sternen dein eigenes Haus unter MI CASA!</p>`
+});
+</script>
+</body>
+</html>

@@ -762,11 +762,72 @@
 {
 "id": "top-school",
 "slot": "top",
-"name": "Sudadera del insti",
+"name": "Sudadera KWG",
 "price": 150,
 "kind": "hoodie",
-"color": "#2a2b30",
-"text": "SEK HX"
+"color": "#1d3a6e",
+"text": "KWG"
+},
+{
+"id": "top-abi-shirt",
+"slot": "top",
+"name": "Camiseta Abi 2029",
+"price": 120,
+"kind": "abishirt",
+"color": "#1d1d22"
+},
+{
+"id": "top-abi-hoodie",
+"slot": "top",
+"name": "Sudadera Abi 2029",
+"price": 180,
+"kind": "abihoodie",
+"color": "#2a2b30"
+},
+{
+"id": "top-abi-gala",
+"slot": "top",
+"name": "Traje de gala (Abiball)",
+"price": 300,
+"kind": "gala",
+"color": "#1d1d22",
+"lvl": 3
+},
+{
+"id": "top-abi-dress",
+"slot": "top",
+"name": "Vestido de gala (Abiball)",
+"price": 300,
+"kind": "dress",
+"color": "#1c2a6b",
+"lvl": 3
+},
+{
+"id": "top-abi-dress-gold",
+"slot": "top",
+"name": "Vestido dorado de gala ✨",
+"price": 450,
+"kind": "dress",
+"color": "#d4a93a",
+"lvl": 5
+},
+{
+"id": "top-abi-toga",
+"slot": "top",
+"name": "Toga Abi 2029",
+"price": 350,
+"kind": "toga",
+"color": "#20243a",
+"lvl": 4
+},
+{
+"id": "hat-birrete",
+"slot": "hat",
+"name": "Birrete (Doktorhut)",
+"price": 250,
+"kind": "birrete",
+"color": "#20243a",
+"lvl": 4
 },
 {
 "id": "top-hero",

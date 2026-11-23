@@ -52,6 +52,12 @@
   .dots{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
   .dots i{width:11px;height:11px;border-radius:50%;background:var(--line);display:block}
   .dots i.d{background:var(--ok)}
+  .buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
+  .bucket{border:2px dashed var(--line);border-radius:12px;padding:8px;min-height:90px;background:var(--input);cursor:pointer;color:var(--txt);text-align:left;font:inherit}
+  .bucket b{display:block;font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:var(--accent2);margin-bottom:6px}
+  .bucket .chip{font-size:15px;padding:4px 8px;margin:2px;display:inline-block;cursor:default;border-color:var(--ok)}
+  .bucket.wrong{border-color:var(--bad);animation:shake .35s}
+  .chip.sel{border-color:var(--accent);background:var(--accent);color:var(--accentTxt)}
   .ov{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;z-index:20;overflow:auto;padding:16px}
   .ov.show{display:block}
   .ov .panel{max-width:720px;margin:20px auto}
@@ -135,7 +141,7 @@
     $("app").innerHTML = frame(`${scene()}<div class="panel"><div class="row" style="justify-content:space-between"><span class="tag">${st.label || "Parte " + (S.stage + 1)}</span><span class="small">${st.title}</span></div>${dots}
       <div id="task"></div><div class="fb" id="fb"></div><div class="row c" id="nextrow"></div></div>`, { mistakes: true });
     wire(); LOCK = false; JUEGO._t = t;
-    ({ choice: rChoice, type: rType, order: rOrder, error: rError })[t.t](t, id);
+    ({ choice: rChoice, type: rType, order: rOrder, error: rError, sort: rSort })[t.t](t, id);
   }
   function head(t) {
     let h = "";
@@ -242,6 +248,28 @@
       });
     });
     t.show = t.show || t.words.map((w, i) => i === t.bad ? t.fix : w).join(" ");
+  }
+
+  function rSort(t, id) {
+    const left = shuffle(t.items.map((x, i) => ({ w: x[0], b: x[1], i }))), placed = t.buckets.map(() => []);
+    let sel = null, miss = false;
+    $("task").innerHTML = head(t) + `<div class="small">Toca una palabra y después la caja correcta. – Tippe ein Wort an, dann die richtige Kiste.</div><div class="pool" id="pool"></div><div class="buckets" id="bk"></div>`;
+    const draw = () => {
+      $("pool").innerHTML = left.map((x, k) => `<button class="chip ${sel === k ? "sel" : ""}" data-k="${k}">${x.w}</button>`).join("");
+      $("bk").innerHTML = t.buckets.map((b, j) => `<button class="bucket" data-j="${j}"><b>${b}</b>${placed[j].map(w => `<span class="chip">${w}</span>`).join("")}</button>`).join("");
+      $("pool").querySelectorAll(".chip").forEach(c => c.onclick = () => { if (LOCK) return; sel = +c.dataset.k; draw(); });
+      $("bk").querySelectorAll(".bucket").forEach(bt => bt.onclick = () => {
+        if (LOCK || sel === null) return;
+        const x = left[sel], j = +bt.dataset.j;
+        if (x.b === j) { placed[j].push(x.w); left.splice(sel, 1); sel = null; $("fb").textContent = ""; draw(); if (!left.length) { if (miss) { $("fb").className = "fb good"; } right(t, id, miss ? "¡Todo ordenado! ✔ (con errores)" : null); } }
+        else {
+          bt.classList.add("wrong"); setTimeout(() => bt.classList.remove("wrong"), 400);
+          S.mistakes++; miss = true; if (S.wrong.indexOf(id) < 0) S.wrong.push(id); if ($("errc")) $("errc").textContent = S.mistakes; save();
+          $("fb").className = "fb bad"; $("fb").innerHTML = "✘ " + ((t.why && t.why[x.b]) || "Esta caja no es correcta. – Falsche Kiste. Schau auf Geschlecht und Zahl!");
+        }
+      });
+    };
+    draw();
   }
 
   /* ---------- Ende ---------- */

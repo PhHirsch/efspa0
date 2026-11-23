@@ -1,5 +1,14 @@
 /* Cover-Grafiken für Spiele auf der Startseite (id: SVG). Ohne Eintrag wird das Emoji aus GRAMMAR.icon gezeigt. */
 window.COVERS = {
+  "adjetivos": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+    <rect x="18" y="14" width="184" height="112" rx="10" fill="#1d1d22"/><rect x="24" y="20" width="172" height="90" rx="6" fill="#d9cbb0"/>
+    <rect x="30" y="26" width="76" height="78" fill="#8a8480"/><rect x="112" y="26" width="78" height="78" fill="#fff3dc"><animate attributeName="fill" values="#8a8480;#fff3dc;#fff3dc" keyTimes="0;.35;1" dur="4s" repeatCount="indefinite"/></rect>
+    <path d="M40 92 L96 92 L96 70 L40 70 Z" fill="#6a625c"/><path d="M48 70 L48 60 L88 60 L88 70" stroke="#5a524c" stroke-width="4" fill="none"/><path d="M60 40 l6 10 M80 38 l-4 12" stroke="#5a524c" stroke-width="2"/>
+    <rect x="122" y="70" width="58" height="22" rx="5" fill="#2aa08a"/><rect x="122" y="60" width="58" height="12" rx="5" fill="#3fc0a5"/><circle cx="168" cy="40" r="8" fill="#ffb02e"/><rect x="128" y="34" width="22" height="16" fill="#4fa3e0" stroke="#fff" stroke-width="2"/>
+    <rect x="104" y="20" width="12" height="90" fill="#1d1d22"/>
+    <circle cx="34" cy="118" r="4" fill="#ff3b3b"><animate attributeName="opacity" values="1;.2;1" dur="1s" repeatCount="indefinite"/></circle>
+    <text x="44" y="122" font-family="Arial Black,Arial" font-size="9" fill="#fff">REC</text>
+    <text x="196" y="122" font-family="Anton,Impact,Arial Black" font-size="11" fill="#ffb02e" text-anchor="end">-O -A -OS -AS</text></svg>`,
   "review": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg"><g><path d="M60 70 L160 70 L150 128 L70 128Z" fill="#8a5a2a"/><path d="M60 70 L160 70 L150 82 L70 82Z" fill="#6b4226"/>
     <g><path d="M78 74 q-6 -40 32 -46 q38 6 32 46z" fill="#5fd068"/><circle cx="96" cy="52" r="9" fill="#fff"/><circle cx="124" cy="52" r="9" fill="#fff"/><circle cx="98" cy="54" r="4" fill="#222"/><circle cx="122" cy="54" r="4" fill="#222"/><path d="M98 66 q12 8 24 0" stroke="#1e4a24" stroke-width="3" fill="none"/><animateTransform attributeName="transform" type="translate" values="0 4;0 -4;0 4" dur="1.6s" repeatCount="indefinite"/></g>
     <path d="M56 66 L164 66 L160 78 L60 78Z" fill="#a8743a"/><text x="28" y="40" font-size="26" font-weight="800" fill="#ffd23a" font-family="Arial">?</text><text x="176" y="52" font-size="22" font-weight="800" fill="#ff6a6a" font-family="Arial">✘</text><text x="40" y="110" font-size="18" font-weight="800" fill="#fff" font-family="Arial" opacity=".8">abc</text></g></svg>`,

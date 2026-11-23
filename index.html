@@ -156,9 +156,9 @@
 <div class="ov" id="pinov" style="z-index:40"><div class="sheet pinbox" id="pinbox"></div></div>
 <div class="tour" id="tour"><div class="hole" id="hole"></div><div class="tip" id="tip"></div></div>
 
-<script src="game.js?v=10"></script>
+<script src="game.js?v=11"></script>
 <script src="bosses.js?v=9"></script>
-<script src="covers.js?v=11"></script>
+<script src="covers.js?v=12"></script>
 <script src="vocab-u1.js?v=9"></script>
 <script src="vocab-u2.js?v=9"></script>
 <script src="vocab-u3.js?v=9"></script>
@@ -169,9 +169,10 @@ window.VOCAB = window.VOCAB || {}; window.COVERS = window.COVERS || {};
 
 /* ===== Spiele (neueste oben). icon = Emoji fürs Cover, falls es in covers.js kein eigenes Cover gibt. Vokabel-Bosse kommen automatisch aus vocab-*.js ===== */
 const GRAMMAR = [
-  {id:"hay-estar", unit:"u3", file:"mision-barrio.html", icon:"🗺️", topic:"hay · está / están", name:"Misión Barrio", info:"Descubre Triana y encuentra el Café Azul.", color:"linear-gradient(135deg,#5a3a18,#b8742a)"},
+  {id:"hay-estar", unit:"u3", file:"mision-barrio.html", icon:"🗺️", topic:"hay · está / están", name:"Misión Barrio", info:"Descubre Chamberí (Madrid) y encuentra el Café Azul.", color:"linear-gradient(135deg,#5a3a18,#b8742a)"},
   {id:"mucho-poco", unit:"u3", file:"simbarrio.html", icon:"🏗️", topic:"mucho / poco · la ciudad", name:"SimBarrio", info:"Construye un barrio nuevo para Villaluna.", color:"linear-gradient(135deg,#124a5a,#2a9a7a)"},
   {id:"ser-estar", unit:"u3", file:"tren-nocturno.html", icon:"🚂", topic:"ser · estar", name:"El tren nocturno a Granada", info:"Abre los candados y sal del tren.", color:"linear-gradient(135deg,#1e1650,#5a3cb0)"},
+  {id:"adjetivos", unit:"u3", file:"reformas-locas.html", icon:"🛠️", topic:"Los adjetivos", name:"¡Reformas Locas!", info:"Reforma un piso en Chamberí en 9 capítulos – solo con adjetivos correctos. ¡Misión larga (ca. 45 min)!", color:"linear-gradient(135deg,#0f4a44,#2aa08a)", accent:"#ffb02e", isNew:true},
   {id:"verbos-cafe", unit:"u3", file:"cafe-robot.html", icon:"🤖", topic:"Verbos en presente", name:"Café Robot", info:"Repara el robot con verbos correctos.", color:"linear-gradient(135deg,#5a1e3a,#c0407a)"}
 ];
 /* Überschriften der Units ohne Vokabeldatei (Schlüssel wie GRAMMAR.unit) */
