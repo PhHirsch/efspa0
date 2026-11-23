@@ -1119,5 +1119,66 @@
 "price": 1200,
 "kind": "aurora",
 "lvl": 7
+},
+{
+"id": "top-espana",
+"slot": "top",
+"name": "Camiseta „ESPAÑA“",
+"price": 150,
+"kind": "espana",
+"color": "#c8102e",
+"unit": 4
+},
+{
+"id": "hat-skater",
+"slot": "hat",
+"name": "Gorra de skater",
+"price": 100,
+"kind": "capback",
+"color": "#1d1d22",
+"unit": 4
+},
+{
+"id": "ex-mochila",
+"slot": "extra",
+"name": "Mochila",
+"price": 150,
+"kind": "mochila",
+"unit": 5
+},
+{
+"id": "gl-fiesta",
+"slot": "glasses",
+"name": "Gafas de fiesta 🎉",
+"price": 100,
+"kind": "fiesta",
+"unit": 6
+},
+{
+"id": "hat-sombrero",
+"slot": "hat",
+"name": "Sombrero mexicano",
+"price": 250,
+"kind": "sombrero",
+"color": "#e2b55a",
+"unit": 7
+},
+{
+"id": "top-poncho",
+"slot": "top",
+"name": "Poncho",
+"price": 300,
+"kind": "poncho",
+"color": "#8a3a6a",
+"unit": 7
+},
+{
+"id": "top-moda",
+"slot": "top",
+"name": "Chaqueta de moda",
+"price": 350,
+"kind": "moda",
+"color": "#d8a23a",
+"unit": 8
 }
 ]

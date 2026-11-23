@@ -117,6 +117,14 @@ add("y-bici", "yard", "Bicicleta", 250, unit=2, kind="bici", es="Bicicleta")
 add("y-helados", "yard", "Puesto de helados", 300, unit=2, kind="helados", es="Puesto de helados")
 add("y-metro", "yard", "Boca de metro", 350, unit=3, kind="metro", es="Boca de metro")
 add("y-churros", "yard", "Churrería", 400, unit=3, kind="churros", es="Churrería")
+add("y-porteria", "yard", "Portería de fútbol", 300, unit=4, kind="porteria", es="Portería de fútbol")
+add("y-skate", "yard", "Rampa de skate", 400, unit=4, kind="skate", es="Rampa de skate")
+add("y-pupitre", "yard", "Pupitre con libros", 250, unit=5, kind="pupitre", es="Pupitre con libros")
+add("y-pinata", "yard", "Piñata", 350, unit=6, kind="pinata", es="Piñata")
+add("y-paella", "yard", "Paellera", 400, unit=6, kind="paella", es="Paellera")
+add("y-piramide", "yard", "Pirámide maya", 500, unit=7, kind="piramide", es="Pirámide maya")
+add("y-cactus", "yard", "Cactus", 250, unit=7, kind="cactus", es="Cactus")
+add("y-perchero", "yard", "Perchero", 300, unit=8, kind="perchero", es="Perchero")
 
 HSLOTS = ["ground", "wall", "wcolor", "roof", "rcolor", "window", "door", "roofx", "fence", "yard1", "yard2", "yard3", "yard4"]
 HDEFAULT = {"ground": "g-grass", "wall": "w-plaster", "wcolor": "wc-cream", "roof": "r-gable", "rcolor": "rc-red", "window": "win-classic",
