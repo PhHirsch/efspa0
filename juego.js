@@ -140,9 +140,10 @@
     const doneInStage = st.tasks.length - new Set(S.queue).size;
     const dots = `<div class="dots">${st.tasks.map((x, i) => `<i class="${i < doneInStage ? "d" : ""}"></i>`).join("")}</div>`;
     $("app").innerHTML = frame(`${scene()}<div class="panel"><div class="row" style="justify-content:space-between"><span class="tag">${st.label || "Parte " + (S.stage + 1)}</span><span class="small">${st.title}</span></div>${dots}
-      <div id="task"></div><div class="fb" id="fb"></div><div class="row c" id="nextrow"></div></div>`, { mistakes: true });
+      ${st.memo ? `<div class="rule" style="font-size:16px">${st.memo}</div>` : ""}<div id="task"></div><div class="fb" id="fb"></div><div class="row c" id="nextrow"></div></div>`, { mistakes: true });
     wire(); LOCK = false; JUEGO._t = t;
     ({ choice: rChoice, type: rType, order: rOrder, error: rError, sort: rSort })[t.t](t, id);
+    if ($("pbtn")) $("pbtn").onclick = () => { $("pbox").style.display = "block"; $("pbtn").style.display = "none"; };
   }
   function head(t) {
     let h = "";
@@ -152,6 +153,7 @@
     if (t.who) h += `<div class="who"><div class="face${t.who.av ? " av" : ""}">${t.who.av ? E8.myAvatar() : t.who.face}</div><div><b class="n">${t.who.name}</b>${t.say || ""}${t.sayDe ? `<div class="de">${t.sayDe}</div>` : ""}${inBubble ? q : ""}</div></div>`;
     else if (t.say) h += `<div class="rule">${t.say}${t.sayDe ? `<div class="de">${t.sayDe}</div>` : ""}</div>`;
     if (!inBubble) h += q;
+    if (t.pista) h += `<div style="margin-top:8px"><button class="tbtn" id="pbtn">💡 Pista – Tipp</button><div id="pbox" class="rule" style="display:none;margin-top:6px">${t.pista}</div></div>`;
     return h;
   }
 

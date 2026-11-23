@@ -12,14 +12,14 @@
   .moon{position:absolute;right:26px;top:14px;font-size:34px}
   .hills{position:absolute;left:0;right:0;bottom:26px;height:40px;background:#17123a;border-radius:50% 50% 0 0/100% 100% 0 0}
   .rail{position:absolute;left:0;right:0;bottom:18px;height:6px;background:repeating-linear-gradient(90deg,#6b5a3a 0 8px,#3a2f1e 8px 14px)}
-  .train{position:absolute;left:10px;right:10px;bottom:24px;display:flex;gap:6px;align-items:flex-end}
+  .train{position:absolute;left:6px;right:6px;bottom:24px;display:flex;gap:3px;align-items:flex-end}
   .wag{flex:1;height:74px;border-radius:10px 10px 4px 4px;background:#7a2a2a;border:2px solid #b8503a;position:relative;display:flex;align-items:center;justify-content:center;gap:4px}
   .wag.loco{flex:.8;background:#3a3a4a;border-color:#6a6a80;border-radius:24px 10px 4px 4px}
-  .wag .win{width:22px;height:20px;border-radius:4px;background:#ffd96a;opacity:.85}
-  .wag .lock{position:absolute;top:-14px;right:-6px;font-size:22px}
+  .wag .win{width:12px;height:16px;border-radius:4px;background:#ffd96a;opacity:.85}
+  .wag .lock{position:absolute;top:-14px;right:-4px;font-size:18px}
   .wag .num{position:absolute;bottom:2px;left:6px;font-size:11px;color:#ffd9c0;font-weight:700}
   .wag.now{box-shadow:0 0 0 3px #f2c230,0 0 18px rgba(242,194,48,.6)}
-  .wag .me{width:38px;height:38px;border-radius:50%;overflow:hidden;border:2px solid #f2c230}
+  .wag .me{width:32px;height:32px;border-radius:50%;overflow:hidden;border:2px solid #f2c230}
   .codebar{display:flex;justify-content:center;align-items:center;gap:10px;padding:10px;font-size:15px;color:var(--muted)}
   .digit{width:38px;height:46px;border-radius:8px;background:#0d0b24;border:2px solid #3e3370;display:grid;place-items:center;font-size:26px;font-weight:800;color:#f2c230;font-family:Menlo,Consolas,monospace}
   .digit.open{animation:pop .5s;border-color:#f2c230}
@@ -28,10 +28,10 @@
 <body>
 <main id="app"></main>
 <script src="game.js?v=11"></script>
-<script src="juego.js?v=3"></script>
+<script src="juego.js?v=5"></script>
 <script>
-const C = {face:"👩🏻‍✈️", name:"Carmen, la revisora"}, Y = {av:true, name:"Tú"}, P = (f, n) => ({face: f, name: n});
-const CODES = ["482", "715", "369", "250", "914", "7"];
+const C = {face:"👩🏻‍✈️", name:"Carmen, la revisora"}, Y = {av:true, name:"Tú"}, P = (f, n) => ({face: f, name: n}), K = P;
+const CODES = ["482", "715", "369", "250", "914", "637", "158", "820", "7"];
 JUEGO.start({
   id: "ser-estar", key: "efspa0-tren-nocturno", icon: "🚂", topic: "ser · estar", title: "El tren nocturno a Granada",
   intro: `<p>Viajas en el <b>tren nocturno</b> de Madrid a Granada. 🌙 Te duermes… Cuando te despiertas, ¡todas las puertas están cerradas! 🔒</p>
@@ -49,72 +49,118 @@ JUEGO.start({
       <tr><td>él / ella / usted</td><td>es</td><td>está</td></tr><tr><td>nosotros/-as</td><td>somos</td><td>estamos</td></tr>
       <tr><td>vosotros/-as</td><td>sois</td><td>estáis</td></tr><tr><td>ellos / ellas / ustedes</td><td>son</td><td>están</td></tr></table>`,
   stages: [
-    { label: "Vagón 1", title: "La primera nota", go: "¡Vamos!",
-      intro: `<div class="who"><div class="face">📝</div><div><b class="n">La nota de Carmen</b>¡Hola! <u>Soy</u> Carmen. <u>Soy</u> de Granada. <u>Soy</u> revisora y <u>soy</u> simpática. 😉<br>Ahora <u>estoy</u> en el vagón 5. <u>Estoy</u> muy bien. ¿Y tú? ¿Cómo <u>estás</u>?</div></div>
-        <p class="de">Carmen benutzt zwei Verben für „sein“: <b>ser</b> (soy) und <b>estar</b> (estoy, estás). Wann nimmt sie welches? Finde es heraus!</p>`,
+    { label: "Vagón 1", title: "Lo que ya sabes: ser", go: "¡Vamos!",
+      memo: `📌 <b>ser:</b> yo soy · tú eres · él/ella es · nosotros somos · vosotros sois · ellos son`,
+      intro: `<div class="who"><div class="face">📝</div><div><b class="n">La primera nota de Carmen</b>¡Hola! <u>Soy</u> Carmen. ¿Y tú? ¿Cómo te llamas? ¿De dónde <u>eres</u>?</div></div>
+        <p>Das Verb <b>ser</b> (sein) kennst du schon aus Unidad 2. Hier sind noch einmal alle Formen:</p>
+        <table class="t"><tr><td>yo</td><td><b>soy</b></td></tr><tr><td>tú</td><td><b>eres</b></td></tr><tr><td>él / ella</td><td><b>es</b></td></tr><tr><td>nosotros/-as</td><td><b>somos</b></td></tr><tr><td>vosotros/-as</td><td><b>sois</b></td></tr><tr><td>ellos / ellas</td><td><b>son</b></td></tr></table>
+        <p class="de">Schritt 1: Wiederhole die Formen von <b>ser</b>. Die Tabelle findest du jederzeit oben unter 📜.</p>`,
       tasks: [
-        { t: "choice", q: "<i>Soy de Granada.</i> → Woher jemand kommt:", keep: true, opts: ["ser", "estar"], a: "ser", hint: "Soy de Granada → Herkunft → ser." },
-        { t: "choice", q: "<i>Soy revisora.</i> → Was jemand ist (Beruf):", keep: true, opts: ["ser", "estar"], a: "ser", hint: "Soy revisora → Beruf → ser." },
-        { t: "choice", q: "<i>Estoy en el vagón 5.</i> → Wo jemand ist:", keep: true, opts: ["ser", "estar"], a: "estar", hint: "Estoy en el vagón 5 → Ort → estar." },
-        { t: "choice", q: "<i>Estoy muy bien. ¿Cómo estás?</i> → Wie es jemandem geht:", keep: true, opts: ["ser", "estar"], a: "estar", hint: "Estoy muy bien → Befinden → estar." },
-        { t: "choice", q: "<i>Soy simpática.</i> → Wie jemand ist (Charakter):", keep: true, opts: ["ser", "estar"], a: "ser", hint: "Soy simpática → Eigenschaft → ser." }
+        { t: "choice", who: C, q: "Yo ___ Carmen.", opts: ["soy", "eres", "es", "somos"], a: "soy", pista: "Die Person ist <b>yo</b>. Schau in die Tabelle: yo → …", hint: "yo → soy." },
+        { t: "choice", who: C, q: "¿De dónde ___ tú?", opts: ["eres", "soy", "es", "son"], a: "eres", pista: "Die Person ist <b>tú</b>.", hint: "tú → eres." },
+        { t: "choice", who: C, q: "Mi madre ___ profesora.", opts: ["es", "eres", "son", "soy"], a: "es", pista: "<i>mi madre</i> = <b>ella</b>.", hint: "mi madre = ella → es." },
+        { t: "choice", who: Y, q: "Nosotros ___ de Alemania.", opts: ["somos", "sois", "son", "es"], a: "somos", pista: "Die Person ist <b>nosotros</b>.", hint: "nosotros → somos." },
+        { t: "choice", who: C, q: "Los chicos del vagón 1 ___ simpáticos.", opts: ["son", "somos", "es", "sois"], a: "son", pista: "<i>los chicos</i> = <b>ellos</b>.", hint: "los chicos = ellos → son." }
       ] },
-    { label: "Vagón 2", title: "Las formas", shuffle: true,
-      intro: `<p>¡El primer candado está abierto! 🔓 En el vagón 2 hay otra nota con una tabla.</p>
-        <table class="t"><tr><th></th><th>ser</th><th>estar</th></tr><tr><td>yo</td><td>soy</td><td>estoy</td></tr><tr><td>tú</td><td>eres</td><td>estás</td></tr><tr><td>él / ella</td><td>es</td><td>está</td></tr><tr><td>nosotros</td><td>somos</td><td>estamos</td></tr><tr><td>vosotros</td><td>sois</td><td>estáis</td></tr><tr><td>ellos / ellas</td><td>son</td><td>están</td></tr></table>
-        <p class="de">Wähle die richtige Form. Erst überlegen: ser oder estar? Dann: welche Person?</p>`,
+    { label: "Vagón 2", title: "Lo que ya sabes: estar",
+      memo: `📌 <b>estar:</b> yo estoy · tú estás · él/ella está · nosotros estamos · vosotros estáis · ellos están`,
+      intro: `<div class="who"><div class="face">📝</div><div><b class="n">La segunda nota de Carmen</b>Ahora <u>estoy</u> en el vagón 8. ¿Dónde <u>estás</u> tú?</div></div>
+        <p>Das Verb <b>estar</b> (sein, sich befinden) kennst du aus Bloque A (<i>Mis padres están en casa.</i>). Die Formen:</p>
+        <table class="t"><tr><td>yo</td><td><b>estoy</b></td></tr><tr><td>tú</td><td><b>estás</b></td></tr><tr><td>él / ella</td><td><b>está</b></td></tr><tr><td>nosotros/-as</td><td><b>estamos</b></td></tr><tr><td>vosotros/-as</td><td><b>estáis</b></td></tr><tr><td>ellos / ellas</td><td><b>están</b></td></tr></table>
+        <p class="de">Schritt 2: Wiederhole die Formen von <b>estar</b>. Achte auf die Akzente!</p>`,
       tasks: [
-        { t: "choice", who: Y, q: "Yo ___ de Alemania.", opts: ["soy", "estoy", "es", "está"], a: "soy", hint: "Herkunft → ser · yo → soy." },
-        { t: "choice", who: Y, q: "Nosotros ___ en el vagón 2.", opts: ["somos", "estamos", "están", "son"], a: "estamos", hint: "Wo? → estar · nosotros → estamos." },
-        { t: "choice", who: C, q: "¿Tú ___ bien?", opts: ["eres", "estás", "está", "es"], a: "estás", hint: "Wie geht's? → estar · tú → estás." },
-        { t: "choice", who: P("🧔🏻", "Un chico"), q: "Carmen ___ muy simpática.", opts: ["es", "está", "eres", "estás"], a: "es", hint: "Charakter → ser · Carmen (ella) → es." },
-        { t: "choice", who: C, q: "Los chicos del vagón 3 ___ de Francia.", opts: ["son", "están", "somos", "estáis"], a: "son", hint: "Herkunft → ser · ellos → son." },
-        { t: "choice", who: C, q: "¿Vosotros ___ bien?", opts: ["sois", "estáis", "están", "son"], a: "estáis", hint: "Wie geht's? → estar · vosotros → estáis." },
-        { t: "choice", who: Y, q: "¿Dónde ___ mi maleta? 🧳", opts: ["es", "está", "son", "están"], a: "está", hint: "Wo? → estar · mi maleta (eine) → está." }
+        { t: "choice", who: Y, q: "Yo ___ en el tren.", opts: ["estoy", "estás", "está", "están"], a: "estoy", pista: "Die Person ist <b>yo</b>.", hint: "yo → estoy." },
+        { t: "choice", who: C, q: "¿Dónde ___ tú?", opts: ["estás", "estoy", "está", "estamos"], a: "estás", pista: "Die Person ist <b>tú</b>.", hint: "tú → estás." },
+        { t: "choice", who: C, q: "Granada ___ en Andalucía.", opts: ["está", "estás", "estoy", "están"], a: "está", pista: "<i>Granada</i> = eine Sache = wie <b>él / ella</b>.", hint: "Granada (eine Stadt) → está." },
+        { t: "choice", who: Y, q: "Nosotros ___ en el vagón 2.", opts: ["estamos", "están", "estáis", "estoy"], a: "estamos", pista: "Die Person ist <b>nosotros</b>.", hint: "nosotros → estamos." },
+        { t: "choice", who: C, q: "Las maletas ___ en el pasillo.", opts: ["están", "está", "estamos", "estáis"], a: "están", pista: "<i>las maletas</i> = mehrere Sachen = wie <b>ellos / ellas</b>.", hint: "las maletas = ellas → están." }
       ] },
-    { label: "Vagón 3", title: "La gente del tren", shuffle: true,
-      intro: `<p>En el vagón 3 hay muchas personas. Escucha y <b>escribe</b> la forma de <b>ser</b> o <b>estar</b>.</p><p class="de">Tippe die richtige Form von ser oder estar. Akzente: Knöpfe unter dem Feld.</p>`,
+    { label: "Vagón 3", title: "¿Cuándo ser, cuándo estar?", go: "🔍 ¡A investigar!",
+      memo: `📝 <b>La nota de Carmen:</b> <u>Soy</u> Carmen. <u>Soy</u> de Granada. <u>Soy</u> revisora. <u>Soy</u> simpática. 😉 Ahora <u>estoy</u> en el vagón 8. <u>Estoy</u> muy bien.`,
+      intro: `<div class="who"><div class="face">📝</div><div><b class="n">La tercera nota de Carmen</b><u>Soy</u> Carmen. <u>Soy</u> de Granada. <u>Soy</u> revisora. <u>Soy</u> simpática. 😉<br>Ahora <u>estoy</u> en el vagón 8. <u>Estoy</u> muy bien.</div></div>
+        <p>Spanisch hat <b>zwei</b> Verben für das deutsche „sein“: <b>ser</b> und <b>estar</b>. Aber wann nimmt man welches?</p>
+        <p class="de">Schritt 3: Finde es selbst heraus! Bei jeder Aufgabe steht, <b>was</b> Carmen sagen will. Wähle dann das Verb, das Carmen in ihrer Notiz benutzt hat.</p>`,
       tasks: [
-        { t: "type", who: P("👧🏼", "Lena"), q: "Mi amigo Leo ___ de Höxter.", a: "es", tips: { "está": "de Höxter = Herkunft → ser: es." } },
-        { t: "type", who: P("👨🏽‍🦳", "Don Paco"), q: "Ahora el tren ___ en Córdoba.", a: "está", tips: { es: "Wo ist der Zug? → estar: está." } },
-        { t: "type", who: P("👩🏻‍🦱", "Sara"), q: "Nosotras ___ hermanas.", a: "somos", tips: { estamos: "Wer/was wir sind → ser: somos." } },
-        { t: "type", who: C, q: "¡Buenas noches! ¿Cómo ___ vosotros?", a: "estáis", tips: { sois: "Wie geht's? → estar: estáis." } },
-        { t: "type", who: Y, q: "Hoy yo ___ fatal. 🤢", a: "estoy", tips: { soy: "Wie es mir heute geht → estar: estoy." } },
-        { t: "type", who: P("👨🏽‍🦳", "Don Paco"), q: "Granada ___ en Andalucía.", a: "está", tips: { es: "Wo liegt etwas? → estar: está." } },
-        { t: "type", who: P("👧🏼", "Lena"), q: "Las maletas ___ en el pasillo.", qDe: "el pasillo = der Gang", a: "están", tips: { son: "Wo? → estar: están.", "está": "las maletas = mehrere → están." } }
+        { t: "choice", who: C, task: "Carmen sagt ihren Namen.", q: "___ Carmen.", keep: true, opts: ["Soy", "Estoy"], a: "Soy", pista: "Schau in Carmens Notiz: Wie stellt sie sich vor?", hint: "Name → ser: Soy Carmen." },
+        { t: "choice", who: C, task: "Carmen sagt, woher sie kommt.", q: "___ de Granada.", keep: true, opts: ["Soy", "Estoy"], a: "Soy", pista: "Schau in die Notiz: „… de Granada“.", hint: "Herkunft → ser: Soy de Granada." },
+        { t: "choice", who: C, task: "Carmen sagt ihren Beruf.", q: "___ revisora.", keep: true, opts: ["Soy", "Estoy"], a: "Soy", pista: "Schau in die Notiz: „… revisora“.", hint: "Beruf → ser: Soy revisora." },
+        { t: "choice", who: C, task: "Carmen sagt, wie sie ist (Charakter).", q: "___ simpática.", keep: true, opts: ["Soy", "Estoy"], a: "Soy", pista: "Schau in die Notiz: „… simpática“.", hint: "Eigenschaft → ser: Soy simpática." },
+        { t: "choice", who: C, task: "Carmen sagt, wo sie gerade ist.", q: "Ahora ___ en el vagón 8.", keep: true, opts: ["soy", "estoy"], a: "estoy", pista: "Schau in die Notiz: „Ahora … en el vagón 8“.", hint: "Ort → estar: estoy en el vagón 8." },
+        { t: "choice", who: C, task: "Carmen sagt, wie es ihr geht.", q: "___ muy bien.", keep: true, opts: ["Soy", "Estoy"], a: "Estoy", pista: "Schau in die Notiz: „… muy bien“.", hint: "Befinden → estar: Estoy muy bien." },
+        { t: "choice", task: "Und jetzt die Regel:", q: "Was hast du herausgefunden?", keep: true, opts: ["ser: wer, woher, was, wie jemand ist · estar: wo jemand ist, wie es jemandem geht", "ser: wo jemand ist · estar: woher jemand kommt", "Es ist egal – beide sind immer richtig."], a: "ser: wer, woher, was, wie jemand ist · estar: wo jemand ist, wie es jemandem geht", pista: "Schau dir deine Antworten in diesem Waggon an: Bei welchen Sätzen stand <i>soy</i>, bei welchen <i>estoy</i>?", hint: "Name, Herkunft, Beruf, Charakter → ser. Ort, Befinden → estar." }
       ] },
-    { label: "Vagón 4", title: "Notas con errores", shuffle: true,
-      intro: `<p>¡Uy! En el vagón 4 las notas tienen errores. Toca la palabra falsa y corrígela.</p><p class="de">Tippe auf das falsche Wort und wähle die Verbesserung.</p>`,
+    { label: "Vagón 4", title: "La regla",
+      memo: `📌 <b>ser</b> → wer? woher (<b>de</b> + Ort)? was (Beruf)? wie (Charakter)? · <b>estar</b> → wo (<b>en</b> + Ort)? wie geht's (<b>bien, fatal</b>)?`,
+      intro: `<p>¡Muy bien! Das ist die Regel. 📌</p>
+        <div class="rule"><b>ser</b> → <b>wer</b>? <b>woher</b>? <b>was</b>? <b>wie</b> (Eigenschaft)?<br>Name · Herkunft (<b>de</b> + Ort) · Beruf · Charakter<br><span class="ex">Soy Carmen. Soy de Granada. Soy revisora. Soy simpática.</span></div>
+        <div class="rule"><b>estar</b> → <b>wo</b>? <b>wie geht's</b>?<br>Ort (<b>en</b> + Ort) · Befinden (<b>bien, muy bien, mal, fatal</b>)<br><span class="ex">Estoy en el tren. Estoy muy bien.</span></div>
+        <p class="de">Schritt 4: Entscheide nur: <b>ser</b> oder <b>estar</b>? Achte auf die Signalwörter: <b>de</b> + Ort → ser · <b>en</b> + Ort → estar · bien/fatal → estar.</p>`,
       tasks: [
-        { t: "error", who: P("🧒🏽", "Un niño"), words: ["Yo", "soy", "en", "el", "vagón", "4."], bad: 1, fix: "estoy", opts: ["estoy", "está", "es"], hint: "Wo? → estar: estoy." },
-        { t: "error", who: P("👩🏼", "Una señora"), words: ["Marta", "está", "de", "Sevilla."], bad: 1, fix: "es", opts: ["es", "son", "estoy"], hint: "Herkunft → ser: es." },
-        { t: "error", who: P("👦🏾", "Un chico"), words: ["Mi", "hermano", "está", "profesor."], bad: 2, fix: "es", opts: ["es", "son", "eres"], hint: "Beruf → ser: es." },
-        { t: "error", who: P("👴🏻", "Un abuelo"), words: ["¿Dónde", "son", "las", "maletas?"], bad: 1, fix: "están", opts: ["están", "está", "sois"], hint: "Wo? → estar · las maletas → están." }
+        { t: "choice", who: K("👧🏼", "Lena"), task: "¿ser o estar?", q: "Mi amigo Leo … de Höxter.", keep: true, opts: ["ser", "estar"], a: "ser", pista: "<b>de</b> Höxter → Woher kommt Leo?", hint: "de + Ort = Herkunft → ser." },
+        { t: "choice", who: K("👨🏽‍🦳", "Don Paco"), task: "¿ser o estar?", q: "El tren … en Córdoba.", keep: true, opts: ["ser", "estar"], a: "estar", pista: "<b>en</b> Córdoba → Wo ist der Zug?", hint: "en + Ort = wo → estar." },
+        { t: "choice", who: K("👦🏾", "Un chico"), task: "¿ser o estar?", q: "Mi padre … médico.", keep: true, opts: ["ser", "estar"], a: "ser", pista: "médico ist ein Beruf.", hint: "Beruf → ser." },
+        { t: "choice", who: C, task: "¿ser o estar?", q: "¿Cómo … tú? – ¡Muy bien!", keep: true, opts: ["ser", "estar"], a: "estar", pista: "Die Antwort ist <i>muy bien</i> → Wie geht es dir?", hint: "Befinden (wie geht's?) → estar." },
+        { t: "choice", who: K("🧔🏻", "Un chico"), task: "¿ser o estar?", q: "Carmen … muy simpática.", keep: true, opts: ["ser", "estar"], a: "ser", pista: "simpática beschreibt Carmens Charakter.", hint: "Charakter → ser." },
+        { t: "choice", who: K("👧🏼", "Lena"), task: "¿ser o estar?", q: "Las maletas … en el pasillo.", keep: true, opts: ["ser", "estar"], a: "estar", pista: "<b>en</b> el pasillo → Wo sind die Koffer?", hint: "en + Ort = wo → estar." },
+        { t: "choice", who: K("👩🏻‍🦱", "Sara"), task: "¿ser o estar?", q: "Nosotras … hermanas.", keep: true, opts: ["ser", "estar"], a: "ser", pista: "Wer sind wir? (Schwestern)", hint: "Wer jemand ist → ser." },
+        { t: "choice", who: Y, task: "¿ser o estar?", q: "Hoy yo … fatal. 🤢", keep: true, opts: ["ser", "estar"], a: "estar", pista: "<i>fatal</i> → Wie geht es mir heute?", hint: "Befinden → estar." }
       ] },
-    { label: "Vagón 5", title: "¡Encuentra a Carmen!", shuffle: true,
-      intro: `<p>¡Último vagón! Carmen está aquí – pero duerme (schläft). 😴 Escribe las frases correctas para despertarla.</p><p class="de">Bilde die Sätze in der richtigen Reihenfolge.</p>`,
+    { label: "Vagón 5", title: "Verbo y forma", shuffle: true,
+      memo: `📌 <b>ser</b>: Name, Herkunft, Beruf, Charakter · <b>estar</b>: Ort, Befinden – Formen: 📜 oben`,
+      intro: `<p>Jetzt zwei Schritte auf einmal: Erst <b>ser oder estar?</b> Dann die richtige <b>Form</b>.</p><p class="de">Schritt 5: Tipp – überlege zuerst das Verb (Regel), dann die Person (Tabelle). 📜 zeigt beides.</p>`,
       tasks: [
-        { t: "order", task: "Escribe:", taskDe: "Carmen ist aus Granada und ist im Zug.", words: ["Carmen", "es", "de", "Granada", "y", "está", "en", "el", "tren."], a: "Carmen es de Granada y está en el tren." },
+        { t: "choice", who: Y, q: "Yo ___ de Alemania.", opts: ["soy", "estoy", "es", "está"], a: "soy", pista: "1. de Alemania = Herkunft → ser. 2. Person: yo.", hint: "Herkunft → ser · yo → soy." },
+        { t: "choice", who: Y, q: "Nosotros ___ en el vagón 5.", opts: ["somos", "estamos", "están", "son"], a: "estamos", pista: "1. en el vagón = Ort → estar. 2. Person: nosotros.", hint: "Wo? → estar · nosotros → estamos." },
+        { t: "choice", who: C, q: "¿Tú ___ bien?", opts: ["eres", "estás", "está", "es"], a: "estás", pista: "1. bien = Befinden → estar. 2. Person: tú.", hint: "Wie geht's? → estar · tú → estás." },
+        { t: "choice", who: K("🧔🏻", "Un chico"), q: "Carmen ___ muy simpática.", opts: ["es", "está", "eres", "estás"], a: "es", pista: "1. simpática = Charakter → ser. 2. Person: Carmen = ella.", hint: "Charakter → ser · ella → es." },
+        { t: "choice", who: C, q: "Los chicos del vagón 3 ___ de Francia.", opts: ["son", "están", "somos", "estáis"], a: "son", pista: "1. de Francia = Herkunft → ser. 2. Person: los chicos = ellos.", hint: "Herkunft → ser · ellos → son." },
+        { t: "choice", who: C, q: "¿Vosotros ___ bien?", opts: ["sois", "estáis", "están", "son"], a: "estáis", pista: "1. bien = Befinden → estar. 2. Person: vosotros.", hint: "Wie geht's? → estar · vosotros → estáis." },
+        { t: "choice", who: Y, q: "¿Dónde ___ mi maleta? 🧳", opts: ["es", "está", "son", "están"], a: "está", pista: "1. ¿Dónde? = Ort → estar. 2. mi maleta = eine Sache (ella).", hint: "Wo? → estar · mi maleta → está." }
+      ] },
+    { label: "Vagón 6", title: "¡Ahora escribes tú!", shuffle: true,
+      memo: `📌 <b>ser</b>: soy, eres, es, somos, sois, son · <b>estar</b>: estoy, estás, está, estamos, estáis, están`,
+      intro: `<p>In diesem Waggon <b>schreibst</b> du die Form selbst.</p><p class="de">Schritt 6: Tippe die richtige Form von ser oder estar. Akzente: Knöpfe unter dem Feld. Brauchst du Hilfe? → 💡 Pista</p>`,
+      tasks: [
+        { t: "type", who: K("👧🏼", "Lena"), q: "Mi amigo Leo ___ de Höxter.", a: "es", pista: "de Höxter = Herkunft → ser · Leo = él.", tips: { "está": "de Höxter = Herkunft → ser: es." } },
+        { t: "type", who: K("👨🏽‍🦳", "Don Paco"), q: "Ahora el tren ___ en Córdoba.", a: "está", pista: "en Córdoba = Ort → estar · el tren = él.", tips: { es: "Wo ist der Zug? → estar: está." } },
+        { t: "type", who: K("👩🏻‍🦱", "Sara"), q: "Nosotras ___ hermanas.", a: "somos", pista: "Wer wir sind → ser · nosotras.", tips: { estamos: "Wer/was wir sind → ser: somos." } },
+        { t: "type", who: C, q: "¡Buenas noches! ¿Cómo ___ vosotros?", a: "estáis", pista: "¿Cómo …? = wie geht's → estar · vosotros.", tips: { sois: "Wie geht's? → estar: estáis.", estais: "Akzent: estáis." } },
+        { t: "type", who: Y, q: "Hoy yo ___ fatal. 🤢", a: "estoy", pista: "fatal = Befinden → estar · yo.", tips: { soy: "Wie es mir heute geht → estar: estoy." } },
+        { t: "type", who: K("👨🏽‍🦳", "Don Paco"), q: "Granada ___ en Andalucía.", a: "está", pista: "en Andalucía = Ort → estar · Granada = ella.", tips: { es: "Wo liegt etwas? → estar: está." } },
+        { t: "type", who: K("👧🏼", "Lena"), q: "Las maletas ___ en el pasillo.", qDe: "el pasillo = der Gang", a: "están", pista: "en el pasillo = Ort → estar · las maletas = ellas.", tips: { son: "Wo? → estar: están.", "está": "las maletas = mehrere → están." } }
+      ] },
+    { label: "Vagón 7", title: "Notas con errores", shuffle: true,
+      intro: `<p>¡Uy! En el vagón 7 las notas tienen errores. Toca la palabra falsa y corrígela.</p><p class="de">Schritt 7: Tippe auf das falsche Verb und wähle die Verbesserung.</p>`,
+      tasks: [
+        { t: "error", who: K("🧒🏽", "Un niño"), words: ["Yo", "soy", "en", "el", "vagón", "7."], bad: 1, fix: "estoy", opts: ["estoy", "está", "es"], pista: "en el vagón = Ort.", hint: "Wo? → estar: estoy." },
+        { t: "error", who: K("👩🏼", "Una señora"), words: ["Marta", "está", "de", "Sevilla."], bad: 1, fix: "es", opts: ["es", "son", "estoy"], pista: "de Sevilla = Herkunft.", hint: "Herkunft → ser: es." },
+        { t: "error", who: K("👦🏾", "Un chico"), words: ["Mi", "hermano", "está", "profesor."], bad: 2, fix: "es", opts: ["es", "son", "eres"], pista: "profesor = Beruf.", hint: "Beruf → ser: es." },
+        { t: "error", who: K("👴🏻", "Un abuelo"), words: ["¿Dónde", "son", "las", "maletas?"], bad: 1, fix: "están", opts: ["están", "está", "sois"], pista: "¿Dónde? = Ort · las maletas = mehrere.", hint: "Wo? → estar · las maletas → están." }
+      ] },
+    { label: "Vagón 8", title: "¡Encuentra a Carmen!", shuffle: true,
+      intro: `<p>¡Último vagón! Carmen está aquí – pero duerme (schläft). 😴 Escribe las frases correctas para despertarla.</p><p class="de">Schritt 8: Bilde die Sätze in der richtigen Reihenfolge.</p>`,
+      tasks: [
+        { t: "order", task: "Escribe:", taskDe: "Carmen ist aus Granada und ist im Zug.", words: ["Carmen", "es", "de", "Granada", "y", "está", "en", "el", "tren."], a: "Carmen es de Granada y está en el tren.", pista: "de Granada → es · en el tren → está." },
         { t: "order", task: "Escribe:", taskDe: "Wir sind Freunde und sind in Spanien.", words: ["Somos", "amigos", "y", "estamos", "en", "España."], a: "Somos amigos y estamos en España." },
         { t: "order", task: "Escribe:", taskDe: "Der Bahnhof ist in der Nähe der Alhambra.", words: ["La", "estación", "está", "cerca", "de", "la", "Alhambra."], a: "La estación está cerca de la Alhambra." }
       ] },
     { label: "Final", title: "¿Dónde estamos?", go: "🚪 ¡Abrir la puerta!",
       intro: `<div class="who"><div class="face">👩🏻‍✈️</div><div><b class="n">Carmen</b>¡Uy, perdón! 😅 Las puertas… ¡Ahora están abiertas! Mira por la ventana…</div></div>`,
       tasks: [
-        { t: "type", who: Y, q: "¡Por fin! Nosotros ___ en Granada. 🏰", a: "estamos", tips: { somos: "Wo? → estar: estamos." } }
+        { t: "type", who: Y, q: "¡Por fin! Nosotros ___ en Granada. 🏰", a: "estamos", pista: "en Granada = Ort → estar · nosotros.", tips: { somos: "Wo? → estar: estamos." } }
       ] }
   ],
   scene: (S, G) => {
     const st = G.stages[S.stage];
     const doneHere = S.done ? st.tasks.length : S.phase === "play" ? st.tasks.length - new Set(S.queue).size : 0;
     const code = CODES[S.stage], shown = Math.min(code.length, Math.floor(doneHere / st.tasks.length * code.length + 1e-9));
-    const wags = [`<div class="wag loco">🚂</div>`].concat([0, 1, 2, 3, 4].map(i => {
-      const open = S.done || i < S.stage, now = !S.done && (i === Math.min(S.stage, 4));
+    const wags = [`<div class="wag loco">🚂</div>`].concat([0, 1, 2, 3, 4, 5, 6, 7].map(i => {
+      const open = S.done || i < S.stage, now = !S.done && (i === Math.min(S.stage, 7));
       return `<div class="wag ${now ? "now" : ""}"><span class="lock">${open ? "🔓" : "🔒"}</span>${now ? `<div class="me">${E8.myAvatar()}</div>` : `<i class="win"></i><i class="win"></i>`}<span class="num">${i + 1}</span></div>`;
     }));
     const digits = code.split("").map((d, i) => `<div class="digit ${i < shown ? "open" : ""}">${i < shown ? d : "·"}</div>`).join("");
     return `<div class="night"><div class="stars"></div><div class="moon">🌙</div><div class="hills"></div><div class="rail"></div><div class="train">${wags.join("")}</div></div>
-      <div class="codebar">${S.done ? "🏰 ¡Granada! Todas las puertas están abiertas." : `🔒 Código ${S.stage < 5 ? "vagón " + (S.stage + 1) : "de la puerta"}: ${digits}`}</div>`;
+      <div class="codebar">${S.done ? "🏰 ¡Granada! Todas las puertas están abiertas." : `🔒 Código ${S.stage < 8 ? "vagón " + (S.stage + 1) : "de la puerta"}: ${digits}`}</div>`;
   },
   outro: `<div style="font-size:60px">🏰🌅</div><h1>¡Bienvenido/a a Granada!</h1>
     <div class="who" style="text-align:left"><div class="face">👩🏻‍✈️</div><div><b class="n">Carmen</b>¡Muchas gracias! ¡Eres genial! 😊 Mira: allí está la Alhambra. ¡Buen viaje!</div></div>`
