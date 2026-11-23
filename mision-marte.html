@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Misión Marte · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#1a1540 0%,#05040d 70%);--panel:#110f2a;--txt:#eef0ff;--muted:#a3a8d6;--line:#2e2b62;--btn:#1b1844;--accent:#ff6b3d;--accentTxt:#2a0a00;--accent2:#ffb38f;--bubble:#1d1a48;--input:#0a0920;--ok:#6fe59a;--bad:#ff7a8a}
+  .space{position:relative;height:190px;background:radial-gradient(circle at 80% 30%,#2a1b4a 0,#05040d 60%);overflow:hidden}
+  .stars{position:absolute;inset:0;background-image:radial-gradient(1.5px 1.5px at 30px 40px,#fff,transparent),radial-gradient(1px 1px at 140px 120px,#fff,transparent),radial-gradient(1.5px 1.5px at 260px 30px,#fff,transparent),radial-gradient(1px 1px at 380px 150px,#fff,transparent),radial-gradient(1.5px 1.5px at 520px 70px,#fff,transparent),radial-gradient(1px 1px at 640px 160px,#fff,transparent),radial-gradient(1px 1px at 760px 50px,#fff,transparent);opacity:.9}
+  .earth{position:absolute;left:-30px;bottom:-30px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#6fc3ff,#1e5fa8 60%,#0d2f5a);box-shadow:inset -14px -10px 0 rgba(0,0,0,.25)}
+  .earth:after{content:"";position:absolute;left:30px;top:28px;width:40px;height:26px;border-radius:50%;background:#3fae5a;box-shadow:24px 34px 0 -4px #3fae5a}
+  .mars{position:absolute;right:20px;top:26px;width:86px;height:86px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff9b6b,#c4421c 65%,#6a1e0c);box-shadow:inset -10px -8px 0 rgba(0,0,0,.25)}
+  .path{position:absolute;left:80px;right:110px;top:110px;border-top:2px dashed rgba(255,255,255,.3);transform:rotate(-8deg);transform-origin:left}
+  .rocket{position:absolute;font-size:40px;transition:left .8s,top .8s;transform:rotate(45deg)}
+  .rocket .me{position:absolute;left:10px;top:-26px;width:28px;height:28px;border-radius:50%;overflow:hidden;border:2px solid #ff6b3d;background:#fff;transform:rotate(-45deg)}
+  .hud{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-family:Menlo,Consolas,monospace;font-size:14px;color:#9ff0c9;background:#070617;border-top:1px solid #2e2b62}
+  .hud b{color:#ffb38f}
+  .big{font-family:Menlo,Consolas,monospace;font-size:26px;color:#ff6b3d;letter-spacing:.1em}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=11"></script>
+<script src="juego.js?v=6"></script>
+<script>
+const U = ["cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez","once","doce","trece","catorce","quince","dieciséis","diecisiete","dieciocho","diecinueve","veinte","veintiuno","veintidós","veintitrés","veinticuatro","veinticinco","veintiséis","veintisiete","veintiocho","veintinueve"];
+const T = {30:"treinta",40:"cuarenta",50:"cincuenta",60:"sesenta",70:"setenta",80:"ochenta",90:"noventa"};
+const W = n => n < 30 ? U[n] : n === 100 ? "cien" : n % 10 ? T[n - n % 10] + " y " + U[n % 10] : T[n];
+const R = {face:"👩🏽‍🚀", name:"Comandante Rosa"}, B = {face:"🤖", name:"Robot BIT-7"}, Y = {av:true, name:"Tú"};
+const w2d = (n, o) => ({ t: "choice", who: B, q: `<span class="big">${W(n)}</span>`, task: "¿Qué número es?", taskDe: "Welche Zahl ist das?", opts: o.map(String), a: String(n), hint: `${W(n)} → ${n}.` });
+const d2w = (n, o) => ({ t: "choice", who: B, q: `<span class="big">${n}</span>`, task: "¿Cómo se dice?", taskDe: "Wie heißt die Zahl?", opts: o.map(W), a: W(n), hint: `${n} → ${W(n)}.` });
+const wr = (n, tips) => ({ t: "type", who: R, task: "Escribe el número en letras:", taskDe: "Schreib die Zahl als Wort.", q: `<span class="big">${n}</span>`, a: W(n), show: `${n} = ${W(n)}`, tips });
+const code = (n) => ({ t: "type", who: B, task: "Código de la puerta:", taskDe: "Tippe die Ziffern.", q: `<span class="big" style="font-size:22px">${W(n)}</span>`, a: String(n), ph: "0–100", show: `${W(n)} = ${n}` });
+JUEGO.start({
+  id: "numeros", key: "efspa0-mision-marte", icon: "🚀", topic: "Los números 0–100", title: "Misión Marte",
+  intro: `<p>🚀 Eres miembro de la tripulación de la nave espacial española <b>„Cervantes I“</b>. Destino: ¡<b>Marte</b>! Pero el ordenador de a bordo solo funciona con números en español…</p>
+    <p>La comandante <b>Rosa</b> y el robot <b>BIT-7</b> te necesitan: cuenta atrás, códigos, combustible y radio. ¡Cada respuesta correcta te acerca a Marte! 🔴</p>
+    <p class="de">Ihr fliegt zum Mars – aber der Bordcomputer versteht nur spanische Zahlen. Jede richtige Antwort bringt die Rakete näher an den Mars. Falsche Aufgaben kommen später nochmal.</p>`,
+  goLabel: "🚀 ¡A la nave!", time: "ca. 20 minutos",
+  rulesLabel: "Los números",
+  rules: `<h2>Los números 0–100</h2>
+    <table class="t"><tr><td>0 cero</td><td>5 cinco</td><td>10 diez</td><td>15 quince</td></tr><tr><td>1 uno</td><td>6 seis</td><td>11 once</td><td>16 dieci<b>séis</b></td></tr><tr><td>2 dos</td><td>7 siete</td><td>12 doce</td><td>17 diecisiete</td></tr><tr><td>3 tres</td><td>8 ocho</td><td>13 trece</td><td>18 dieciocho</td></tr><tr><td>4 cuatro</td><td>9 nueve</td><td>14 catorce</td><td>19 diecinueve</td></tr></table>
+    <div class="rule"><b>20–29</b> in einem Wort: veinte, veintiuno, veinti<b>dós</b>, veinti<b>trés</b>, veinticuatro … veinti<b>séis</b> … veintinueve</div>
+    <div class="rule"><b>ab 31</b> mit <b>y</b>: treinta <b>y</b> uno, cuarenta <b>y</b> cinco … · Zehner: 30 treinta · 40 cuarenta · 50 cincuenta · 60 sesenta · 70 setenta · 80 ochenta · 90 noventa · <b>100 cien</b></div>
+    <div class="rule"><b>Rechnen:</b> + más · − menos · = son <span class="ex">Ocho más siete son quince.</span><br><b>Alter:</b> <span class="ex">¿Cuántos años tienes? – Tengo dieciséis años.</span></div>`,
+  stages: [
+    { label: "Fase 1", title: "Cuenta atrás", go: "⏱️ ¡Empieza la cuenta atrás!",
+      memo: "📌 0 cero · 1 uno · 2 dos · 3 tres · 4 cuatro · 5 cinco · 6 seis · 7 siete · 8 ocho · 9 nueve · 10 diez · 11 once · 12 doce · 13 trece · 14 catorce · 15 quince · 16 dieciséis · 17 diecisiete · 18 dieciocho · 19 diecinueve · 20 veinte",
+      intro: `<div class="who"><div class="face">👩🏽‍🚀</div><div><b class="n">Comandante Rosa</b>¡Bienvenido/a a bordo! Primero, la cuenta atrás. El ordenador dice los números en español. ¿Los entiendes?</div></div><p class="de">Erst die Zahlen von 0 bis 20 – die Liste steht während der Aufgaben in der Merk-Box.</p>`,
+      pista: "Schau in die Merk-Box: Such das Wort und lies die Zahl davor.",
+      tasks: [w2d(20, [20, 12, 2]), w2d(14, [14, 4, 40]), w2d(11, [11, 1, 12]), w2d(17, [17, 7, 16]), d2w(15, [15, 5, 13]), d2w(12, [12, 2, 20]), d2w(16, [16, 6, 19]), d2w(0, [0, 10, 2])] },
+    { label: "Fase 2", title: "El panel de control", shuffle: true,
+      memo: "📌 0 cero · 1 uno · 2 dos · 3 tres · 4 cuatro · 5 cinco · 6 seis · 7 siete · 8 ocho · 9 nueve · 10 diez · 11 once · 12 doce · 13 trece · 14 catorce · 15 quince · 16 dieci<b>séis</b> · 17 diecisiete · 18 dieciocho · 19 diecinueve · 20 veinte",
+      intro: `<p>El panel de control no tiene botones con números – ¡solo con letras! <b>Escribe</b> los números.</p><p class="de">Schreib die Zahl als Wort. Achtung: dieciséis hat einen Akzent!</p>`,
+      pista: "Schau in die Merk-Box und schreib das Wort genau ab – mit Akzent.",
+      tasks: [wr(5), wr(7), wr(11), wr(13), wr(15), wr(16, { dieciseis: "Akzent auf dem letzten e: dieciséis." }), wr(19, { diecinuebe: "Mit v: diecinueve." }), wr(4)] },
+    { label: "Fase 3", title: "Combustible", shuffle: true,
+      memo: "📌 + <b>más</b> · − <b>menos</b> · = <b>son</b> · <span class=\"ex\">Ocho más siete son quince.</span>",
+      intro: `<div class="who"><div class="face">🤖</div><div><b class="n">BIT-7</b>¡ALERTA! Necesito calcular el combustible. Pero mis cálculos solo funcionan en español. 🔋</div></div><p class="de">Rechne und schreib das Ergebnis als Wort. más = plus · menos = minus · son = ist gleich.</p>`,
+      pista: "1. Rechne mit Ziffern (más = +, menos = −). 2. Schreib das Ergebnis als Wort – die Liste findest du unter 📜.",
+      tasks: [
+        { t: "type", who: B, q: "Ocho más siete son ___.", a: "quince", show: "8 + 7 = 15 → quince" },
+        { t: "type", who: B, q: "Veinte menos cuatro son ___.", a: "dieciséis", show: "20 − 4 = 16 → dieciséis" },
+        { t: "type", who: B, q: "Seis más seis son ___.", a: "doce", show: "6 + 6 = 12 → doce" },
+        { t: "type", who: B, q: "Diecinueve menos dieciocho son ___.", a: "uno", show: "19 − 18 = 1 → uno" },
+        { t: "choice", who: B, q: "Nueve más cuatro son ___.", opts: ["trece", "catorce", "doce"], a: "trece", hint: "9 + 4 = 13 → trece." },
+        { t: "choice", who: B, q: "Diez menos diez son ___.", opts: ["cero", "diez", "veinte"], a: "cero", hint: "10 − 10 = 0 → cero." }
+      ] },
+    { label: "Fase 4", title: "Los números grandes", go: "🔍 ¡A investigar!",
+      memo: "📖 21 veintiuno · 22 veintidós · 23 veintitrés · 26 veintiséis · 30 treinta · 31 treinta y uno · 35 treinta y cinco · 40 cuarenta · 47 cuarenta y siete · 50 cincuenta · 60 sesenta · 70 setenta · 80 ochenta · 90 noventa · 100 cien",
+      intro: `<p>¡Despegamos! 🚀 Ahora el ordenador habla de números <b>grandes</b>. Mira bien la lista – ¿cómo se forman los números?</p><p class="de">Schau dir die Liste in der Merk-Box an und finde die Regel selbst heraus: Wie werden die Zahlen 21–29 gebildet? Und ab 31?</p>`,
+      tasks: [
+        { t: "choice", q: "Wie werden <b>21–29</b> geschrieben?", keep: true, opts: ["in einem Wort (veintiuno)", "mit y getrennt (veinte y uno)"], a: "in einem Wort (veintiuno)", hint: "21–29: ein Wort – veintiuno, veintidós …", pista: "Schau in der Merk-Box auf 21, 22, 23, 26." },
+        { t: "choice", q: "Wie werden Zahlen <b>ab 31</b> gebildet?", keep: true, opts: ["Zehner + y + Einer (treinta y uno)", "in einem Wort (treintiuno)", "Einer + Zehner (uno y treinta)"], a: "Zehner + y + Einer (treinta y uno)", hint: "ab 31: treinta y uno, cuarenta y siete …", pista: "Schau in der Merk-Box auf 31, 35, 47." },
+        { t: "choice", q: "Wie heißt <b>100</b>?", keep: true, opts: ["cien", "ciento", "diez y diez"], a: "cien", hint: "100 = cien.", pista: "Das letzte Wort in der Merk-Box." },
+        d2w(34, [34, 43, 24]), d2w(29, [29, 39, 92]),
+        { t: "choice", who: B, q: `<span class="big">68</span>`, task: "¿Cómo se escribe?", opts: ["sesenta y ocho", "sesentayocho", "ochenta y seis"], a: "sesenta y ocho", hint: "ab 31 mit y und getrennt: sesenta y ocho.", pista: "60 = sesenta, 8 = ocho. Ab 31: Zehner + y + Einer." }
+      ] },
+    { label: "Fase 5", title: "Las puertas de la nave", shuffle: true,
+      memo: "📌 Zehner: 20 veinte · 30 treinta · 40 cuarenta · 50 cincuenta · 60 sesenta · 70 setenta · 80 ochenta · 90 noventa · 100 cien",
+      intro: `<p>Las puertas de la nave tienen un teclado (Tastenfeld). BIT-7 te dice el código en letras. <b>Escribe los números con cifras</b> (Ziffern).</p><p class="de">Tippe die Zahl als Ziffern, z. B. „cuarenta y siete“ → 47.</p>`,
+      pista: "Erst der Zehner (Merk-Box), dann der Einer nach dem „y“.",
+      tasks: [code(47), code(21), code(66), code(99), code(100), code(58), code(73), code(85)] },
+    { label: "Fase 6", title: "Frecuencias de radio", shuffle: true,
+      memo: "📌 20–29 in einem Wort (veinti<b>dós</b>, veinti<b>trés</b>, veinti<b>séis</b> mit Akzent!) · ab 31: Zehner <b>y</b> Einer · 100 cien",
+      intro: `<div class="who"><div class="face">👩🏽‍🚀</div><div><b class="n">Comandante Rosa</b>Tenemos que llamar a la Tierra. 📡 Escribe las frecuencias de radio en letras.</div></div><p class="de">Schreib die Zahl als Wort. Achte auf Akzente und auf das „y“.</p>`,
+      pista: "Ist die Zahl zwischen 21 und 29? → ein Wort (veinti…). Ab 31 → Zehner + y + Einer.",
+      tasks: [wr(22, { veintidos: "Akzent: veintidós." }), wr(26, { veintiseis: "Akzent: veintiséis.", "veinte y seis": "21–29 schreibt man in einem Wort: veintiséis." }), wr(30), wr(45, { cuarentaycinco: "Getrennt schreiben: cuarenta y cinco.", "cuarenta cinco": "Mit y: cuarenta y cinco." }), wr(71, { "setenta uno": "Mit y: setenta y uno.", "sesenta y uno": "70 = setenta (mit t), 60 = sesenta." }), wr(88), wr(100, { ciento: "100 allein heißt cien." })] },
+    { label: "Fase 7", title: "La tripulación", shuffle: true,
+      memo: "📌 ¿Cuántos años tienes? – <b>Tengo</b> … años. · ¿Cuántos años tiene …? – <b>Tiene</b> … años.",
+      intro: `<p>En la nave hay una tripulación muy especial. ¿Cuántos años tienen?</p><p class="de">Alter auf Spanisch: Tengo … años (ich bin … Jahre alt) – wörtlich: „Ich habe … Jahre“.</p>`,
+      tasks: [
+        { t: "order", task: "Escribe:", taskDe: "Ich bin 42 Jahre alt.", who: R, words: ["Tengo", "cuarenta", "y", "dos", "años."], a: "Tengo cuarenta y dos años." },
+        { t: "order", task: "Pregunta:", taskDe: "Wie alt bist du?", who: R, words: ["¿Cuántos", "años", "tienes?"], a: "¿Cuántos años tienes?" },
+        { t: "choice", who: B, q: "Tengo ___ años. 🤖 (100)", opts: ["cien", "ciento", "diez"], a: "cien", hint: "100 → cien." },
+        { t: "choice", who: {face:"👨🏻‍🔧", name:"El ingeniero Luis"}, q: "Tengo ___ años. (37)", opts: ["treinta y siete", "setenta y tres", "treinta y seis"], a: "treinta y siete", hint: "37 → treinta y siete." },
+        { t: "type", who: Y, task: "Escribe tu respuesta (Zahl als Wort):", q: "Tengo ___ años. (16)", a: "dieciséis", tips: { dieciseis: "Akzent: dieciséis." } }
+      ] },
+    { label: "Final", title: "Aterrizaje en Marte", go: "🔴 ¡Aterrizaje!",
+      memo: "📌 + más · − menos · = son",
+      intro: `<div class="who"><div class="face">🤖</div><div><b class="n">BIT-7</b>¡Llegamos a Marte! Para el aterrizaje necesito un último cálculo… ¡Rápido! 🔴</div></div>`,
+      tasks: [
+        { t: "choice", who: B, q: "Cuarenta más treinta son ___.", opts: ["setenta", "sesenta", "diecisiete"], a: "setenta", hint: "40 + 30 = 70 → setenta.", pista: "40 + 30 = ? – und aufpassen: setenta (70) oder sesenta (60)?" },
+        { t: "type", who: R, q: "Cien menos uno son ___.", a: "noventa y nueve", show: "100 − 1 = 99 → noventa y nueve", pista: "100 − 1 = 99 → Zehner (90) + y + Einer (9)." }
+      ] }
+  ],
+  scene: (S) => {
+    const p = S.done ? 1 : S.solved / S.total, launched = S.done || S.stage >= 3;
+    const left = launched ? 70 + p * 560 : 52, top = launched ? 110 - p * 70 : 120;
+    const cnt = S.stage < 3 ? Math.max(0, 20 - Math.round(S.solved / 22 * 20)) : 0;
+    const dist = Math.max(0, Math.round((1 - p) * 225));
+    return `<div class="space"><div class="stars"></div><div class="earth"></div><div class="mars"></div><div class="path"></div>
+      <div class="rocket" style="left:${left}px;top:${top}px">🚀<span class="me">${E8.myAvatar()}</span></div></div>
+      <div class="hud"><span>${S.stage < 3 && !S.done ? `T − <b>${cnt}</b> (${W(cnt)})` : "🚀 EN VUELO"}</span><span>Marte: <b>${dist}</b> millones de km</span></div>`;
+  },
+  outro: `<div style="font-size:60px">🔴🚀🎉</div><h1>¡Aterrizaje en Marte!</h1>
+    <div class="who" style="text-align:left"><div class="face">👩🏽‍🚀</div><div><b class="n">Comandante Rosa</b>¡Misión cumplida! Eres el/la mejor astronauta de la nave. ¡Bienvenido/a a Marte! 👽</div></div>`
+});
+</script>
+</body>
+</html>

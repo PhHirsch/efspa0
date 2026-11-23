@@ -1,5 +1,14 @@
 /* Cover-Grafiken für Spiele auf der Startseite (id: SVG). Ohne Eintrag wird das Emoji aus GRAMMAR.icon gezeigt. */
 window.COVERS = {
+  "numeros": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+    <rect width="220" height="140" rx="10" fill="#0b0920"/>
+    <g fill="#fff"><circle cx="20" cy="20" r="1.4"/><circle cx="70" cy="34" r="1"/><circle cx="120" cy="14" r="1.4"/><circle cx="196" cy="110" r="1"/><circle cx="40" cy="120" r="1.2"/><circle cx="150" cy="128" r="1"/></g>
+    <circle cx="170" cy="40" r="28" fill="#c4421c"/><circle cx="160" cy="32" r="6" fill="#a3361a"/><circle cx="180" cy="50" r="4" fill="#a3361a"/>
+    <circle cx="10" cy="140" r="40" fill="#1e5fa8"/><path d="M-4 112 q14 -6 22 6 q-8 8 -22 2z" fill="#3fae5a"/>
+    <path d="M40 118 Q90 70 150 52" stroke="#ffffff55" stroke-width="2" fill="none" stroke-dasharray="5 5"/>
+    <g transform="translate(96 78) rotate(50)"><path d="M0 -26 C10 -14 10 10 8 18 L-8 18 C-10 10 -10 -14 0 -26Z" fill="#e8ecf5"/><circle cx="0" cy="-6" r="5" fill="#5ab0ff" stroke="#2a3a5a" stroke-width="1.5"/><path d="M-8 8 L-16 22 L-8 18Z M8 8 L16 22 L8 18Z" fill="#ff6b3d"/><path d="M-5 18 L0 32 L5 18Z" fill="#ffcf3a"/></g>
+    <text x="16" y="34" font-family="Menlo,monospace" font-size="18" font-weight="bold" fill="#9ff0c9">T−10</text>
+  </svg>`,
   "ir-camino": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
     <rect x="22" y="12" width="176" height="116" rx="10" fill="#efe4cc"/>
     <rect x="101" y="12" width="18" height="116" fill="#8a8f98"/><rect x="22" y="40" width="176" height="14" fill="#8a8f98"/><rect x="22" y="84" width="176" height="14" fill="#8a8f98"/>

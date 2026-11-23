@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>The Hirsch Games · Español EF</title>
+<title>Los Juegos del Ciervo · Español EF</title>
 <link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -158,7 +158,7 @@
 
 <script src="game.js?v=11"></script>
 <script src="bosses.js?v=9"></script>
-<script src="covers.js?v=13"></script>
+<script src="covers.js?v=14"></script>
 <script src="vocab-u1.js?v=9"></script>
 <script src="vocab-u2.js?v=9"></script>
 <script src="vocab-u3.js?v=11"></script>
@@ -169,6 +169,7 @@ window.VOCAB = window.VOCAB || {}; window.COVERS = window.COVERS || {};
 
 /* ===== Spiele (neueste oben). icon = Emoji fürs Cover, falls es in covers.js kein eigenes Cover gibt. Vokabel-Bosse kommen automatisch aus vocab-*.js ===== */
 const GRAMMAR = [
+  {id:"numeros", unit:"u1", file:"mision-marte.html", icon:"🚀", topic:"Los números 0–100", name:"Misión Marte", info:"Vuela a Marte: cuenta atrás, códigos y combustible – ¡solo con números en español!", color:"linear-gradient(135deg,#1a1540,#c4421c)", accent:"#ff6b3d", isNew:true},
   {id:"hay-estar", unit:"u3", file:"mision-barrio.html", icon:"🗺️", topic:"hay · está / están", name:"Misión Barrio", info:"Descubre Chamberí (Madrid) y encuentra el Café Azul.", color:"linear-gradient(135deg,#5a3a18,#b8742a)"},
   {id:"mucho-poco", unit:"u3", file:"simbarrio.html", icon:"🏗️", topic:"mucho / poco · la ciudad", name:"SimBarrio", info:"Construye un barrio nuevo para Villaluna.", color:"linear-gradient(135deg,#124a5a,#2a9a7a)"},
   /* Bloque B – noch ausgeblendet, erst freischalten, wenn der Kurs so weit ist:
@@ -237,7 +238,7 @@ function setBg(g){
 /* ===== Kopfzeile ===== */
 function topBar(){
   const s = state();
-  const brand = big => `<div class="brand ${big?"big":""}"><img src="logo.svg" alt=""><div class="bn">THE HIRSCH<br>GAMES<small>${SITE.sub}</small></div></div>`;
+  const brand = big => `<div class="brand ${big?"big":""}"><img src="logo.svg" alt=""><div class="bn">LOS JUEGOS<br>DEL CIERVO<small>${SITE.sub}</small></div></div>`;
   if (!s) { $("top").innerHTML = `${brand(true)}<div class="pills"><button class="howto" onclick="tour()">❓ ¿CÓMO FUNCIONA?</button></div>`; return; }
   const L = E8.levelInfo(s.xp||0), stars = Object.values(s.stars||{}).reduce((a,b)=>a+b,0);
   $("top").innerHTML = `${brand(false)}<div class="hex D">${L.level}</div><div class="tier"><div class="D">NIVEL ${L.level} · ${L.name.toUpperCase()}</div><div class="bar"><i style="width:${L.pct}%"></i></div><div class="xpt">${L.next?`${s.xp||0} / ${L.next} XP`:"nivel máximo"}</div></div>
@@ -421,7 +422,7 @@ function pinDialog(first){
 
 /* ===== Tutorial ===== */
 const TOUR = [
-  {sel:null, t:"¡BIENVENIDOS A THE HIRSCH GAMES!", p:"Aquí practicas español con juegos, ganas monedas, subes de nivel y vistes a tu avatar. ¡Vamos a ver cómo funciona!", de:"Hier übst du Spanisch mit Spielen, sammelst Münzen und gestaltest deinen Avatar. Kurze Tour!"},
+  {sel:null, t:"¡BIENVENIDOS A LOS JUEGOS DEL CIERVO!", p:"Aquí practicas español con juegos, ganas monedas, subes de nivel y vistes a tu avatar. ¡Vamos a ver cómo funciona!", de:"Hier übst du Spanisch mit Spielen, sammelst Münzen und gestaltest deinen Avatar. Kurze Tour!"},
   {sel:"#hero", t:"TÚ", p:"Este es tu avatar. Inicia sesión con tu <b>número</b> y el <b>PIN de 4 cifras</b> de tu profe. La primera vez eliges tu <b>propio PIN</b>. Sin login puedes jugar, pero no ganas monedas.", de:"Beim ersten Login wählst du deine eigene PIN. Ohne Login kannst du spielen, bekommst aber keine Münzen."},
   {sel:".lobby .feat", t:"TU JUEGO", p:"Aquí ves el juego elegido. Pulsa <b>JUGAR</b> para empezar. Solo sigues cuando la respuesta es correcta – los errores vuelven más tarde.", de:"Mit JUGAR startest du. Du kommst nur weiter, wenn alles richtig ist."},
   {sel:"#shelves .shelf:nth-child(2)", t:"TODOS LOS JUEGOS", p:"Los juegos están ordenados por unidad: jefes de vocabulario y misiones. Toca un juego <b>una vez</b> para verlo y <b>otra vez</b> para jugar.", de:"Einmal tippen = ansehen, nochmal tippen = spielen. Wische die Reihen zur Seite."},
