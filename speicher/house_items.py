@@ -111,7 +111,12 @@ add("y-dino", "yard", "Dinosaur statue 🦖", 700, lvl=6, kind="dino")
 add("y-ufo", "yard", "Landed UFO 🛸", 1000, lvl=7, kind="ufo")
 add("y-rocket", "yard", "Rocket 🚀", 1500, lvl=9, stars=50, kind="rocket")
 # Unit-Teile ¡Vamos! ¡Adelante! (erscheinen erst, wenn die Unit freigeschaltet ist)
-# (folgen nach Freigabe der Vorschlagsliste)
+add("y-oso", "yard", "El Oso y el Madroño (Madrid)", 450, unit=1, kind="oso", es="El Oso y el Madroño (Madrid)")
+add("y-sombrilla", "yard", "Sombrilla de playa", 300, unit=1, kind="sombrilla", es="Sombrilla de playa")
+add("y-bici", "yard", "Bicicleta", 250, unit=2, kind="bici", es="Bicicleta")
+add("y-helados", "yard", "Puesto de helados", 300, unit=2, kind="helados", es="Puesto de helados")
+add("y-metro", "yard", "Boca de metro", 350, unit=3, kind="metro", es="Boca de metro")
+add("y-churros", "yard", "Churrería", 400, unit=3, kind="churros", es="Churrería")
 
 HSLOTS = ["ground", "wall", "wcolor", "roof", "rcolor", "window", "door", "roofx", "fence", "yard1", "yard2", "yard3", "yard4"]
 HDEFAULT = {"ground": "g-grass", "wall": "w-plaster", "wcolor": "wc-cream", "roof": "r-gable", "rcolor": "rc-red", "window": "win-classic",
