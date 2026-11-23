@@ -1,5 +1,25 @@
 /* Cover-Grafiken für Spiele auf der Startseite (id: SVG). Ohne Eintrag wird das Emoji aus GRAMMAR.icon gezeigt. */
 window.COVERS = {
+  "conjugador": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="cjg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a0838"/><stop offset="1" stop-color="#3a0e6a"/></linearGradient></defs>
+    <rect width="220" height="140" rx="10" fill="url(#cjg)"/>
+    <g stroke="#ff3bd4" stroke-width="1" opacity=".6"><path d="M0 110 L220 110 M0 122 L220 122 M0 134 L220 134 M110 100 L110 140 M70 100 L40 140 M150 100 L180 140 M30 100 L-20 140 M190 100 L240 140"/></g>
+    <text x="110" y="46" font-family="Arial Black,Impact,sans-serif" font-size="22" fill="#fff" text-anchor="middle" stroke="#ff3bd4" stroke-width=".8">HABL_</text>
+    <g font-family="Menlo,monospace" font-size="14" font-weight="bold" text-anchor="middle"><text x="50" y="80" fill="#3affd4">-o</text><text x="90" y="72" fill="#ffd23a">-as</text><text x="130" y="80" fill="#3ab0ff">-amos</text><text x="174" y="70" fill="#ff6a8a">-áis</text></g>
+    <rect x="30" y="90" width="160" height="7" rx="3.5" fill="#1a0838" stroke="#8a3bff"/><rect x="31" y="91" width="96" height="5" rx="2.5" fill="#ff3bd4"/>
+    <text x="22" y="22" font-size="13">❤️❤️❤️</text><text x="198" y="22" font-family="Menlo,monospace" font-size="13" fill="#3affd4" text-anchor="end">×5</text>
+  </svg>`,
+  "telenovela": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+    <rect width="220" height="140" rx="10" fill="#3a0a1a"/>
+    <rect x="34" y="14" width="152" height="100" rx="12" fill="#1a0a10" stroke="#8a2a4a" stroke-width="4"/>
+    <rect x="42" y="22" width="136" height="84" rx="6" fill="#ff8aa0"/>
+    <circle cx="86" cy="58" r="13" fill="#c9905a"/><path d="M72 56 C72 40 100 40 100 56 L100 76 L72 76Z" fill="#3a1a0a"/><circle cx="86" cy="58" r="10" fill="#c9905a"/><rect x="74" y="72" width="24" height="34" rx="6" fill="#ffd23a"/>
+    <circle cx="134" cy="58" r="11" fill="#f2c9a0"/><path d="M123 54 C123 44 145 44 145 54Z" fill="#6a3a1a"/><rect x="122" y="70" width="24" height="36" rx="6" fill="#3a78d8"/>
+    <path d="M110 44 C104 36 96 42 110 54 C124 42 116 36 110 44Z" fill="#ff2a5a"/>
+    <path d="M90 114 L80 130 M130 114 L140 130" stroke="#8a2a4a" stroke-width="4"/>
+    <text x="110" y="134" font-family="Georgia,serif" font-style="italic" font-size="12" fill="#ffb3c2" text-anchor="middle">continuará…</text>
+    <rect x="150" y="84" width="24" height="16" rx="2" fill="#fff8e6" transform="rotate(-8 162 92)"/>
+  </svg>`,
   "tener-no": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
     <rect x="18" y="10" width="184" height="120" rx="8" fill="#7a5634"/>
     <g fill="#fffbe9"><rect x="30" y="20" width="36" height="44" rx="2" transform="rotate(-4 48 42)"/><rect x="92" y="18" width="36" height="44" rx="2" transform="rotate(3 110 40)"/><rect x="154" y="20" width="36" height="44" rx="2" transform="rotate(-2 172 42)"/><rect x="40" y="76" width="36" height="44" rx="2" transform="rotate(2 58 98)"/><rect x="144" y="76" width="36" height="44" rx="2" transform="rotate(-3 162 98)"/></g>

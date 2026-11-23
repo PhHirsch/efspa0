@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Amor y misterio en Chamberí · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#4a0f24 0%,#14040a 70%);--panel:#200a12;--txt:#fff0f3;--muted:#e0a8b8;--line:#4e1a2a;--btn:#2e0e1a;--accent:#ff5a7a;--accentTxt:#fff;--accent2:#ffb3c2;--bubble:#2e1019;--input:#14060a;--ok:#6fe59a;--bad:#ffb03a}
+  .tv{position:relative;border-radius:14px 14px 0 0;overflow:hidden;background:linear-gradient(135deg,#6a1030,#2a0614);padding:14px 16px;display:flex;align-items:center;gap:14px}
+  .tv .logo{font-family:Georgia,serif;font-style:italic;font-size:26px;line-height:1;color:#ffe0e8;text-shadow:0 2px 0 #8a1030,0 0 18px #ff5a7a}
+  .tv .logo small{display:block;font-size:13px;font-style:normal;letter-spacing:.2em;color:#ffb3c2;margin-top:4px}
+  .tv .cast{margin-left:auto;display:flex;gap:6px;font-size:28px}
+  .tv .cast span{width:44px;height:44px;border-radius:50%;background:#fff1;display:grid;place-items:center;border:2px solid #ff5a7a}
+  .tv .cast span.me{overflow:hidden;background:#fff}
+  .tv .cast span.me svg{width:44px;height:44px}
+  .prog{height:6px;background:#2a0614}.prog i{display:block;height:100%;background:linear-gradient(90deg,#ff5a7a,#ffd23a)}
+  .story p{margin:.45em 0;line-height:1.55}
+  .story .d{display:flex;gap:8px;align-items:flex-start;margin:.4em 0}
+  .story .d b{flex:none;min-width:62px;color:#ffb3c2}
+  .story .gl{border-bottom:1px dotted #ffb3c2;cursor:help}
+  .story .note{background:#fff8e6;color:#3a2a10;border-radius:4px;padding:8px 12px;font-family:"Comic Sans MS","Bradley Hand",cursive;transform:rotate(-1deg);box-shadow:0 2px 6px #0006;margin:.6em 0;display:inline-block}
+  .eps{display:grid;gap:12px;margin:14px 0}
+  .ep{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,#3a0a1a,#6a1a34);border:1px solid #8a2a4a;border-radius:14px;padding:14px;color:#fff;text-decoration:none}
+  .ep .n{font-family:Georgia,serif;font-size:34px;font-style:italic;color:#ffb3c2;width:44px;text-align:center}
+  .ep b{font-size:19px}
+  .ep.lock{filter:grayscale(.8);opacity:.55;pointer-events:none}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:17px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px}
+  .de{color:var(--muted);font-size:14px}
+  .btn{display:inline-block;padding:10px 18px;border-radius:12px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700}
+  .ep .st{margin-left:auto;font-size:18px;color:#ffd23a;white-space:nowrap}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=13"></script>
+<script src="juego.js?v=6"></script>
+<script>
+/* ======== Freischalten: Zahl erhöhen, wenn die nächste Folge erscheinen soll ======== */
+const LIBERADOS = 1;
+
+const g = (w, de) => `<span class="gl" title="${de}">${w}</span> <span class="de">(${de})</span>`;
+const d = (who, t) => `<div class="d"><b>${who}:</b><span>${t}</span></div>`;
+const AL = {face:"👧🏽", name:"Alba"}, DI = {face:"👦🏻", name:"Diego"}, CA = {face:"👩🏼‍🦰", name:"Carla"}, AB = {face:"👵🏽", name:"La abuela Carmen"};
+const VF = (q, a, why) => ({ t: "choice", q: q, task: "¿Verdadero o falso?", taskDe: "Richtig oder falsch?", keep: true, opts: ["verdadero ✔", "falso ✘"], a: a ? "verdadero ✔" : "falso ✘", hint: why });
+
+const EPS = [
+ { n: 1, unit: "Unidad 1", title: "La chica nueva", teaser: "Alba llega a Madrid. Nuevo instituto, nuevos amigos … y una nota misteriosa.",
+   parts: [
+   { title: "El primer día",
+     text: `<p>Es lunes. Alba está nerviosa: es su primer día en un instituto de Madrid, en el barrio de Chamberí. Alba es de México, de Guadalajara.</p>
+       ${d("Diego", "¡Hola! ¿Eres nueva? Me llamo Diego. ¿Y tú?")}
+       ${d("Alba", "Hola, Diego. Me llamo Alba. Soy de México.")}
+       ${d("Diego", "¡De México! ¡Qué guay! ¿Cuántos años tienes?")}
+       ${d("Alba", "Tengo dieciséis años. ¿Y tú?")}
+       ${d("Diego", "Yo también tengo dieciséis. Mira, esta es Carla, mi amiga.")}
+       ${d("Carla", "Hola, Alba. ¡Bienvenida a Madrid! 😊")}`,
+     tasks: [
+       { t: "choice", q: "¿De dónde es Alba?", opts: ["de México", "de Madrid", "de Barcelona"], a: "de México", hint: "„Soy de México.“" },
+       { t: "choice", q: "¿Cuántos años tiene Alba?", opts: ["dieciséis", "quince", "diecisiete"], a: "dieciséis", hint: "„Tengo dieciséis años.“" },
+       VF("Diego es el hermano de Carla.", false, "Carla es la amiga de Diego: „esta es Carla, mi amiga“."),
+       VF("Es el primer día de Alba en el instituto.", true, "„Es su primer día en un instituto de Madrid.“")
+     ] },
+   { title: "Una nota en la mochila",
+     text: `<p>Después de la clase, Alba, Diego y Carla hablan en el patio.</p>
+       ${d("Carla", "Alba, ¿tienes WhatsApp? ¿Cuál es tu número?")}
+       ${d("Alba", "Sí, es el seis, cuarenta y cinco, setenta y dos, treinta y ocho …")}
+       <p>Alba ${g("abre", "öffnet")} su ${g("mochila", "Rucksack")} … y ve una nota. No es de Diego, no es de Carla. ¿De quién es?</p>
+       <div class="note">¡Hola, Alba! No eres la única ${g("persona", "Person")} de México en este barrio … 😉 &nbsp;– C.</div>
+       ${d("Alba", "¿„C“? ¿Quién es „C“? 😳")}
+       ${d("Diego", "¿Carla? ¿Es tu nota?")}
+       ${d("Carla", "¡No, no! ¡No es mi nota!")}`,
+     tasks: [
+       { t: "choice", q: "¿Dónde ve Alba la nota?", opts: ["en su mochila", "en la mesa del profe", "en su móvil"], a: "en su mochila", hint: "„Alba abre su mochila … y ve una nota.“" },
+       { t: "choice", q: "¿Quién escribe la nota?", opts: ["No sabemos – solo „C.“", "Diego", "Carla"], a: "No sabemos – solo „C.“", hint: "Carla dice „¡No es mi nota!“ – es un misterio." },
+       { t: "choice", q: "El número de Alba empieza con: seis, cuarenta y cinco …", opts: ["6 45 …", "6 54 …", "16 45 …"], a: "6 45 …", hint: "seis = 6, cuarenta y cinco = 45." },
+       VF("En la nota dice: Alba no es la única persona de México en el barrio.", true, "„No eres la única persona de México en este barrio.“")
+     ] }],
+   end: "¿Quién es „C.“? ¿Y quién más es de México en Chamberí? 🤔 – Continuará …" },
+ { n: 2, unit: "Unidad 2", title: "Un mensaje misterioso", teaser: "La familia de Alba, un mensaje anónimo … y una foto muy vieja.",
+   parts: [
+   { title: "La familia de Alba",
+     text: `<p>Alba vive en Madrid con su madre y su abuela, Carmen. Su padre trabaja en México. Alba no tiene hermanos, pero tiene un gato, Frida. 🐱</p>
+       ${d("Diego", "¿Tu abuela es de México también?")}
+       ${d("Alba", "No, mi abuela es de Madrid. Pero vive muchos años en México. Ahora vive otra vez aquí, en Chamberí.")}
+       ${d("Diego", "Mi abuelo también vive en Chamberí. Se llama Manuel. Tiene ochenta años y es muy simpático.")}
+       <p>${g("De repente", "plötzlich")}, el móvil de Alba ${g("suena", "klingelt")}. Un mensaje. Número ${g("desconocido", "unbekannt")}.</p>
+       <div class="note">Tu abuela tiene un secreto. Pregunta por „Olavide 1975“. – C.</div>`,
+     tasks: [
+       { t: "choice", q: "¿Con quién vive Alba?", opts: ["con su madre y su abuela", "con su padre y su madre", "con su hermano"], a: "con su madre y su abuela", hint: "„Alba vive … con su madre y su abuela.“" },
+       VF("Alba tiene un hermano.", false, "„Alba no tiene hermanos, pero tiene un gato.“"),
+       { t: "choice", q: "¿Dónde trabaja el padre de Alba?", opts: ["en México", "en Madrid", "en Chamberí"], a: "en México", hint: "„Su padre trabaja en México.“" },
+       { t: "choice", q: "¿Cómo se llama el abuelo de Diego?", opts: ["Manuel", "Carmen", "Frida"], a: "Manuel", hint: "„Se llama Manuel.“" },
+       { t: "choice", q: "¿Qué dice el mensaje?", opts: ["La abuela tiene un secreto.", "Diego tiene un secreto.", "El gato tiene un secreto."], a: "La abuela tiene un secreto.", hint: "„Tu abuela tiene un secreto.“" }
+     ] },
+   { title: "La foto",
+     text: `<p>Por la tarde, Alba habla con su abuela.</p>
+       ${d("Alba", "Abuela, ¿qué es „Olavide 1975“?")}
+       <p>La abuela no contesta. Está muy seria (${g("ernst", "ernst")}). Después, ${g("saca", "holt heraus")} una foto vieja: es una chica de dieciséis años en una plaza. Con ella hay un chico.</p>
+       ${d("Abuela", "Esta chica soy yo. En la Plaza de Olavide. En 1975.")}
+       ${d("Alba", "¿Y el chico? ¿Quién es?")}
+       ${d("Abuela", "Es … un amigo. Un amigo muy especial. Pero no sé dónde está ahora.")}
+       <p>Alba hace una foto de la foto con su móvil y la ${g("manda", "schickt")} a Diego. Dos minutos después, Diego contesta:</p>
+       <div class="note">Alba … ¡ese chico es mi abuelo Manuel! 😱</div>`,
+     tasks: [
+       { t: "choice", q: "¿Qué hay en la foto vieja?", opts: ["una chica y un chico en una plaza", "un gato y una casa", "Alba y Diego"], a: "una chica y un chico en una plaza", hint: "„Es una chica … en una plaza. Con ella hay un chico.“" },
+       { t: "choice", q: "¿Quién es la chica de la foto?", opts: ["la abuela de Alba", "Carla", "la madre de Diego"], a: "la abuela de Alba", hint: "„Esta chica soy yo.“ – dice la abuela." },
+       VF("La abuela sabe dónde está el chico ahora.", false, "„No sé dónde está ahora.“"),
+       { t: "order", task: "Diego escribe:", taskDe: "Dieser Junge ist mein Opa!", words: ["¡Ese", "chico", "es", "mi", "abuelo!"], a: "¡Ese chico es mi abuelo!" }
+     ] }],
+   end: "¿El abuelo de Diego y la abuela de Alba? ¿Y quién es „C.“? 💌 – Continuará …" },
+ { n: 3, unit: "Unidad 3", title: "El piso de la abuela", teaser: "Una caja debajo de la cama, una carta de 1975 … y una cita en la Plaza de Olavide.",
+   parts: [
+   { title: "En el barrio",
+     text: `<p>El sábado, Diego está en el piso de Alba. El piso está en la calle de Fuencarral, en Chamberí. En la calle hay una panadería, un bar y una farmacia. Cerca hay una estación de metro.</p>
+       <p>El piso no es muy grande, pero es bonito. Hay un salón con muchas fotos, una cocina pequeña y tres habitaciones. La habitación de la abuela está al lado del salón.</p>
+       ${d("Diego", "¡Qué piso tan bonito! ¿Dónde está tu abuela?")}
+       ${d("Alba", `No está. Está en el mercado. ¡Rápido, ${g("buscamos", "wir suchen")} el secreto!`)}`,
+     tasks: [
+       { t: "choice", q: "¿Dónde está el piso de Alba?", opts: ["en la calle de Fuencarral", "en la Plaza Mayor", "en México"], a: "en la calle de Fuencarral", hint: "„El piso está en la calle de Fuencarral.“" },
+       { t: "choice", q: "¿Qué hay en la calle?", opts: ["una panadería, un bar y una farmacia", "un museo y un parque", "un cine y un hospital"], a: "una panadería, un bar y una farmacia", hint: "„En la calle hay una panadería, un bar y una farmacia.“" },
+       VF("El piso es muy grande.", false, "„El piso no es muy grande, pero es bonito.“"),
+       { t: "choice", q: "¿Dónde está la habitación de la abuela?", opts: ["al lado del salón", "al lado de la cocina", "en el metro"], a: "al lado del salón", hint: "„… está al lado del salón.“" },
+       { t: "choice", q: "¿Dónde está la abuela?", opts: ["en el mercado", "en su habitación", "en el bar"], a: "en el mercado", hint: "„Está en el mercado.“" }
+     ] },
+   { title: "La caja",
+     text: `<p>Debajo de la cama de la abuela hay una caja vieja. En la caja hay fotos, un pañuelo (${g("Halstuch", "Halstuch")}) rojo … y una carta.</p>
+       <div class="note">Querida Carmen: Mañana estoy en la Plaza de Olavide, a las seis, al lado de la fuente. Te espero. Siempre. – Manuel, 1975</div>
+       ${d("Diego", `Es la ${g("letra", "Schrift")} de mi abuelo … ¡estoy seguro!`)}
+       <p>En ese momento, la puerta del piso ${g("se abre", "geht auf")}. Es la abuela Carmen. Mira la caja, mira la carta … y mira a Diego.</p>
+       ${d("Abuela", "¿Tú … eres el nieto (Enkel) de Manuel?")}`,
+     tasks: [
+       { t: "choice", q: "¿Dónde está la caja?", opts: ["debajo de la cama", "encima del armario", "en la cocina"], a: "debajo de la cama", hint: "„Debajo de la cama … hay una caja vieja.“" },
+       { t: "choice", q: "¿Qué hay en la caja?", opts: ["fotos, un pañuelo rojo y una carta", "un móvil y un gato", "libros y bolígrafos"], a: "fotos, un pañuelo rojo y una carta", hint: "„En la caja hay fotos, un pañuelo rojo … y una carta.“" },
+       { t: "choice", q: "¿Dónde espera Manuel a Carmen?", opts: ["en la Plaza de Olavide, al lado de la fuente", "en el metro", "en el instituto"], a: "en la Plaza de Olavide, al lado de la fuente", hint: "„… en la Plaza de Olavide … al lado de la fuente.“" },
+       VF("La abuela entra en el piso.", true, "„La puerta del piso se abre. Es la abuela Carmen.“"),
+       { t: "order", task: "La abuela pregunta:", taskDe: "Bist du der Enkel von Manuel?", words: ["¿Eres", "el", "nieto", "de", "Manuel?"], a: "¿Eres el nieto de Manuel?" }
+     ] }],
+   end: "¿Qué pasó en 1975 en la Plaza de Olavide? ¿Y quién es „C.“? 💔 – Continuará …" }
+];
+
+const q = new URLSearchParams(location.search), EP = EPS.find(e => e.n === +q.get("ep"));
+const doneKey = n => "efspa0-tele-done-" + n;
+if (!EP || EP.n > LIBERADOS) {
+  const se = E8.getSession(), st = se && se.state ? se.state.stars || {} : {};
+  document.getElementById("app").innerHTML = `<div class="panel" style="max-width:720px;margin:20px auto;padding:18px">
+    <a href="index.html" style="color:#ffb3c2">← Lobby</a>
+    <div class="tv" style="margin-top:10px;border-radius:14px"><div class="logo">Amor y misterio<br>en Chamberí<small>UNA TELENOVELA</small></div><div class="cast"><span>👧🏽</span><span>👦🏻</span><span>👩🏼‍🦰</span><span>👵🏽</span></div></div>
+    <p>Alba llega de México a Madrid. Un instituto nuevo, amigos nuevos – y un misterio. Lee cada capítulo y contesta las preguntas. ¡Un capítulo nuevo cuando tu profe lo libera!</p>
+    <p class="de">Lies jede Folge und beantworte die Fragen. Neue Folgen schaltet deine Lehrkraft frei – bleib dran!</p>
+    <div class="eps">${EPS.map(e => { const lock = e.n > LIBERADOS, s = st["tele-" + e.n] || 0;
+      return `<a class="ep ${lock ? "lock" : ""}" href="?ep=${e.n}"><span class="n">${e.n}</span><span><b>${lock ? "🔒 " : ""}${e.title}</b><br><span class="de">${e.unit} · ${lock ? "Pronto … – bald" : e.teaser}</span></span><span class="st">${lock ? "" : s ? "★".repeat(s) + "☆".repeat(3 - s) : "NUEVO"}</span></a>`; }).join("")}
+      <div class="ep lock"><span class="n">…</span><span><b>🔒 Capítulo 4</b><br><span class="de">Continuará …</span></span></div></div></div>`;
+} else {
+  JUEGO.start({
+    id: "tele-" + EP.n, key: "efspa0-tele-" + EP.n, icon: "💌", topic: "Telenovela · Capítulo " + EP.n, title: EP.title,
+    intro: `<p><b>Capítulo ${EP.n}</b> · ${EP.teaser}</p><p class="de">Lies den Text genau – er bleibt bei den Fragen sichtbar. Unbekannte Wörter haben eine Übersetzung in Klammern.</p>`,
+    goLabel: "▶ ¡Empieza el capítulo!", time: "ca. 10 minutos",
+    stages: EP.parts.map((p, i) => ({ label: "Parte " + (i + 1), title: p.title, go: "📖 ¡A leer!",
+      intro: `<div class="story">${p.text}</div><p class="de">Lies den Text. Danach kommen Fragen – der Text bleibt oben sichtbar.</p>`,
+      memo: `<div class="story">${p.text}</div>`, pista: "Such die Antwort im Text oben – die Wörter aus der Frage stehen meistens auch im Text.", tasks: p.tasks })),
+    scene: (S) => `<div class="tv"><div class="logo">Amor y misterio<br>en Chamberí<small>CAPÍTULO ${EP.n}</small></div><div class="cast"><span>👧🏽</span><span>👦🏻</span>${EP.n > 1 ? "<span>👵🏽</span>" : "<span>👩🏼‍🦰</span>"}<span class="me">${E8.myAvatar()}</span></div></div>
+      <div class="prog"><i style="width:${S.done ? 100 : Math.round(S.solved / S.total * 100)}%"></i></div>`,
+    outro: `<div style="font-size:56px">💌🎬</div><h1>Fin del capítulo ${EP.n}</h1><p style="font-size:20px">${EP.end}</p>
+      <p class="de">${EP.n < LIBERADOS ? "Die nächste Folge ist schon da!" : "Die nächste Folge schaltet deine Lehrkraft bald frei."}</p><p><a class="btn" href="telenovela.html">📺 Todos los capítulos</a></p>`
+  });
+}
+</script>
+</body>
+</html>
