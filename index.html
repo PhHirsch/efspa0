@@ -582,10 +582,11 @@ function tourStep(){
 /* ===== Start ===== */
 (function(){
   let pre = null; try{ pre = sessionStorage.getItem("efspa0sel"); }catch(e){}
-  SEL = ALL.find(g => g.id === pre) || ALL.find(g => g.isNew) || ALL[0];
+  const START = "adjetivos"; /* Spiel, das beim Öffnen zuerst ausgewählt ist */
+  SEL = ALL.find(g => g.id === pre) || ALL.find(g => g.id === START) || ALL.find(g => g.isNew) || ALL[0];
   render(); setBg(SEL);
   if (E8.online()) E8.api("scores",{}).then(r => { if (r.ok) { SCORES = r.scores; feat(); if (state()) hero(); } });
-  if (state()) E8.call("login").then(() => { topBar(); hero(); feat(); shelves(); const s = state(); if (s && s.mustSetPin) pinDialog(true); });
+  if (state()) E8.call("login").then(() => { topBar(); hero(); feat(); VIEW==="map" ? mapView() : shelves(); const s = state(); if (s && s.mustSetPin) pinDialog(true); });
   if (location.hash === "#tour") setTimeout(tour, 600);
 })();
 </script>
