@@ -83,7 +83,7 @@
       samepin: "Elige un PIN nuevo, no el antiguo. – Wähle eine neue PIN, nicht die alte.",
       pinmatch: "Los dos PIN no son iguales. – Die beiden PINs sind nicht gleich.",
       level: "Necesitas un nivel más alto. – Dafür brauchst du ein höheres Level.",
-      stars: "Necesitas más estrellas. – Dafür brauchst du mehr Sterne."
+      stars: "Necesitas más estrellas. – Dafür brauchst du mehr Sterne.", adv: "Primero abre más puertas del calendario de Adviento. – Erst mehr Türchen im Adventskalender öffnen."
     })[e] || ("Error: " + e);
   }
 

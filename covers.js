@@ -1,5 +1,12 @@
 /* Cover-Grafiken für Spiele auf der Startseite (id: SVG). Ohne Eintrag wird das Emoji aus GRAMMAR.icon gezeigt. */
 window.COVERS = {
+  "adviento": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+    <rect width="220" height="140" rx="10" fill="#0f3a2a"/>
+    <g fill="#fff" opacity=".7"><circle cx="20" cy="16" r="1.6"/><circle cx="70" cy="10" r="1.2"/><circle cx="150" cy="18" r="1.6"/><circle cx="200" cy="40" r="1.2"/><circle cx="12" cy="70" r="1.2"/><circle cx="208" cy="100" r="1.6"/></g>
+    ${[0,1,2,3,4,5].map(c=>[0,1,2].map(r=>{const n=[7,14,2,21,10,18,5,24,12,1,16,9,20,3,13,23,6,11][r*6+c];const col=["#c8312b","#1f7a3a","#2a5aa0","#b8862a","#8a2a6a","#2a8a8a"][(r*6+c)%6];return `<rect x="${22+c*30}" y="${26+r*34}" width="26" height="30" rx="4" fill="${col}" stroke="#ffffff33"/><text x="${35+c*30}" y="${46+r*34}" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">${n}</text>`}).join("")).join("")}
+    <rect x="142" y="94" width="26" height="30" rx="4" fill="#f3ead0"/><text x="155" y="115" font-size="15" text-anchor="middle">🍇</text>
+    <path d="M110 0 L110 10" stroke="#ffd23a" stroke-width="2"/><path d="M110 6 l2.5 5.5 6 .5 -4.6 3.8 1.5 5.8 -5.4 -3.2 -5.4 3.2 1.5 -5.8 -4.6 -3.8 6 -.5Z" fill="#ffd23a"/>
+  </svg>`,
   "conjugador": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
     <defs><linearGradient id="cjg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a0838"/><stop offset="1" stop-color="#3a0e6a"/></linearGradient></defs>
     <rect width="220" height="140" rx="10" fill="url(#cjg)"/>

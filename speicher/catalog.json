@@ -1180,5 +1180,23 @@
 "kind": "moda",
 "color": "#d8a23a",
 "unit": 8
+},
+{
+"id": "hat-reno",
+"slot": "hat",
+"name": "Cuernos de reno 🦌",
+"price": 50,
+"kind": "reno",
+"color": "#8a5a32",
+"adv": 10
+},
+{
+"id": "top-uvas",
+"slot": "top",
+"name": "Jersey de las 12 uvas 🍇",
+"price": 80,
+"kind": "uvas",
+"color": "#2a7a4a",
+"adv": 20
 }
 ]

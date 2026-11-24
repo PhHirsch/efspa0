@@ -172,9 +172,9 @@
 <div class="ov" id="pinov" style="z-index:40"><div class="sheet pinbox" id="pinbox"></div></div>
 <div class="tour" id="tour"><div class="hole" id="hole"></div><div class="tip" id="tip"></div></div>
 
-<script src="game.js?v=13"></script>
+<script src="game.js?v=14"></script>
 <script src="bosses.js?v=9"></script>
-<script src="covers.js?v=17"></script>
+<script src="covers.js?v=18"></script>
 <script src="vocab-u1.js?v=9"></script>
 <script src="vocab-u2.js?v=9"></script>
 <script src="vocab-u3.js?v=11"></script>
@@ -212,6 +212,7 @@ const ALL = [], SHELVES = [];
 if (Object.values(VOCAB).some(u => u.sections && u.sections.length)) {
   ALL.push({id:"daily", href:"boss.html?id=daily", topic:"Reto del día", name:"Jefe del día", info:"10 palabras al azar de todas las unidades – cada día un jefe nuevo. ¡Hasta 15 monedas, una vez al día!", art:COVERS.daily, accent:"#e0533a", color:"linear-gradient(135deg,#7a1e3a,#e0533a)", shelf:"daily"});
   ALL.push({id:"review", href:"boss.html?id=review", topic:"Caja de errores", name:"El Monstruo de los Errores", info:"Un jefe hecho de las palabras que tenías mal. Si las aciertas, ¡salen de tu caja! Monedas una vez al día.", art:COVERS.review||"", accent:"#3fae5a", color:"linear-gradient(135deg,#1e4a24,#3fae5a)", shelf:"daily", only:() => { const s = state(); return !!(s && s.review && s.review.length); }});
+  if (new Date() <= new Date(2027,0,10,23,59)) ALL.push({id:"adviento", href:"adviento.html", topic:"Navidad · 1–24 dic", name:"Calendario de Adviento", info: new Date() < new Date(2026,11,1) ? "¡Pronto! Desde el 1 de diciembre: cada día una puerta con tradiciones de Navidad de España y Latinoamérica. Con 10, 20 y 24 puertas: ¡premios especiales!" : "Cada día una puerta nueva: tradiciones de Navidad de España y Latinoamérica. Con 10, 20 y 24 puertas: ¡premios especiales!", art:COVERS.adviento||"", accent:"#e63946", color:"linear-gradient(135deg,#0f3a2a,#c8312b)", shelf:"daily", isNew:true});
   ALL.push({id:"conjugador", href:"conjugador.html", topic:"Arcade · conjugar", name:"El Conjugador", info:"¡Conjuga lo más rápido que puedas! Cada vez más rápido – ¿cuántos puntos consigues con 3 vidas?", art:COVERS.conjugador||"", accent:"#ff3bd4", color:"linear-gradient(135deg,#1a0838,#ff3bd4)", shelf:"daily"});
   ALL.push({id:"telenovela", href:"telenovela.html", topic:"Telenovela · leer", name:"Amor y misterio en Chamberí", info:"Una telenovela por capítulos: lee, entiende y descubre el secreto. ¡Cada capítulo nuevo se abre cuando lo libera tu profe!", art:COVERS.telenovela||"", accent:"#ff5a7a", color:"linear-gradient(135deg,#3a0a1a,#c83a5a)", shelf:"daily"});
   SHELVES.push({key:"daily", title:"Hoy"});
@@ -247,11 +248,12 @@ const ACH = [
   ["☄️","Racha de 30","30 días seguidos – 30 Tage in Folge", s => (s.streakBest||0) >= 30],
   ["👑","Maestro/a","Un juego sin errores – Ein Spiel ohne Fehler", s => (s.perfect||[]).length >= 1],
   ["🤴","Gran Maestro/a","5 juegos sin errores – 5 Spiele ohne Fehler", s => (s.perfect||[]).length >= 5],
+  ["🎄","¡Feliz Navidad!","Abre las 24 puertas del calendario – Alle 24 Türchen geöffnet", s => (s.adv||0) >= 24],
   ["🏛️","Equipo","La meta común llega a 10.000 – Kursziel 10.000 erreicht", s => (s.meta||0) >= 10000]
 ];
 const state = () => { const se = E8.getSession(); return se ? se.state : null; };
 const starsOf = id => { const s = state(); return s && s.stars ? (s.stars[id]||0) : 0; };
-const NOSTAR = ["daily","review","telenovela"];
+const NOSTAR = ["daily","review","telenovela","adviento"];
 const isMaestro = id => { const s = state(); return !!(s && s.perfect && s.perfect.indexOf(id) >= 0); };
 const stStr = n => "★".repeat(n) + "☆".repeat(3-n);
 
@@ -397,10 +399,10 @@ function drawShop(msg, ok){
   const changed=JSON.stringify(trying)!==JSON.stringify(worn);
   let action="";
   if(notMine.length===1){
-    const it=E8.item(trying[notMine[0]]), can=E8.inSeason(it), lvOk=!it.lvl||lv>=it.lvl;
+    const it=E8.item(trying[notMine[0]]), can=E8.inSeason(it), lvOk=(!it.lvl||lv>=it.lvl)&&(!it.adv||(s.adv||0)>=it.adv);
     action=`<button class="btn primary" id="buy" ${(!can||!lvOk||s.coins<it.price)?"disabled":""}>Comprar “${it.name}” por ${it.price} 🪙</button>`;
     if(!can) msg=msg||"Ahora no está disponible. – Gerade nicht erhältlich.";
-    else if(!lvOk) msg=msg||`🔒 Necesitas el nivel ${it.lvl}. – Dafür brauchst du Level ${it.lvl}.`;
+    else if(!lvOk) msg=msg||(it.adv?`🎄 Abre ${it.adv} puertas del calendario de Adviento (tienes ${s.adv||0}). – Öffne ${it.adv} Türchen im Adventskalender.`:`🔒 Necesitas el nivel ${it.lvl}. – Dafür brauchst du Level ${it.lvl}.`);
     else if(s.coins<it.price) msg=msg||`Te faltan ${it.price-s.coins} monedas. – Dir fehlen noch ${it.price-s.coins} Münzen.`;
   } else if(notMine.length>1){ msg=msg||"Te estás probando varias cosas que no tienes. Cómpralas una a una. – Mehrere Teile sind noch nicht gekauft."; }
   else if(changed) action=`<button class="btn primary" id="wear">✔ Guardar mi look</button>`;
@@ -409,9 +411,9 @@ function drawShop(msg, ok){
   const sections=slots.map(slot=>{
     const items=E8.CATALOG.filter(i=>i.slot===slot && (MODE==="locker" ? isMine(i.id) : ((E8.inSeason(i)&&E8.available(i))||isMine(i.id))));
     return (slots.length>1?`<h3 class="sec">${E8.SLOTNAME[slot]}</h3>`:"")+`<div class="items">`+items.map(i=>{
-      const t=Object.assign({},trying,{[slot]:i.id}), r=E8.rarity(i.price), mine=isMine(i.id), locked=i.lvl&&lv<i.lvl&&!mine;
+      const t=Object.assign({},trying,{[slot]:i.id}), r=E8.rarity(i.price), mine=isMine(i.id), locked=((i.lvl&&lv<i.lvl)||(i.adv&&(s.adv||0)<i.adv))&&!mine;
       return `<div class="item ${trying[slot]===i.id?"sel":""} ${worn[slot]===i.id?"wear":""}" data-slot="${slot}" data-id="${i.id}" style="border-top:4px solid ${r.color}">
-        ${locked?`<span class="lock">🔒 Nivel ${i.lvl}</span>`:""}
+        ${locked?`<span class="lock">${i.adv?"🎄 "+(s.adv||0)+"/"+i.adv:"🔒 Nivel "+i.lvl}</span>`:""}
         <div class="mini">${E8.avatarSVG(t)}</div><div class="iname">${i.name}</div>
         <div class="rar" style="color:${r.color}">${i.price?r.name:"&nbsp;"}${i.unit?" · Unidad "+i.unit:""}${i.months?" · "+seasonText(i):""}</div>
         <div class="price ${mine?"own":""}">${i.price===0?"gratis":mine?"✔ tuyo":i.price+" 🪙"}</div></div>`;
