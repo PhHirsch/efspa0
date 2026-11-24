@@ -518,6 +518,59 @@
     return `<svg viewBox="${f1(xs[0])} ${f1(ys[0])} ${f1(xs[1] - xs[0])} ${f1(ys[1] - ys[0])}" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">${s}</svg>`;
   }
 
+  /* ---------- Variante 2 (Vorschau): Häuser entlang geschwungener Dorfstraßen ---------- */
+  function townSVG2(list, meta) {
+    const n = list.length + 1, rnd = rng(n * 13 + 5), G = 12.5;
+    const perSide = Math.max(3, Math.ceil(Math.sqrt(n * 1.6) / 1.2)), perBand = perSide * 2, bands = Math.ceil(n / perBand);
+    const BH = 29; // Abstand der Straßen
+    const curve = (k, x) => 3.2 * Math.sin(x / 14 + k * 1.7) + 1.4 * Math.sin(x / 6.5 + k);
+    const lots = []; // {x,y}
+    for (let b = 0; b < bands; b++) for (let c = 0; c < perSide; c++) {
+      const x = c * G + (b % 2 ? 6 : 0) + (rnd() - .5) * 1.4, yc = b * BH + curve(b, x + 5);
+      lots.push({ x: x, y: yc - 11.6 - rnd() * 1.2 }); lots.push({ x: x + (rnd() - .5) * 1.2, y: yc + 1.6 + rnd() * 1.2 });
+    }
+    const use = lots.slice(0, n), pIdx = Math.min(use.length - 1, (Math.floor((bands - 1) / 2) * perBand) + Math.floor(perSide / 2) * 2);
+    const xs0 = use.map(l => l.x), ys0 = use.map(l => l.y), minX = Math.min(...xs0) - 4, maxX = Math.max(...xs0) + 14, minY = Math.min(...ys0) - 4, maxY = Math.max(...ys0) + 14;
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2, ax = (maxX - minX) / 2 + 9, ay = (maxY - minY) / 2 + 9;
+    let s = "";
+    const blob = []; for (let k = 0; k < 44; k++) { const t = k / 44 * Math.PI * 2, r = 1 + .07 * Math.sin(t * 3 + 2) + .05 * Math.sin(t * 7) + (rnd() - .5) * .05; blob.push([cx + Math.cos(t) * ax * r, cy + Math.sin(t) * ay * r, 0]); }
+    s += poly(blob.map(q => [q[0] + 1.2, q[1] + 1.2, -1.2]), "#0a1a28", 'opacity=".55"') + poly(blob, "#6aa84f") + poly(blob.map(q => [cx + (q[0] - cx) * .93, cy + (q[1] - cy) * .93, .005]), "#74b356");
+    // Weser
+    const rx = y => maxX + 5 + 2.2 * Math.sin(y / 9) + 1.2 * Math.sin(y / 4.3), L = [], Rr = [];
+    for (let y = minY - 14; y <= maxY + 14; y += 1.5) { L.push([rx(y) - 2.1, y, .02]); Rr.unshift([rx(y) + 2.1, y, .02]); }
+    s += `<clipPath id="isl2"><polygon points="${pts(blob)}"/></clipPath><g clip-path="url(#isl2)">` + poly(L.concat(Rr), "#4a8ec4", 'stroke="#c9b98a" stroke-width="4"');
+    for (let y = minY - 10; y < maxY + 10; y += 6) s += ln([rx(y) - .8, y, .03], [rx(y + 1.2) + .6, y + 1.2, .03], "#fff", 2, 'opacity=".45"');
+    s += `</g>`;
+    s += `<g clip-path="url(#isl2)">`;
+    // Geschwungene Straßen (Band b)
+    const strip = (pts0, w, c, ex) => { const A = [], B = []; for (let i = 0; i < pts0.length; i++) { const p = pts0[i], q = pts0[Math.min(i + 1, pts0.length - 1)], o = pts0[Math.max(i - 1, 0)], dx = q[0] - o[0], dy = q[1] - o[1], l = Math.hypot(dx, dy) || 1; A.push([p[0] - dy / l * w, p[1] + dx / l * w, .015]); B.unshift([p[0] + dy / l * w, p[1] - dx / l * w, .015]); } return poly(A.concat(B), c, ex); };
+    for (let b = 0; b < bands; b++) { const P0 = []; for (let x = minX - 2; x <= maxX + 3; x += 1) P0.push([x, b * BH + curve(b, x)]);
+      s += strip(P0, 1.9, "#c4bca8") + strip(P0, 1.35, "#4b515a");
+      for (let i = 0; i < P0.length - 2; i += 3) s += ln([P0[i][0], P0[i][1], .03], [P0[i + 1][0], P0[i + 1][1], .03], "#f3e7b0", 2, 'opacity=".8"'); }
+    // Verbindungswege zwischen den Straßen (Feldwege)
+    for (let b = 0; b < bands - 1; b++) { const x = minX + (maxX - minX) * (b % 2 ? .25 : .7), P0 = []; for (let t = 0; t <= 1.001; t += .1) P0.push([x + 2.5 * Math.sin(t * Math.PI), b * BH + curve(b, x) + t * (BH + curve(b + 1, x) - curve(b, x))]); s += strip(P0, .8, "#c2aa7a"); }
+    // Brücke
+    const by = Math.floor(bands / 2) * BH, bc = by + curve(Math.floor(bands / 2), maxX); const P1 = []; for (let x = maxX + 2; x <= rx(bc) + 3; x += 1) P1.push([x, bc]); s += strip(P1, .9, "#c2aa7a") + blk(rx(bc) - 2.6, bc - 1, .05, 5.2, 2, .35, "#b08a5a");
+    // Felder
+    [[minX - 5, minY + 6], [maxX - 12, minY - 4], [minX + 6, maxY + 2]].forEach(([fx, fy], k) => { s += poly([[fx, fy, .01], [fx + 7, fy, .01], [fx + 7, fy + 5, .01], [fx, fy + 5, .01]], ["#d8c06a", "#b8a050", "#c9d48a"][k]); for (let r = .6; r < 5; r += .8) s += ln([fx + .2, fy + r, .02], [fx + 6.8, fy + r, .02], "#a08a3a", 1.2, 'opacity=".5"'); });
+    s += `</g>`;
+    // Objekte
+    const obj = []; let k = 0;
+    use.forEach((l, idx) => { const o = P(l.x, l.y, 0);
+      if (idx === pIdx) { obj.push({ d: l.x + l.y + 10, s: `<g>${plaza(l.x, l.y, meta)}</g>` }); return; }
+      const h = list[k]; if (!h) return; obj.push({ d: l.x + l.y + 10, s: `<g class="lot" data-k="${k}" style="cursor:pointer" transform="translate(${f1(o[0])} ${f1(o[1])})">${houseSVG(h.h, h.st, { nr: h.nr, inner: true })}</g>` }); k++; });
+    const freeAt = (x, y) => !use.some(l => x > l.x - .8 && x < l.x + 10.8 && y > l.y - .8 && y < l.y + 10.8) && Math.abs(x - rx(y)) > 3.2 && [...Array(bands).keys()].every(b => Math.abs(y - b * BH - curve(b, x)) > 2.3);
+    const inside = (x, y) => { const dx = (x - cx) / ax, dy = (y - cy) / ay; return dx * dx + dy * dy < .86; };
+    for (let q = 0; q < 140; q++) { const x = cx + (rnd() * 2 - 1) * ax, y = cy + (rnd() * 2 - 1) * ay; if (inside(x, y) && freeAt(x, y)) obj.push({ d: x + y, s: tree(x, y, .6 + rnd() * .6) }); }
+    for (let b = 0; b < bands; b++) for (let x = minX; x < maxX; x += 9 + rnd() * 6) { const y = b * BH + curve(b, x); if (rnd() < .6) obj.push({ d: x + y, s: lamp(x, y - 1.7) }); if (rnd() < .22) obj.push({ d: x + y + 1, s: car(x, y - 1.05, ["#e63946", "#3a78d8", "#f0c03a", "#f4f1ea", "#3aa06a"][Math.floor(rnd() * 5)], true) }); }
+    obj.sort((a, b) => a.d - b.d).forEach(o => { s += o.s; });
+    s += plaza.label || "";
+    const NR = ["Calle Mayor", "Calle del Sol", "Calle de Olavide", "Calle del Ciervo", "Calle de la Luna"];
+    for (let b = 0; b < bands; b++) { const x = minX + 3, t = P(x, b * BH + curve(b, x), .05); s += `<text x="${f1(t[0])}" y="${f1(t[1]) + 4}" font-family="Arial" font-weight="700" font-size="11" fill="#fff" text-anchor="start" transform="rotate(30 ${f1(t[0])} ${f1(t[1])})">${NR[b % NR.length]}</text>`; }
+    const pb = blob.map(q => P(q[0], q[1], 0)), X = [Math.min(...pb.map(p => p[0])) - 20, Math.max(...pb.map(p => p[0])) + 20], Y = [Math.min(...pb.map(p => p[1])) - 200, Math.max(...pb.map(p => p[1])) + 40];
+    return `<svg viewBox="${f1(X[0])} ${f1(Y[0])} ${f1(X[1] - X[0])} ${f1(Y[1] - Y[0])}" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">${s}</svg>`;
+  }
+
   window.HOUSE = { CATALOG: HCAT, SLOTS: HSLOTS, DEFAULT: HDEFAULT, STAGES: STAGES, YARD_STAGE: YARD_STAGE, STAGE_NAMES: STAGE_NAMES, TABS: HTABS, SLOTNAME: HSLOTNAME,
-    item: id => byId[id], clean: hclean, stageOf: stageOf, yardOpen: yardOpen, svg: houseSVG, town: townSVG, fam: fam };
+    item: id => byId[id], clean: hclean, stageOf: stageOf, yardOpen: yardOpen, svg: houseSVG, town: townSVG, town2: townSVG2, fam: fam };
 })();
