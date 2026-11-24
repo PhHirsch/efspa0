@@ -381,7 +381,7 @@ function metaBox(){
     <div class="de" style="font-size:13px;opacity:.85">Todas las monedas que gana el curso construyen nuestra plaza. – Alle Münzen des Kurses bauen gemeinsam an eurem Platz.</div>
     <div class="mb"><i style="width:${pct}%"></i></div>
     <div style="font-size:15px"><b>${m.toLocaleString("es-ES")} 🪙</b> ${nxt?`· próximo: ${nxt[1]} ${nxt[2]} a ${nxt[0].toLocaleString("es-ES")} 🪙`:"· ¡Plaza terminada! 🎉"}</div>
-    <div class="ms" style="margin-top:8px">${METAS.map(x=>`<span class="${m>=x[0]?"ok":""}">${x[1]} ${(x[0]/1000)}k</span>`).join("")}</div></div></div>`;
+    <div class="ms" style="margin-top:8px">${METAS.map(x=>`<span class="${m>=x[0]?"ok":""}">${x[1]} ${(x[0]/1000)}k</span>`).join("")}</div><a href="home.html#hood" style="display:inline-block;margin-top:10px;color:#ffd23a;font-weight:800;text-decoration:none">🏙️ Ver la plaza en la ciudad →</a></div></div>`;
 }
 /* ===== Weltkarte (zweite Ansicht der Spiele) ===== */
 let VIEW = (()=>{ try { return localStorage.getItem("efspa0-view") || "shelf"; } catch(e) { return "shelf"; } })();

@@ -396,24 +396,88 @@
     return `<svg viewBox="-180 -170 360 390" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">${s}</svg>`;
   }
 
-  /* ---------- Stadt: alle Häuser auf einer Karte ---------- */
-  function townSVG(list) {
-    const n = list.length, C = Math.max(2, Math.ceil(Math.sqrt(n))), R = Math.max(1, Math.ceil(n / C)), G = 12.5;
-    const W = C * G + 1.5, D = R * G + 1.5;
+  /* ---------- Stadt: Häuser an Straßen, in der Mitte die Plaza del curso (Meta común) ---------- */
+  const METAS = [2000, 5000, 10000, 20000, 35000, 50000];
+  function tree(x, y, sc) { sc = sc || 1; return shadow(x, y, .7 * sc, .35 * sc) + ln([x, y, 0], [x, y, 1.1 * sc], "#6a4422", 3.5 * sc) + ball(x, y, 1.6 * sc, .75 * sc, "#3f8f3f") + ball(x - .2, y - .2, 1.85 * sc, .45 * sc, "#5fb25a"); }
+  function lamp(x, y) { return ln([x, y, 0], [x, y, 2.1], "#3a3f48", 2.2) + ball(x, y, 2.2, .18, "#ffe9a0", 'stroke="#c9a84a" stroke-width="1"'); }
+  function car(x, y, c, along) { const dx = along ? 1.6 : .8, dy = along ? .8 : 1.6; return shadow(x + dx / 2, y + dy / 2, .9, .45) + blk(x, y, .15, dx, dy, .45, c) + blk(x + (along ? .35 : .1), y + (along ? .1 : .35), .6, along ? .8 : .6, along ? .6 : .8, .3, "#dfe8f0"); }
+  function plaza(ox, oy, meta) {
+    const m = meta || 0, on = k => m >= METAS[k];
+    let s = poly([[ox, oy, .02], [ox + 10, oy, .02], [ox + 10, oy + 10, .02], [ox, oy + 10, .02]], "#e3d3ad");
+    for (let k = 1; k < 10; k++) { s += ln([ox + k, oy, .03], [ox + k, oy + 10, .03], "#c9b68a", 1, 'opacity=".6"') + ln([ox, oy + k, .03], [ox + 10, oy + k, .03], "#c9b68a", 1, 'opacity=".6"'); }
+    s += disc(ox + 5, oy + 5, .04, 3.2, "#d4c08e", 'stroke="#b89e64" stroke-width="1.5"');
+    if (!on(0)) { // Baustelle
+      s += blk(ox + 1, oy + 1, 0, .2, 8, .7, "#ff9a2a") + blk(ox + 1, oy + 1, 0, 8, .2, .7, "#ff9a2a");
+      s += blk(ox + 6.5, oy + 6, 0, .5, .5, 5.2, "#f0c03a") + ln([ox + 6.75, oy + 6.25, 5.2], [ox + 2, oy + 6.25, 5.2], "#f0c03a", 4) + ln([ox + 3, oy + 6.25, 5.2], [ox + 3, oy + 6.25, 2.6], "#555", 1.2);
+      const t = P(ox + 4.5, oy + 4.5, .3); s += `<text x="${f1(t[0])}" y="${f1(t[1])}" font-size="34" text-anchor="middle">🚧</text>`;
+    }
+    if (on(1)) [[1.2, 1.2], [8.8, 1.2], [1.2, 8.8]].forEach(q => { s += tree(ox + q[0], oy + q[1], 1.1); });
+    if (on(1)) { s += blk(ox + 1.5, oy + 4.3, .3, .5, 1.6, .1, "#8a5a2a") + blk(ox + 8, oy + 4.3, .3, .5, 1.6, .1, "#8a5a2a"); }
+    if (on(2)) { // Musikpavillon
+      s += blk(ox + 1.3, oy + 6.6, 0, 2.2, 2.2, .35, "#d9d2c0");
+      [[1.5, 6.8], [3.3, 6.8], [1.5, 8.6], [3.3, 8.6]].forEach(q => { s += ln([ox + q[0], oy + q[1], .35], [ox + q[0], oy + q[1], 2], "#f3efe4", 2.5); });
+      s += poly([[ox + 1.2, oy + 6.5, 2], [ox + 3.6, oy + 6.5, 2], [ox + 3.6, oy + 8.9, 2], [ox + 1.2, oy + 8.9, 2]], "#c8312b") + poly([[ox + 1.2, oy + 8.9, 2], [ox + 3.6, oy + 8.9, 2], [ox + 2.4, oy + 7.7, 3]], "#a82620") + poly([[ox + 3.6, oy + 6.5, 2], [ox + 3.6, oy + 8.9, 2], [ox + 2.4, oy + 7.7, 3]], "#8a1e18");
+    }
+    if (on(0)) { // Brunnen
+      s += disc(ox + 5, oy + 5, .05, 1.8, "#9aa8b4") + disc(ox + 5, oy + 5, .35, 1.8, "#b8c4ce") + disc(ox + 5, oy + 5, .37, 1.5, "#4fb3e8");
+      s += ln([ox + 5, oy + 5, .37], [ox + 5, oy + 5, 1.5], "#b8c4ce", 5) + ball(ox + 5, oy + 5, 1.6, .25, "#8fd8ff");
+      const a = P(ox + 5, oy + 5, 1.6); s += `<path d="M${f1(a[0])} ${f1(a[1])} q-12 -14 -22 10 M${f1(a[0])} ${f1(a[1])} q12 -14 22 10" stroke="#bfe9ff" stroke-width="2" fill="none"/>`;
+    }
+    if (on(3)) { // Hirsch-Statue
+      s += blk(ox + 7.2, oy + 7.2, 0, 1.4, 1.4, 1.1, "#9a9fa8");
+      const t = P(ox + 7.9, oy + 7.9, 1.1); s += `<text x="${f1(t[0])}" y="${f1(t[1]) + 4}" font-size="46" text-anchor="middle" style="filter:sepia(1) saturate(.6) brightness(.95)">🦌</text>`;
+    }
+    if (on(4)) { // Stadion hinten
+      s += disc(ox + 6.3, oy + 2.2, .05, 1.9, "#6a6f78") + disc(ox + 6.3, oy + 2.2, .9, 1.9, "#d84a3a") + disc(ox + 6.3, oy + 2.2, .92, 1.4, "#3a9a4a") + ln([ox + 6.3, oy + .9, .93], [ox + 6.3, oy + 3.5, .93], "#fff", 1.2);
+    }
+    if (on(5)) { const c = P(ox + 5, oy + 5, 9); s += [[-60, 0, "#ff4f8b"], [0, -30, "#ffd23a"], [60, 10, "#3ab0ff"]].map(([dx, dy, col]) => `<g transform="translate(${f1(c[0] + dx)} ${f1(c[1] + dy)})" stroke="${col}" stroke-width="3" stroke-linecap="round">${[0, 45, 90, 135, 180, 225, 270, 315].map(a => `<path d="M0 0 L${f1(Math.cos(a * Math.PI / 180) * 22)} ${f1(Math.sin(a * Math.PI / 180) * 22)}"/>`).join("")}</g>`).join(""); }
+    const lb = P(ox + 5, oy + 5, 3.2);
+    plaza.label = `<g style="pointer-events:none" transform="translate(${f1(lb[0])} ${f1(lb[1])})"><rect x="-92" y="-14" width="184" height="${meta == null ? 26 : 44}" rx="8" fill="#1d2a4a" opacity=".9"/><text y="4" font-family="Arial Black,Arial" font-size="15" fill="#ffd23a" text-anchor="middle">PLAZA DEL CURSO</text>${meta == null ? "" : `<text y="23" font-family="Arial" font-weight="700" font-size="13" fill="#fff" text-anchor="middle">${m.toLocaleString("es-ES")} 🪙 · META COMÚN</text>`}</g>`;
+    return s;
+  }
+  function townSVG(list, meta) {
+    const n = list.length + 1, C = Math.max(2, Math.ceil(Math.sqrt(n))), R = Math.max(2, Math.ceil(n / C)), G = 12.5, RW = 2.5;
+    const W = C * G, D = R * G, X0 = -RW, Y0 = -RW;
+    const pi = Math.floor((R - 1) / 2) * C + Math.floor((C - 1) / 2);
     const T = (x, y, z) => P(x, y, z || 0);
-    let s = "";
-    // Grundfläche mit Straßen und Weser
     const pp = a => a.map(q => { const p = T(q[0], q[1], q[2]); return f1(p[0]) + "," + f1(p[1]); }).join(" ");
-    s += `<polygon points="${pp([[-1.5, -1.5, 0], [W, -1.5, 0], [W, D, 0], [-1.5, D, 0]])}" fill="#5c6670"/>`;
-    s += `<polygon points="${pp([[-1.5, D, 0], [W, D, 0], [W, D, -1], [-1.5, D, -1]])}" fill="#4a3a2a"/><polygon points="${pp([[W, -1.5, 0], [W, D, 0], [W, D, -1], [W, -1.5, -1]])}" fill="#3a2e22"/>`;
-    s += `<polygon points="${pp([[W, -1.5, 0], [W + 5, -1.5, 0], [W + 5, D, 0], [W, D, 0]])}" fill="#4a8ec4"/><polygon points="${pp([[W + 5, -1.5, 0], [W + 5, D, 0], [W + 5, D, -1], [W + 5, -1.5, -1]])}" fill="#356a96"/><polygon points="${pp([[W, D, 0], [W + 5, D, 0], [W + 5, D, -1], [W, D, -1]])}" fill="#3f7aaa"/>`;
+    let s = "";
+    // Asphalt + Erdkante
+    s += `<polygon points="${pp([[X0, Y0, 0], [W, Y0, 0], [W, D, 0], [X0, D, 0]])}" fill="#454b54"/>`;
+    s += `<polygon points="${pp([[X0, D, 0], [W, D, 0], [W, D, -1], [X0, D, -1]])}" fill="#4a3a2a"/><polygon points="${pp([[W, Y0, 0], [W, D, 0], [W, D, -1], [W, Y0, -1]])}" fill="#3a2e22"/>`;
+    // Weser rechts
+    s += `<polygon points="${pp([[W, Y0, 0], [W + 5, Y0, 0], [W + 5, D, 0], [W, D, 0]])}" fill="#4a8ec4"/><polygon points="${pp([[W + 5, Y0, 0], [W + 5, D, 0], [W + 5, D, -1], [W + 5, Y0, -1]])}" fill="#356a96"/><polygon points="${pp([[W, D, 0], [W + 5, D, 0], [W + 5, D, -1], [W, D, -1]])}" fill="#3f7aaa"/>`;
     for (let i = 0; i < 8; i++) { const y = i * D / 8 + 1; s += ln([W + 1, y, .02], [W + 4, y + .8, .02], "#ffffff", 2, 'opacity=".45"'); }
     const tw = T(W + 2.5, D / 2, 0); s += `<text x="${f1(tw[0])}" y="${f1(tw[1])}" font-size="40" font-weight="800" fill="#ffffff" opacity=".6" text-anchor="middle" font-family="Arial" transform="rotate(30 ${f1(tw[0])} ${f1(tw[1])})">WESER</text>`;
-    for (let i = 0; i <= C; i++) { const x = i * G - 1.25; s += ln([x, -1.5, .01], [x, D, .01], "#e9e2c8", 1.5, 'stroke-dasharray="12 10" opacity=".7"'); }
-    for (let j = 0; j <= R; j++) { const y = j * G - 1.25; s += ln([-1.5, y, .01], [W, y, .01], "#e9e2c8", 1.5, 'stroke-dasharray="12 10" opacity=".7"'); }
-    const cells = list.map((h, k) => ({ h: h, i: k % C, j: Math.floor(k / C), k: k })).sort((a, b) => (a.i + a.j) - (b.i + b.j) || a.i - b.i);
-    cells.forEach(c => { const o = T(c.i * G, c.j * G, 0); s += `<g class="lot" data-k="${c.k}" style="cursor:pointer" transform="translate(${f1(o[0])} ${f1(o[1])})">${houseSVG(c.h.h, c.h.st, { nr: c.h.nr, inner: true })}</g>`; });
-    const xs = [T(-1.5, D, 0)[0] - 20, T(W + 5, -1.5, 0)[0] + 20], ys = [T(-1.5, -1.5, 0)[1] - 230, T(W + 5, D, -1)[1] + 20];
+    // Gehwege um jeden Block
+    for (let i = 0; i < C; i++) for (let j = 0; j < R; j++) s += poly([[i * G - .45, j * G - .45, .02], [i * G + 10.45, j * G - .45, .02], [i * G + 10.45, j * G + 10.45, .02], [i * G - .45, j * G + 10.45, .02]], "#bdb5a3", 'stroke="#a39b88" stroke-width="1"');
+    // Mittelstreifen + Zebrastreifen
+    for (let i = 0; i <= C; i++) { const x = i * G - RW / 2; s += ln([x, Y0, .03], [x, D, .03], "#f3e7b0", 2, 'stroke-dasharray="14 12" opacity=".85"'); }
+    for (let j = 0; j <= R; j++) { const y = j * G - RW / 2; s += ln([X0, y, .03], [W, y, .03], "#f3e7b0", 2, 'stroke-dasharray="14 12" opacity=".85"'); }
+    for (let i = 0; i <= C; i++) for (let j = 0; j < R; j++) { const x = i * G - RW, y = j * G + .3; for (let k = 0; k < 4; k++) s += poly([[x + .25 + k * .55, y, .035], [x + .55 + k * .55, y, .035], [x + .55 + k * .55, y + .9, .035], [x + .25 + k * .55, y + .9, .035]], "#f4f1ea", 'opacity=".8"'); }
+    // Straßennamen
+    const NR = ["Calle Mayor", "Calle del Sol", "Calle de Olavide", "Calle del Ciervo", "Calle de la Luna", "Calle Real", "Calle de Granada"], NC = ["Avenida de España", "Calle de Cervantes", "Calle de Frida Kahlo", "Paseo del Prado", "Calle de Picasso", "Calle de Goya", "Calle de Sorolla"];
+    for (let j = 1; j < R; j++) { const t = T(G * .5 + 1, j * G - RW / 2, .05); s += `<text x="${f1(t[0])}" y="${f1(t[1]) + 4}" font-family="Arial" font-weight="700" font-size="11" fill="#fff" opacity=".9" text-anchor="middle" transform="rotate(30 ${f1(t[0])} ${f1(t[1])})">${NR[(j - 1) % NR.length]}</text>`; }
+    for (let i = 1; i < C; i++) { const t = T(i * G - RW / 2, G * .5 + 1, .05); s += `<text x="${f1(t[0])}" y="${f1(t[1]) + 4}" font-family="Arial" font-weight="700" font-size="11" fill="#fff" opacity=".9" text-anchor="middle" transform="rotate(-30 ${f1(t[0])} ${f1(t[1])})">${NC[(i - 1) % NC.length]}</text>`; }
+    // Objekte nach Tiefe sortiert zeichnen
+    const obj = [];
+    let k = 0;
+    for (let c = 0; c < C * R; c++) {
+      const i = c % C, j = Math.floor(c / C), ox = i * G, oy = j * G;
+      if (c === pi) { obj.push({ d: ox + oy + 10, s: `<g>${plaza(ox, oy, meta)}</g>` }); continue; }
+      if (k < list.length) { const h = list[k], o = T(ox, oy, 0); obj.push({ d: ox + oy + 10, s: `<g class="lot" data-k="${k}" style="cursor:pointer" transform="translate(${f1(o[0])} ${f1(o[1])})">${houseSVG(h.h, h.st, { nr: h.nr, inner: true })}</g>` }); k++; }
+      else obj.push({ d: ox + oy + 10, s: poly([[ox, oy, .03], [ox + 10, oy, .03], [ox + 10, oy + 10, .03], [ox, oy + 10, .03]], "#7cb35a") + tree(ox + 3, oy + 3) + tree(ox + 7, oy + 6) + tree(ox + 4, oy + 8) });
+    }
+    const rnd = rng(C * 7 + R);
+    for (let i = 0; i <= C; i++) for (let j = 0; j <= R; j++) { const x = i * G - RW, y = j * G - RW;
+      obj.push({ d: x + y - 1, s: tree(x - .15, y - .15, .8) });
+      if (i < C && j <= R) obj.push({ d: x + 6 + y, s: lamp(i * G + 5, y + RW - .25) });
+      if (rnd() < .22 && i < C) { const cx = i * G + 2 + rnd() * 6, cy = j * G - RW + .35; obj.push({ d: cx + cy + 1, s: car(cx, cy, ["#e63946", "#3a78d8", "#f0c03a", "#f4f1ea", "#3aa06a"][Math.floor(rnd() * 5)], true) }); }
+      if (rnd() < .18 && j < R) { const cx = i * G - RW + .35, cy = j * G + 2 + rnd() * 6; obj.push({ d: cx + cy + 1, s: car(cx, cy, ["#8a2a6a", "#3a78d8", "#e8e8e8", "#ff8a2a"][Math.floor(rnd() * 4)], false) }); }
+    }
+    obj.sort((a, b) => a.d - b.d).forEach(o => { s += o.s; });
+    s += plaza.label || "";
+    const xs = [T(X0, D, 0)[0] - 20, T(W + 5, Y0, 0)[0] + 20], ys = [T(X0, Y0, 0)[1] - 230, T(W + 5, D, -1)[1] + 40];
     return `<svg viewBox="${f1(xs[0])} ${f1(ys[0])} ${f1(xs[1] - xs[0])} ${f1(ys[1] - ys[0])}" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">${s}</svg>`;
   }
 
