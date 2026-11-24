@@ -28,7 +28,7 @@
 <body>
 <main id="app"></main>
 <script src="game.js?v=14"></script>
-<script src="juego.js?v=6"></script>
+<script src="juego.js?v=7"></script>
 <script>
 const MA = {face:"👩🏻", name:"Marta"}, LE = {face:"👦🏽", name:"Leo"}, PR = {face:"👨🏻‍🏫", name:"El profesor Ruiz"}, ZZ = {face:"🧟", name:"Un zombi"}, DI = {face:"🎬", name:"La directora"}, Y = {av:true, name:"Tú (doblaje)"};
 const ln = s => `<span class="line">${s}</span>`;
@@ -86,6 +86,10 @@ JUEGO.start({
         { t: "choice", q: "trabaj<b>ar</b> → nosotros ___", keep: true, opts: ["trabajamos", "trabajomos", "trabajan"], a: "trabajamos", hint: "Gleiche Endungen wie hablar: trabaj + amos.", pista: "Stamm trabaj- + Endung wie bei hablamos." }
       ] },
     { label: "Escena 4", title: "¡A doblar!", shuffle: true, memo: AR,
+      pick: { q: "La directora pregunta: ¿por dónde escapan Marta y Leo?", qDe: "Wo fliehen Marta und Leo?", opts: [
+        { t: "🚇 Por el metro", intro: `<p>🚇 Marta y Leo bajan al metro de Sol. Está oscuro… y hay ruidos raros.</p>` },
+        { t: "🏢 Por los tejados (Dächer)", intro: `<p>🏢 Marta y Leo suben a los tejados de la Gran Vía. ¡Qué altura!</p>` },
+        { t: "🛵 En una moto", intro: `<p>🛵 ¡Una moto! Marta conduce, Leo mira atrás. ¡Los zombis corren!</p>` }] },
       intro: `<p>Escena 4: ¡Los zombis están en la Puerta del Sol! Los actores necesitan sus frases. Escribe el verbo en la forma correcta.</p><p class="de">Stamm + Endung: z. B. estudiar → estudi- + -as = estudias.</p>`,
       pista: "1. -ar weg (estudiar → estudi-). 2. Endung für die Person dran: -o, -as, -a, -amos, -áis, -an.",
       tasks: [

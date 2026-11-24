@@ -30,7 +30,7 @@
 <body>
 <main id="app"></main>
 <script src="game.js?v=14"></script>
-<script src="juego.js?v=6"></script>
+<script src="juego.js?v=7"></script>
 <script>
 const L = {face:"👧🏽", name:"Lucía López"}, P = {face:"👦🏽", name:"Pablo (su hermano)"}, R = {face:"🎤", name:"La reportera"}, Y = {av:true, name:"Tú (editor/a)"};
 const fan = n => ({face:"💬", name:"@" + n});
@@ -67,6 +67,10 @@ JUEGO.start({
         { t: "choice", who: L, q: cap("Esta es ___ familia."), task: "Subtítulo:", opts: ["mi", "mis"], a: "mi", hint: "familia → eine Familie → mi familia." }
       ] },
     { label: "Vídeo 2", title: "Los subtítulos", shuffle: true, memo: MI,
+      pick: { q: "Lucía pregunta: ¿qué vídeo hacemos hoy?", qDe: "Welches Video drehen wir heute?", opts: [
+        { t: "👵 „Mis abuelos reaccionan a TikTok“", intro: `<p>🎬 ¡Gran idea! Los abuelos ven TikTok por primera vez… 😂</p>`, first: [0, 1] },
+        { t: "🐶 „Un día con mi perro Toby“", intro: `<p>🎬 Toby es la estrella hoy. ¡Los fans aman a Toby!</p>` },
+        { t: "👨‍👩‍👧‍👦 „Mi familia en 60 segundos“", intro: `<p>🎬 ¡Rápido! Toda la familia en un minuto.</p>`, first: [3, 2] }] },
       intro: `<p>Lucía graba un vídeo nuevo – pero ¡faltan palabras en los subtítulos! Escribe <b>mi</b> o <b>mis</b>.</p><p class="de">Schreib mi oder mis in die Lücke. Frag dich: Folgt eins oder mehrere?</p>`,
       pista: "Schau auf das Wort nach der Lücke: endet es auf -s (mehrere)? → mis. Sonst → mi.",
       tasks: [

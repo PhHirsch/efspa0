@@ -35,7 +35,7 @@
 <body>
 <main id="app"></main>
 <script src="game.js?v=14"></script>
-<script src="juego.js?v=6"></script>
+<script src="juego.js?v=7"></script>
 <script>
 /* ======== Freischalten: Zahl erhöhen, wenn die nächste Folge erscheinen soll ======== */
 const LIBERADOS = 1;
@@ -154,7 +154,7 @@ if (!EP || EP.n > LIBERADOS) {
       <div class="ep lock"><span class="n">…</span><span><b>🔒 Capítulo 4</b><br><span class="de">Continuará …</span></span></div></div></div>`;
 } else {
   JUEGO.start({
-    id: "tele-" + EP.n, key: "efspa0-tele-" + EP.n, icon: "💌", topic: "Telenovela · Capítulo " + EP.n, title: EP.title,
+    noHard: true, id: "tele-" + EP.n, key: "efspa0-tele-" + EP.n, icon: "💌", topic: "Telenovela · Capítulo " + EP.n, title: EP.title,
     intro: `<p><b>Capítulo ${EP.n}</b> · ${EP.teaser}</p><p class="de">Lies den Text genau – er bleibt bei den Fragen sichtbar. Unbekannte Wörter haben eine Übersetzung in Klammern.</p>`,
     goLabel: "▶ ¡Empieza el capítulo!", time: "ca. 10 minutos",
     stages: EP.parts.map((p, i) => ({ label: "Parte " + (i + 1), title: p.title, go: "📖 ¡A leer!",

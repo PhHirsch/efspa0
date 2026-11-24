@@ -25,7 +25,7 @@
 <body>
 <main id="app"></main>
 <script src="game.js?v=14"></script>
-<script src="juego.js?v=6"></script>
+<script src="juego.js?v=7"></script>
 <script>
 const N = {face:"👩🏽", name:"Inés (en la isla)"}, Y = {av:true, name:"Tú"}, H = {face:"👨🏻‍✈️", name:"El piloto Raúl"};
 const m = s => `<span class="msg">${s}</span>`, me = s => `<span class="msg me">${s}</span>`;
@@ -91,7 +91,11 @@ JUEGO.start({
         { t: "order", who: N, task: "Inés escribe:", taskDe: "Ich spreche Spanisch und Englisch.", words: ["Hablo", "español", "y", "inglés."], a: "Hablo español y inglés." },
         { t: "order", who: N, task: "Inés escribe:", taskDe: "Mein Hund ist auch hier.", words: ["Mi", "perro", "también", "está", "aquí."], a: "Mi perro también está aquí." }
       ] },
-    { label: "Chat 5", title: "Tus preguntas", shuffle: true, memo: SB + "<br>" + QW,
+    { label: "Chat 5", title: "Tus preguntas", shuffle: true,
+      pick: { q: "Inés tiene poca batería. ¿Qué es lo más importante para ti?", qDe: "Was ist dir am wichtigsten?", opts: [
+        { t: "🏝️ Saber cómo es la isla", intro: `<p>Primero quieres saber cómo es la isla – así el piloto la encuentra.</p>`, first: [0, 2] },
+        { t: "❤️ Saber cómo está Inés", intro: `<p>Primero quieres saber cómo está Inés. ¡Es lo más importante!</p>`, first: [1] },
+        { t: "📞 Tener su número de teléfono", intro: `<p>Primero quieres su número – por si se corta el chat.</p>`, first: [3] }] }, memo: SB + "<br>" + QW,
       intro: `<p>El piloto necesita más información. Escribe tus preguntas a Inés: ¡ordena las palabras!</p><p class="de">Bau die Fragen: zuerst das Fragewort, dann das Verb.</p>`,
       pista: "Frage = ¿ + Fragewort + Verb + Rest ?",
       tasks: [

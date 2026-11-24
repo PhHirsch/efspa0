@@ -25,7 +25,7 @@
 <body>
 <main id="app"></main>
 <script src="game.js?v=14"></script>
-<script src="juego.js?v=6"></script>
+<script src="juego.js?v=7"></script>
 <script>
 const SUS = [
   ["Marcos", "👦🏻", "16 años", "🐶 perro", "2 hermanos", "🚲 sí"],
@@ -92,7 +92,11 @@ const STAGES = [
         { t: "choice", q: "¿___ no tienes tu móvil? – Porque está en casa.", qDe: "porque = weil", opts: ["Por qué", "Qué", "Cómo"], a: "Por qué", hint: "Grund (porque) → ¿Por qué …?" },
         { t: "choice", q: "¿___ es tu número de teléfono? – Es el 612 …", opts: ["Cuál", "Qué", "Cuántos"], a: "Cuál", hint: "Telefonnummer → ¿Cuál es tu número …?" }
       ] },
-    { label: "Pista 5", title: "El interrogatorio", shuffle: true, memo: QW + "<br>" + TENER,
+    { label: "Pista 5", title: "El interrogatorio", shuffle: true,
+      pick: { q: "¿A quién interrogas primero?", qDe: "Wen verhörst du zuerst?", opts: [
+        { t: "👦🏻 Marcos – está muy nervioso", intro: `<p>🕵️ Empiezas con <b>Marcos</b>. Está muy nervioso… ¿por qué?</p>`, first: [0] },
+        { t: "👧🏼 Lola – no habla con nadie", intro: `<p>🕵️ Empiezas con <b>Lola</b>. Está sola en la cocina.</p>`, first: [1] },
+        { t: "🧑🏾 Hugo – siempre está con el móvil", intro: `<p>🕵️ Empiezas con <b>Hugo</b>. ¡Tiene dos móviles en la mano!</p>`, first: [3] }] }, memo: QW + "<br>" + TENER,
       intro: `<div class="who"><div class="face">👮🏽‍♀️</div><div><b class="n">Inspectora Gómez</b>Ahora tú haces las preguntas. Ordena las palabras.</div></div><p class="de">Bau die Fragen. Das Fragewort steht am Anfang, dann das Verb.</p>`,
       pista: "Fragewort zuerst (¿Cómo / ¿Dónde …), dann das Verb, dann der Rest.",
       tasks: [

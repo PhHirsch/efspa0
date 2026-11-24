@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Jefe final · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#3a0a0a 0%,#0c0303 70%);--panel:#1a0808;--txt:#fff2ee;--muted:#d8a8a0;--line:#4a1a14;--btn:#2a0c0a;--accent:#ff5a2a;--accentTxt:#fff;--accent2:#ffb38f;--bubble:#2a0f0c;--input:#120404;--ok:#6fe59a;--bad:#ffb03a}
+  .arena{position:relative;height:210px;overflow:hidden;border-radius:14px 14px 0 0;background:radial-gradient(ellipse at 50% 120%,#ff5a2a55,transparent 60%),linear-gradient(#1a0606,#3a0c08)}
+  .arena .boss{position:absolute;right:8%;bottom:20px;font-size:110px;line-height:1;filter:drop-shadow(0 0 20px #ff5a2a88);transition:transform .2s}
+  .arena .boss.hit{animation:hit .4s}
+  @keyframes hit{25%{transform:translateX(14px) rotate(6deg);filter:brightness(2.2)}60%{transform:translateX(-6px)}}
+  .arena .boss.rage{animation:rage 1.2s infinite}
+  @keyframes rage{50%{transform:scale(1.06);filter:drop-shadow(0 0 30px #ff2a2a)}}
+  .arena .hero{position:absolute;left:8%;bottom:20px;width:96px;height:96px;border-radius:50%;overflow:hidden;background:#fff;border:4px solid #3ab0ff;box-shadow:0 0 20px #3ab0ff88}
+  .arena .hero svg{width:100%;height:100%}
+  .hp{position:absolute;right:4%;top:12px;width:46%}
+  .hp .nm{font-weight:900;font-size:15px;letter-spacing:.05em;text-align:right}
+  .hp .b{height:16px;border-radius:9px;background:#000a;border:2px solid #ff5a2a;overflow:hidden;margin-top:3px}
+  .hp .b i{display:block;height:100%;background:linear-gradient(90deg,#ff2a2a,#ffb03a);transition:width .6s}
+  .hearts{position:absolute;left:4%;top:14px;font-size:22px}
+  .ph{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);font-weight:900;font-size:15px;color:#ffd23a;letter-spacing:.1em;text-align:center}
+  .say{position:absolute;right:30%;bottom:120px;max-width:44%;background:#fff;color:#3a0a0a;border-radius:12px;padding:6px 10px;font-size:14px;font-weight:700}
+  .say:after{content:"";position:absolute;right:-8px;bottom:10px;border:8px solid transparent;border-left-color:#fff}
+  .mini{display:grid;gap:10px;margin:14px 0}
+  .mini a{display:flex;gap:14px;align-items:center;padding:14px;border-radius:14px;background:linear-gradient(135deg,#3a0c08,#6a1a10);border:1px solid #8a2a1a;color:#fff;text-decoration:none}
+  .mini a .e{font-size:44px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=14"></script>
+<script src="juego.js?v=7"></script>
+<script>
+const VF = (q, a, why) => ({ t: "choice", q: q, task: "¿Verdadero o falso?", keep: true, opts: ["verdadero ✔", "falso ✘"], a: a ? "verdadero ✔" : "falso ✘", hint: why });
+const BOSSES = {
+ 1: { name: "EL DRAGÓN MUDO", e: "🐉", unit: "Unidad 1 · ¡Hola!", lines: ["Grrr… ¡Nadie habla español conmigo!", "¿Números? ¡Yo solo cuento hasta tres! 🔥", "¡Mi furia es infinita! Grrraaah…"],
+   intro: "El Dragón Mudo no habla con nadie. Solo si le hablas en español perfecto, pierde su fuerza. ¡Saludos, números, preguntas – todo lo de la Unidad 1!",
+   stages: [
+    { label: "Fase 1", title: "¡Saluda al dragón!", memo: "📌 ¡Hola! · ¡Buenos días! (Morgen) · ¡Buenas tardes! (Nachmittag) · ¡Buenas noches! (Abend/Nacht) · ¿Cómo te llamas? – Me llamo … · ¿De dónde eres? – Soy de … · ¿Dónde vives? – Vivo en …", tasks: [
+      { t: "choice", q: "Son las 9 de la mañana. Dices: ¡___!", opts: ["Buenos días", "Buenas noches", "Adiós"], a: "Buenos días", hint: "Morgens: ¡Buenos días!" },
+      { t: "choice", q: "¿Cómo te llamas? – ___", opts: ["Me llamo Ana.", "Soy de Ana.", "Vivo en Ana."], a: "Me llamo Ana.", hint: "¿Cómo te llamas? → Me llamo …" },
+      { t: "choice", q: "¿De dónde eres? – ___", opts: ["Soy de Alemania.", "Vivo Alemania.", "Me llamo Alemania."], a: "Soy de Alemania.", hint: "¿De dónde eres? → Soy de …" },
+      { t: "choice", q: "¿___ vives? – Vivo en Höxter.", opts: ["Dónde", "Cómo", "De dónde"], a: "Dónde", hint: "Wo → ¿Dónde vives?" },
+      { t: "choice", q: "¿Cómo estás? – ___, gracias.", opts: ["Muy bien", "Me llamo", "Soy de"], a: "Muy bien", hint: "¿Cómo estás? → (Muy) bien." },
+      { t: "choice", q: "¡Hasta ___! (Bis später!)", opts: ["luego", "pronto", "noche"], a: "luego", hint: "Bis später = ¡Hasta luego!" }] },
+    { label: "Fase 2", title: "La furia de los números", memo: "📌 más (+) · menos (−) · son (=) · 16 dieciséis · 20 veinte · 30 treinta · 40 cuarenta · 50 cincuenta · ¿Cuántos años tienes? – Tengo … años.", tasks: [
+      { t: "type", q: "Ocho más ocho son ___.", a: "dieciséis", show: "8 + 8 = 16 → dieciséis", tips: { dieciseis: "Akzent: dieciséis." } },
+      { t: "type", q: "Treinta menos diez son ___.", a: "veinte", show: "30 − 10 = 20 → veinte" },
+      { t: "type", q: "¿Cuántos años tienes? – ___ quince años.", a: "Tengo", show: "Tengo quince años." },
+      { t: "type", q: "Escribe en letras: 47", a: "cuarenta y siete", show: "47 = cuarenta y siete" },
+      { t: "type", q: "Escribe en letras: 22", a: "veintidós", show: "22 = veintidós", tips: { veintidos: "Akzent: veintidós." } },
+      { t: "choice", q: "¿Cuál es tu número de ___?", opts: ["teléfono", "años", "calle"], a: "teléfono", hint: "¿Cuál es tu número de teléfono?" }] },
+    { label: "Fase final", title: "¡El dragón ataca!", memo: "📌 Fragen: ¿Cómo …? · ¿Dónde …? · ¿De dónde …? · ¿Cuántos …? – immer mit ¿ … ?", tasks: [
+      { t: "order", task: "Ordena:", taskDe: "Woher bist du?", words: ["¿De", "dónde", "eres?"], a: "¿De dónde eres?" },
+      { t: "order", task: "Ordena:", taskDe: "Ich heiße Leo und ich bin aus Deutschland.", words: ["Me", "llamo", "Leo", "y", "soy", "de", "Alemania."], a: "Me llamo Leo y soy de Alemania." },
+      { t: "order", task: "Ordena:", taskDe: "Ich wohne in Madrid, aber ich bin aus Mexiko.", words: ["Vivo", "en", "Madrid,", "pero", "soy", "de", "México."], a: "Vivo en Madrid, pero soy de México." },
+      { t: "error", words: ["¿Como", "te", "llamas?"], bad: 0, fix: "¿Cómo", opts: ["¿Cómo", "¿Dónde", "¿Cuál"], hint: "Fragewort mit Akzent: ¿Cómo?" },
+      { t: "error", words: ["Yo", "soy", "en", "Alemania."], bad: 1, fix: "vivo", opts: ["vivo", "tengo", "llamo"], hint: "wohnen: Vivo en Alemania. (Soy de Alemania.)" },
+      VF("„¡Buenas noches!“ sagt man am Morgen.", false, "Am Morgen: ¡Buenos días! – ¡Buenas noches! am Abend.")] }] },
+ 2: { name: "EL PULPO GRAMÁTICO", e: "🐙", unit: "Unidad 2 · Mi mundo y yo", lines: ["¡Ocho brazos, ocho trampas! 🐙", "¿Tener? ¡Yo tengo ocho brazos! ¡Ja!", "¡Tinta negra! ¡No ves nada!"],
+   intro: "El Pulpo Gramático tiene ocho brazos – y cada brazo es una trampa: pronombres, ser, verbos en -ar, tener, mi/tu/su, no, preguntas y conectores. ¡Todo lo de la Unidad 2!",
+   stages: [
+    { label: "Fase 1", title: "Los brazos del pulpo", memo: "📌 ser: soy, eres, es, somos, sois, son · tener: tengo, tienes, tiene, tenemos, tenéis, tienen · hablar: hablo, hablas, habla, hablamos, habláis, hablan", tasks: [
+      { t: "choice", q: "Nosotros ___ de Madrid.", opts: ["somos", "son", "sois"], a: "somos", hint: "nosotros → somos." },
+      { t: "choice", q: "¿Tú ___ hermanos?", opts: ["tienes", "tiene", "tengo"], a: "tienes", hint: "tú → tienes." },
+      { t: "choice", q: "Mis amigos ___ inglés.", opts: ["hablan", "habla", "hablamos"], a: "hablan", hint: "mis amigos = ellos → hablan." },
+      { t: "choice", q: "___ hermanas se llaman Ana y Eva. (meine)", opts: ["Mis", "Mi", "Sus"], a: "Mis", hint: "hermanas = Plural → mis." },
+      { t: "choice", q: "Lucía y ___ perro. (ihr Hund)", opts: ["su", "sus", "tu"], a: "su", hint: "ihr Hund → su perro." },
+      { t: "choice", q: "Tengo un gato, ___ no tengo perro.", opts: ["pero", "y", "con"], a: "pero", hint: "Gegensatz → pero." }] },
+    { label: "Fase 2", title: "¡Tinta negra!", memo: "📌 Endungen -ar: -o, -as, -a, -amos, -áis, -an · no vor dem Verb · ¿Quién? ¿Qué? ¿Dónde? ¿Cuántos? ¿Por qué?", tasks: [
+      { t: "type", q: "Yo ___ en un instituto. (estudiar)", a: "estudio", show: "yo → estudi-o" },
+      { t: "type", q: "¿Vosotros ___ mucho? (trabajar)", a: "trabajáis", show: "vosotros → trabaj-áis", tips: { trabajais: "Akzent: trabajáis." } },
+      { t: "type", q: "Mi padre ___ cuarenta años. (tener)", a: "tiene", show: "él → tiene" },
+      { t: "type", q: "¿___ es? – Es mi tía Carmen. (Wer?)", a: "Quién", show: "¿Quién es?", tips: { quien: "Akzent: Quién." } },
+      { t: "type", q: "¿___ hermanos tienes? (Wie viele?)", a: "Cuántos", show: "¿Cuántos hermanos tienes?", tips: { cuantos: "Akzent: Cuántos." } },
+      { t: "choice", q: "„Habláis español.“ – ¿Quién habla?", opts: ["vosotros", "nosotros", "ellos"], a: "vosotros", hint: "-áis → vosotros." }] },
+    { label: "Fase final", title: "¡El pulpo se enfada!", memo: "📌 no + Verb · y / pero / también / con · Pronomen fällt meistens weg", tasks: [
+      { t: "order", task: "Ordena:", taskDe: "Ich habe keine Geschwister.", words: ["No", "tengo", "hermanos."], a: "No tengo hermanos." },
+      { t: "order", task: "Ordena:", taskDe: "Mein Bruder spricht auch Englisch.", words: ["Mi", "hermano", "también", "habla", "inglés."], a: "Mi hermano también habla inglés." },
+      { t: "order", task: "Ordena:", taskDe: "Warum lernst du Spanisch?", words: ["¿Por", "qué", "estudias", "español?"], a: "¿Por qué estudias español?" },
+      { t: "error", words: ["Mi", "padres", "son", "simpáticos."], bad: 0, fix: "Mis", opts: ["Mis", "Su", "Tu"], hint: "padres = Plural → Mis." },
+      { t: "error", words: ["Yo", "no", "tiene", "un", "gato."], bad: 2, fix: "tengo", opts: ["tengo", "tienes", "tenemos"], hint: "yo → no tengo." },
+      { t: "error", words: ["Ellas", "es", "mis", "amigas."], bad: 1, fix: "son", opts: ["son", "somos", "eres"], hint: "ellas → son." }] }] },
+ 3: { name: "EL GIGANTE DEL BARRIO", e: "👹", unit: "Unidad 3 · Mi barrio, mi casa", lines: ["¡Yo construyo el barrio como quiero! 🏗️", "¿Mucho? ¿Poco? ¡Todo es MÍO!", "¡Pisos feos, calles feas! ¡JA!"],
+   intro: "El Gigante del Barrio pone todo en el lugar equivocado: las casas, las tiendas, ¡y las palabras! Con hay / está, mucho / poco y los adjetivos lo puedes vencer. ¡Todo lo de la Unidad 3!",
+   stages: [
+    { label: "Fase 1", title: "¿Dónde está todo?", memo: "📌 <b>hay</b> + un/una/Zahl/nichts (es gibt) · <b>está/están</b> + el/la/mi … (befindet sich) · del = de + el", tasks: [
+      { t: "choice", q: "En mi barrio ___ un parque.", opts: ["hay", "está", "están"], a: "hay", hint: "un parque → hay." },
+      { t: "choice", q: "El parque ___ al lado del metro.", opts: ["está", "hay", "están"], a: "está", hint: "el parque → está." },
+      { t: "choice", q: "Las tiendas ___ en la calle Mayor.", opts: ["están", "hay", "está"], a: "están", hint: "las tiendas → están." },
+      { t: "choice", q: "En la plaza ___ dos bares.", opts: ["hay", "están", "está"], a: "hay", hint: "Zahl (dos) → hay." },
+      { t: "choice", q: "La farmacia está al lado ___ cine.", opts: ["del", "de el", "de la"], a: "del", hint: "de + el = del." },
+      { t: "choice", q: "En mi calle hay ___ tiendas. (viele)", opts: ["muchas", "mucho", "muchos"], a: "muchas", hint: "las tiendas → muchas." }] },
+    { label: "Fase 2", title: "El gigante destruye adjetivos", memo: "📌 Adjektive passen sich an: el piso bonit<b>o</b> · la casa bonit<b>a</b> · los pisos bonit<b>os</b> · las casas bonit<b>as</b> · grande / grandes · mucho/a/os/as · poco/a/os/as", tasks: [
+      { t: "type", q: "La cocina es muy ___. (pequeño)", a: "pequeña", show: "la cocina → pequeña", tips: { pequena: "Mit ñ: pequeña." } },
+      { t: "type", q: "Los pisos son ___. (moderno)", a: "modernos", show: "los pisos → modernos" },
+      { t: "type", q: "Las calles son ___. (grande)", a: "grandes", show: "las calles → grandes" },
+      { t: "type", q: "En mi barrio hay ___ parques. (pocos/pocas)", a: "pocos", show: "los parques → pocos" },
+      { t: "type", q: "Mi hermana ___ en un piso grande. (vivir)", a: "vive", show: "ella → vive" },
+      { t: "choice", q: "Hay ___ gente en la plaza. (viel)", qDe: "la gente = die Leute", opts: ["mucha", "muchos", "mucho"], a: "mucha", hint: "la gente (Singular, f.) → mucha gente." }] },
+    { label: "Fase final", title: "¡El barrio es nuestro!", memo: "📌 hay / está / están · Adjektiv nach dem Nomen und angepasst · mucho/poco vor dem Nomen", tasks: [
+      { t: "order", task: "Ordena:", taskDe: "In meinem Viertel gibt es viele Geschäfte.", words: ["En", "mi", "barrio", "hay", "muchas", "tiendas."], a: "En mi barrio hay muchas tiendas." },
+      { t: "order", task: "Ordena:", taskDe: "Mein Zimmer ist klein, aber schön.", words: ["Mi", "habitación", "es", "pequeña,", "pero", "bonita."], a: "Mi habitación es pequeña, pero bonita." },
+      { t: "order", task: "Ordena:", taskDe: "Die U-Bahn-Station ist neben dem Park.", words: ["La", "estación", "de", "metro", "está", "al", "lado", "del", "parque."], a: "La estación de metro está al lado del parque." },
+      { t: "error", words: ["En", "la", "calle", "están", "un", "bar."], bad: 3, fix: "hay", opts: ["hay", "está", "es"], hint: "un bar → hay." },
+      { t: "error", words: ["Las", "casas", "son", "muy", "bonitos."], bad: 4, fix: "bonitas", opts: ["bonitas", "bonita", "bonito"], hint: "las casas → bonitas." },
+      { t: "error", words: ["Hay", "mucho", "parques", "en", "Madrid."], bad: 1, fix: "muchos", opts: ["muchos", "muchas", "mucha"], hint: "los parques → muchos." }] }] }
+};
+const U = +new URLSearchParams(location.search).get("u"), B = BOSSES[U];
+if (!B) {
+  const se = E8.getSession(), st = se && se.state ? se.state.stars || {} : {};
+  document.getElementById("app").innerHTML = `<div class="panel" style="max-width:720px;margin:20px auto;padding:18px"><a href="index.html" style="color:#ffb38f">← Lobby</a>
+    <h1 style="text-align:center">⚔️ Jefes finales</h1><p style="text-align:center">Al final de cada unidad te espera un jefe. ¡Vence al jefe con todo lo que sabes! <span class="de">– Am Ende jeder Unidad wartet ein Endgegner. Gut zur Vorbereitung auf die Klassenarbeit.</span></p>
+    <div class="mini">${Object.entries(BOSSES).map(([k, b]) => `<a href="?u=${k}"><span class="e">${b.e}</span><span><b>${b.name}</b><br><span class="de">${b.unit}</span></span><span style="margin-left:auto;color:#ffd23a">${st["jefe-u" + k] ? "★".repeat(st["jefe-u" + k]) + "☆".repeat(3 - st["jefe-u" + k]) : "⚔️"}</span></a>`).join("")}</div></div>`;
+} else {
+  const phaseMiss = S => (S.data.pm && S.data.pm[S.stage]) || 0;
+  JUEGO.start({
+    id: "jefe-u" + U, key: "efspa0-jefe-u" + U, icon: B.e, topic: "Jefe final · " + B.unit, title: B.name,
+    intro: `<p>${B.intro}</p><p class="de">Endgegner: 3 Phasen, immer schwerer. Jede richtige Antwort trifft den Boss. Jede falsche kostet dich ein Herz ❤️ – du kannst aber immer weiterkämpfen.</p>`,
+    goLabel: "⚔️ ¡A luchar!", time: "ca. 15 minutos",
+    stages: B.stages.map((s, i) => Object.assign({ go: ["⚔️ ¡Ataque!", "🔥 ¡Más fuerte!", "💥 ¡Golpe final!"][i], intro: `<div class="who"><div class="face">${B.e}</div><div><b class="n">${B.name}</b>${B.lines[i]}</div></div>` }, s)),
+    onMistake: S => { S.data.pm = S.data.pm || {}; S.data.pm[S.stage] = (S.data.pm[S.stage] || 0) + 1; const b = document.querySelector(".arena .boss"); if (b) b.classList.add("rage"); },
+    onSolve: S => { const b = document.querySelector(".arena .boss"); if (b) { b.classList.remove("hit"); void b.offsetWidth; b.classList.add("hit"); } const i = document.querySelector(".hp .b i"); if (i) i.style.width = Math.max(0, Math.round((1 - S.solved / S.total) * 100)) + "%"; },
+    scene: (S) => { const hp = S.done ? 0 : Math.round((1 - S.solved / S.total) * 100), h = Math.max(0, 5 - phaseMiss(S));
+      return `<div class="arena"><div class="hearts">${"❤️".repeat(h)}${"🖤".repeat(5 - h)}</div>
+        <div class="hp"><div class="nm">${B.e} ${B.name}</div><div class="b"><i style="width:${hp}%"></i></div></div>
+        <div class="ph">${S.done ? "💥 ¡VICTORIA!" : (["FASE 1", "FASE 2", "FASE FINAL"][S.stage] || "")}${!S.done && h === 0 ? "<br>😵 ¡Sin corazones – sigue luchando!" : ""}</div>
+        <div class="hero">${E8.myAvatar()}</div><div class="boss" style="${S.done ? "transform:rotate(90deg) translateY(30px);opacity:.5" : ""}">${B.e}</div>
+        ${S.done ? "" : `<div class="say">${B.lines[Math.min(S.stage, 2)]}</div>`}</div>`; },
+    outro: `<div style="font-size:64px">💥${B.e}🏆</div><h1>¡Has vencido a ${B.name}!</h1><p>Ahora dominas la ${B.unit}. 💪</p><p><a class="btn" href="jefe-final.html">⚔️ Otros jefes</a></p>`
+  });
+}
+</script>
+</body>
+</html>

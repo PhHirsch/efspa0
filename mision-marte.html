@@ -23,7 +23,7 @@
 <body>
 <main id="app"></main>
 <script src="game.js?v=14"></script>
-<script src="juego.js?v=6"></script>
+<script src="juego.js?v=7"></script>
 <script>
 const U = ["cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez","once","doce","trece","catorce","quince","dieciséis","diecisiete","dieciocho","diecinueve","veinte","veintiuno","veintidós","veintitrés","veinticuatro","veinticinco","veintiséis","veintisiete","veintiocho","veintinueve"];
 const T = {30:"treinta",40:"cuarenta",50:"cincuenta",60:"sesenta",70:"setenta",80:"ochenta",90:"noventa"};
@@ -79,6 +79,9 @@ JUEGO.start({
         { t: "choice", who: B, q: `<span class="big">68</span>`, task: "¿Cómo se escribe?", opts: ["sesenta y ocho", "sesentayocho", "ochenta y seis"], a: "sesenta y ocho", hint: "ab 31 mit y und getrennt: sesenta y ocho.", pista: "60 = sesenta, 8 = ocho. Ab 31: Zehner + y + Einer." }
       ] },
     { label: "Fase 5", title: "Las puertas de la nave", shuffle: true,
+      pick: { q: "BIT-7 pregunta: ¿qué ruta tomamos a Marte?", qDe: "Welche Route fliegen wir?", opts: [
+        { t: "🌙 Por la Luna – más bonita", intro: `<p>🌙 Pasáis cerca de la Luna. ¡Qué vista! Pero las puertas de la nave se cierran…</p>` },
+        { t: "☄️ Por los asteroides – más rápida", intro: `<p>☄️ ¡Cuidado, asteroides! La nave se mueve mucho y las puertas se cierran…</p>` }] },
       memo: "📌 Zehner: 20 veinte · 30 treinta · 40 cuarenta · 50 cincuenta · 60 sesenta · 70 setenta · 80 ochenta · 90 noventa · 100 cien",
       intro: `<p>Las puertas de la nave tienen un teclado (Tastenfeld). BIT-7 te dice el código en letras. <b>Escribe los números con cifras</b> (Ziffern).</p><p class="de">Tippe die Zahl als Ziffern, z. B. „cuarenta y siete“ → 47.</p>`,
       pista: "Erst der Zehner (Merk-Box), dann der Einer nach dem „y“.",

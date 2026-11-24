@@ -45,7 +45,7 @@
 <div class="snow"></div>
 <main id="app"></main>
 <script src="game.js?v=14"></script>
-<script src="juego.js?v=6"></script>
+<script src="juego.js?v=7"></script>
 <script>
 const YEAR = 2026;
 const g = (w, de) => `<b>${w}</b> <span class="de">(${de})</span>`;
@@ -160,7 +160,7 @@ const se = E8.getSession(), ST = se && se.state ? se.state : null, done = n => !
 if (N >= 1 && N <= 24 && isOpen(N)) {
   const dd = D[N - 1];
   JUEGO.start({
-    id: "adv-" + N, key: "efspa0-adv-" + N, icon: dd.e, topic: "Calendario de Adviento · Puerta " + N, title: dd.t,
+    noHard: true, id: "adv-" + N, key: "efspa0-adv-" + N, icon: dd.e, topic: "Calendario de Adviento · Puerta " + N, title: dd.t,
     intro: `<div class="story">${dd.txt}</div><p class="de">Lies den Text – er bleibt bei den Fragen sichtbar.</p>`,
     goLabel: "🎁 ¡Abrir!", time: "3–5 minutos",
     stages: [{ label: "Puerta " + N, title: dd.t, memo: `<div class="story">${dd.txt}</div>`, pista: "Die Antwort steht im Text oben.", tasks: dd.q }],

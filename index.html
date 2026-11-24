@@ -142,16 +142,26 @@
   .crowns{display:inline-block;margin-top:6px;background:linear-gradient(135deg,#ffd23a,#ff9a2a);color:#3a2000;font-weight:800;font-size:14px;padding:3px 12px;border-radius:20px}
   .ava.maestro{box-shadow:0 0 0 4px #ffd23a,0 0 30px #ffd23a88;border-radius:50%}
   .card .crown{position:absolute;top:6px;right:8px;font-size:24px;filter:drop-shadow(0 2px 3px #0008)}
-  .meta{margin:6px 0 18px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#1b2a4a,#3a2160);border:1px solid rgba(255,255,255,.15);display:flex;flex-wrap:wrap;align-items:stretch}
-  .meta .pz{flex:1 1 380px;min-height:150px;background:#7ec8ff}
-  .meta .pz svg{display:block;width:100%;height:100%}
-  .meta .tx{flex:1 1 300px;padding:14px 18px}
-  .meta h3{margin:0 0 4px;font-size:24px}
-  .meta .mb{height:16px;border-radius:9px;background:rgba(0,0,0,.35);overflow:hidden;margin:8px 0}
-  .meta .mb i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff6a2a)}
-  .meta .ms{display:flex;flex-wrap:wrap;gap:5px;font-size:12px}
-  .meta .ms span{background:rgba(255,255,255,.12);padding:2px 8px;border-radius:10px}
-  .meta .ms span.ok{background:#3fd27a;color:#032}
+  .mc{margin:6px 0 18px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#1b2a4a,#3a2160);border:1px solid rgba(255,255,255,.15);display:flex;flex-wrap:wrap;align-items:stretch}
+  .mc .pz{flex:1 1 380px;min-height:150px;background:#7ec8ff}
+  .mc .pz svg{display:block;width:100%;height:100%}
+  .mc .tx{flex:1 1 300px;padding:14px 18px}
+  .mc h3{margin:0 0 4px;font-size:24px}
+  .mc .mb{height:16px;border-radius:9px;background:rgba(0,0,0,.35);overflow:hidden;margin:8px 0}
+  .mc .mb i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff6a2a)}
+  .mc .ms{display:flex;flex-wrap:wrap;gap:5px;font-size:12px}
+  .mc .ms span{background:rgba(255,255,255,.12);padding:2px 8px;border-radius:10px}
+  .mc .ms span.ok{background:#3fd27a;color:#032}
+  .vt{display:flex;gap:8px;justify-content:center;margin:0 0 12px}
+  .vt button{font-size:16px;padding:8px 18px;border-radius:24px;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.35);color:#fff;cursor:pointer;font-weight:700}
+  .vt button.on{background:#fff;color:#111}
+  .map{border-radius:18px;overflow:hidden;background:#1a3a5a;border:1px solid rgba(255,255,255,.15);margin-bottom:24px}
+  .map svg{display:block;width:100%;height:auto}
+  .map .nd{cursor:pointer}
+  .map .nd:hover circle.o{stroke:#fff}
+  .card .hard{position:absolute;top:6px;right:34px;font-size:20px;filter:drop-shadow(0 2px 3px #0008)}
+  .albumlink{display:inline-block;margin-top:6px;margin-left:6px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.25);color:#fff;font-weight:700;font-size:14px;padding:3px 12px;border-radius:20px;text-decoration:none}
+  .hardbtn{display:inline-block;margin-left:10px;padding:10px 16px;border-radius:12px;background:#ff3a2a;color:#fff;font-weight:800;text-decoration:none;font-size:16px;vertical-align:middle}
 </style>
 </head>
 <body>
@@ -165,6 +175,7 @@
     <div class="feat" id="feat"></div>
   </div>
   <div id="meta"></div>
+  <div class="vt" id="vt"></div>
   <div id="shelves"></div>
 </div>
 <nav class="nav"><button class="D on" data-n="play">JUGAR</button><button class="D" data-n="locker">TAQUILLA</button><button class="D" data-n="shop">TIENDA</button><button class="D" data-n="home">MI CASA</button><button class="D" data-n="trophies">TROFEOS</button></nav>
@@ -174,6 +185,7 @@
 
 <script src="game.js?v=14"></script>
 <script src="bosses.js?v=9"></script>
+<script src="cromos.js?v=1"></script>
 <script src="covers.js?v=18"></script>
 <script src="vocab-u1.js?v=9"></script>
 <script src="vocab-u2.js?v=9"></script>
@@ -208,7 +220,7 @@ let SCORES = {}, SEL = null;
 /* Alle Spiele als Liste */
 const ACC = g => g.accent || ((String(g.color).match(/#[0-9a-fA-F]{6}/g)||["#5a3cb0"]).pop());
 const COVER = g => COVERS[g.id] || `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="cg_${g.id}"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><circle cx="110" cy="66" r="62" fill="url(#cg_${g.id})"/><text x="110" y="96" font-size="80" text-anchor="middle">${g.icon||"🎮"}</text></svg>`;
-const ALL = [], SHELVES = [];
+const ALL = [], SHELVES = [], BOSSCARDS = [];
 if (Object.values(VOCAB).some(u => u.sections && u.sections.length)) {
   ALL.push({id:"daily", href:"boss.html?id=daily", topic:"Reto del día", name:"Jefe del día", info:"10 palabras al azar de todas las unidades – cada día un jefe nuevo. ¡Hasta 15 monedas, una vez al día!", art:COVERS.daily, accent:"#e0533a", color:"linear-gradient(135deg,#7a1e3a,#e0533a)", shelf:"daily"});
   ALL.push({id:"review", href:"boss.html?id=review", topic:"Caja de errores", name:"El Monstruo de los Errores", info:"Un jefe hecho de las palabras que tenías mal. Si las aciertas, ¡salen de tu caja! Monedas una vez al día.", art:COVERS.review||"", accent:"#3fae5a", color:"linear-gradient(135deg,#1e4a24,#3fae5a)", shelf:"daily", only:() => { const s = state(); return !!(s && s.review && s.review.length); }});
@@ -219,12 +231,15 @@ if (Object.values(VOCAB).some(u => u.sections && u.sections.length)) {
 }
 [...new Set(Object.keys(VOCAB).concat(GRAMMAR.map(g => g.unit)))].sort().reverse().forEach(key => {
   const u = VOCAB[key], title = (u && u.unit) || UNITS[key] || key, gr = GRAMMAR.filter(g => g.unit === key);
-  if (gr.length) { SHELVES.push({key:key+"-g", title:title, sub:"Misiones"}); gr.forEach(g => ALL.push({id:g.id, href:g.file, topic:g.topic, name:g.name, info:g.info, art:COVER(g), accent:ACC(g), color:g.color, shelf:key+"-g", isNew:g.isNew})); }
+  if (gr.length) { SHELVES.push({key:key+"-g", title:title, sub:"Misiones"});
+    const BU = {u1:["🐉","El Dragón Mudo"], u2:["🐙","El Pulpo Gramático"], u3:["👹","El Gigante del Barrio"]}[key];
+    if (BU) BOSSCARDS.push({id:"jefe-"+key, href:"jefe-final.html?u="+key.slice(1), topic:"Jefe final · "+title, name:BU[1], info:`¡El jefe final de la ${title}! 3 fases, cada vez más difícil – todo lo de la unidad. Ideal antes del examen. – Endgegner: ideal vor der Klassenarbeit.`, art:`<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="bg${key}" cx=".5" cy="1.1" r=".9"><stop offset="0" stop-color="#ff5a2a"/><stop offset="1" stop-color="#1a0404"/></radialGradient></defs><rect width="220" height="140" rx="10" fill="url(#bg${key})"/><text x="110" y="98" font-size="74" text-anchor="middle">${BU[0]}</text><rect x="40" y="14" width="140" height="10" rx="5" fill="#0008" stroke="#ff5a2a"/><rect x="42" y="16" width="96" height="6" rx="3" fill="#ff3a2a"/><text x="110" y="128" font-family="Arial Black,Impact" font-size="13" fill="#ffd23a" text-anchor="middle">JEFE FINAL</text></svg>`, accent:"#ff3a2a", color:"linear-gradient(135deg,#3a0a0a,#ff3a2a)", shelf:key+"-g", isNew:true, boss:true}); gr.forEach(g => ALL.push({id:g.id, href:g.file, topic:g.topic, name:g.name, info:g.info, art:COVER(g), accent:ACC(g), color:g.color, shelf:key+"-g", isNew:g.isNew})); }
   if (u && u.sections.length) {
     SHELVES.push({key:key+"-v", title:title, sub:"Jefes de vocabulario"});
     u.sections.forEach(s => { const c = BOSSCOL[s.boss]||["#333333","#555555"]; ALL.push({id:s.id, href:"boss.html?id="+s.id, topic:"Jefe de vocabulario · "+s.part, name:s.title, info:`¡Lucha contra ${s.bossName}! ${s.words.length} palabras · Vocabulario ${s.pages}`, art:BOSSART[s.boss]||"", accent:c[1], color:`linear-gradient(135deg,${c[0]},${c[1]})`, shelf:key+"-v"}); });
   }
 });
+BOSSCARDS.forEach(b => ALL.push(b));
 if (!ALL.length) ALL.push({id:"soon", href:"", topic:"¡Pronto!", name:"Próximamente", info:"Aquí pronto habrá juegos nuevos. Mientras tanto ya puedes crear tu avatar.", art:"", accent:"#5a3cb0", color:"linear-gradient(135deg,#1e1650,#5a3cb0)"});
 
 /* ===== Erfolge ===== */
@@ -249,11 +264,15 @@ const ACH = [
   ["👑","Maestro/a","Un juego sin errores – Ein Spiel ohne Fehler", s => (s.perfect||[]).length >= 1],
   ["🤴","Gran Maestro/a","5 juegos sin errores – 5 Spiele ohne Fehler", s => (s.perfect||[]).length >= 5],
   ["🎄","¡Feliz Navidad!","Abre las 24 puertas del calendario – Alle 24 Türchen geöffnet", s => (s.adv||0) >= 24],
+  ["⚔️","Cazadragones","Vence a un jefe final – Einen Endgegner besiegt", s => Object.keys(s.stars).some(g => g.indexOf("jefe-u") === 0)],
+  ["🔥","Valiente","Termina un juego en modo difícil – Ein Spiel im Modo difícil", s => Object.keys(s.stars).some(g => /-dificil$/.test(g))],
+  ["📒","Coleccionista de cromos","Consigue 8 cromos – 8 Sammelkarten", s => window.CROMOS && CROMOS.filter(c => cromoState(s, c.id).got).length >= 8],
   ["🏛️","Equipo","La meta común llega a 10.000 – Kursziel 10.000 erreicht", s => (s.meta||0) >= 10000]
 ];
 const state = () => { const se = E8.getSession(); return se ? se.state : null; };
 const starsOf = id => { const s = state(); return s && s.stars ? (s.stars[id]||0) : 0; };
 const NOSTAR = ["daily","review","telenovela","adviento"];
+const hardOk = g => (GRAMMAR.some(x => x.id === g.id) || g.boss) && starsOf(g.id) > 0;
 const isMaestro = id => { const s = state(); return !!(s && s.perfect && s.perfect.indexOf(id) >= 0); };
 const stStr = n => "★".repeat(n) + "☆".repeat(3-n);
 
@@ -283,7 +302,7 @@ function hero(){
   const nCrown = s && s.perfect ? s.perfect.length : 0;
   let h = `<div class="ava ${nCrown?"maestro":""}" id="ava">${E8.avatarSVG(s?s.equipped:null)}</div><div class="podium"></div>`;
   if (s) {
-    h += `<div class="pname D">JUGADOR/A #${s.nr}</div>${nCrown?`<div class="crowns" title="Juegos sin ningún error – Spiele ohne Fehler">👑 Maestro/a × ${nCrown}</div>`:""}<div class="psub">${SITE.sub}</div><div class="badges">${ACH.map(a=>`<span class="${s.stats&&a[3](s)?"":"off"}" title="${a[1]}: ${a[2]}">${a[0]}</span>`).join("")}</div>${"mustSetPin" in s ? `<button class="pinlink" onclick="pinDialog(false)">🔑 Cambiar PIN</button>` : ""}`;
+    h += `<div class="pname D">JUGADOR/A #${s.nr}</div>${nCrown?`<div class="crowns" title="Juegos sin ningún error – Spiele ohne Fehler">👑 Maestro/a × ${nCrown}</div>`:""}${s && window.CROMOS?`<a class="albumlink" href="album.html">📒 Álbum ${CROMOS.filter(c=>cromoState(s,c.id).got).length}/${CROMOS.length}</a>`:""}<div class="psub">${SITE.sub}</div><div class="badges">${ACH.map(a=>`<span class="${s.stats&&a[3](s)?"":"off"}" title="${a[1]}: ${a[2]}">${a[0]}</span>`).join("")}</div>${"mustSetPin" in s ? `<button class="pinlink" onclick="pinDialog(false)">🔑 Cambiar PIN</button>` : ""}`;
   } else if (E8.online()) {
     h += `<div class="login"><div class="D" style="font-size:22px">INICIAR SESIÓN</div><div class="de" style="margin-bottom:8px">¡Gana monedas y viste a tu avatar! – Melde dich an.</div>
       <div class="row" style="align-items:flex-end"><div><label>NÚMERO</label><input id="nr" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></div>
@@ -311,7 +330,7 @@ function feat(){
   const done = g.id==="daily" && s && s.stats && s.stats.dailyToday;
   $("feat").innerHTML = `<div class="kicker">${g.isNew?"NUEVO · ":""}${g.topic.toUpperCase()}</div><h1 class="D">${g.name.toUpperCase()}</h1><p>${g.info}</p>
     <div class="meta">${s && NOSTAR.indexOf(g.id)<0 ? `<span class="st">${stStr(n)}</span>` : ""}${done?`<span>✔ Hecho hoy – ¡puedes seguir practicando!</span>`:""}${isMaestro(g.id)?`<span style="color:#ffd23a">👑 MAESTRO/A – ¡sin errores!</span>`:(s&&s.perfect&&NOSTAR.indexOf(g.id)<0&&g.id!=="conjugador"?`<span style="opacity:.7">👑 Sin errores = Maestro/a</span>`:"")}</div>
-    ${g.href?`<a class="play D" href="${g.href}"><span>JUGAR ▶</span></a>`:""}
+    ${g.href?`<a class="play D" href="${g.href}"><span>JUGAR ▶</span></a>`:""}${hardOk(g)?`<a class="hardbtn" href="${g.href}${g.href.indexOf("?")>=0?"&":"?"}modo=dificil">🔥 MODO DIFÍCIL${starsOf(g.id+"-dificil")?" ✔":""}</a>`:""}
     ${l.length?`<div class="top3">🏆 TOP 3 ${l.map((x,i)=>`<span class="p ${["g","s","b"][i]}"><div>${E8.avatarSVG(x.eq)}</div>#${x.nr}</span>`).join("")}</div>`:""}`;
 }
 /* ===== Reihen ===== */
@@ -320,7 +339,7 @@ function shelves(){
     const games = ALL.filter(g => g.shelf === sh.key && (!g.only || g.only()));
     return `<div class="shelf"><h3 class="D">${sh.title.toUpperCase()}${sh.sub?`<small>${sh.sub}</small>`:""}</h3><div class="strip">${games.map(g => {
       const n = starsOf(g.id);
-      return `<div class="card ${SEL&&SEL.id===g.id?"sel":""}" data-id="${g.id}" style="background:${g.color}">${g.isNew?`<span class="new">NUEVO</span>`:""}${isMaestro(g.id)?`<span class="crown" title="¡Sin errores! – Ohne Fehler">👑</span>`:""}<div class="art">${g.art}</div>
+      return `<div class="card ${SEL&&SEL.id===g.id?"sel":""}" data-id="${g.id}" style="background:${g.color}">${g.isNew?`<span class="new">NUEVO</span>`:""}${isMaestro(g.id)?`<span class="crown" title="¡Sin errores! – Ohne Fehler">👑</span>`:""}${starsOf(g.id+"-dificil")?`<span class="hard" title="Modo difícil">🔥</span>`:""}<div class="art">${g.art}</div>
         <div class="lab"><small>${g.topic.toUpperCase()}</small>${g.name}${state()&&NOSTAR.indexOf(g.id)<0?` <span style="color:#ffd23a;font-size:12px">${stStr(n)}</span>`:""}</div>${n?`<div class="prog" style="width:${n*33.4}%"></div>`:""}</div>`;
     }).join("")}</div></div>`;
   }).join("");
@@ -358,13 +377,49 @@ function metaBox(){
   if (!s || !("meta" in s)) { el.innerHTML = ""; return; }
   const m = s.meta, nxt = METAS.find(x => m < x[0]), prev = [...METAS].reverse().find(x => m >= x[0]);
   const from = prev ? prev[0] : 0, pct = nxt ? Math.round((m - from) / (nxt[0] - from) * 100) : 100;
-  el.innerHTML = `<div class="meta"><div class="pz">${plaza(m)}</div><div class="tx"><h3 class="D">META COMÚN · LA PLAZA DEL CURSO</h3>
+  el.innerHTML = `<div class="mc"><div class="pz">${plaza(m)}</div><div class="tx"><h3 class="D">META COMÚN · LA PLAZA DEL CURSO</h3>
     <div class="de" style="font-size:13px;opacity:.85">Todas las monedas que gana el curso construyen nuestra plaza. – Alle Münzen des Kurses bauen gemeinsam an eurem Platz.</div>
     <div class="mb"><i style="width:${pct}%"></i></div>
     <div style="font-size:15px"><b>${m.toLocaleString("es-ES")} 🪙</b> ${nxt?`· próximo: ${nxt[1]} ${nxt[2]} a ${nxt[0].toLocaleString("es-ES")} 🪙`:"· ¡Plaza terminada! 🎉"}</div>
     <div class="ms" style="margin-top:8px">${METAS.map(x=>`<span class="${m>=x[0]?"ok":""}">${x[1]} ${(x[0]/1000)}k</span>`).join("")}</div></div></div>`;
 }
-function render(){ topBar(); hero(); feat(); metaBox(); shelves(); }
+/* ===== Weltkarte (zweite Ansicht der Spiele) ===== */
+let VIEW = (()=>{ try { return localStorage.getItem("efspa0-view") || "shelf"; } catch(e) { return "shelf"; } })();
+function viewToggle(){
+  $("vt").innerHTML = `<button class="${VIEW==="shelf"?"on":""}" data-v="shelf">📚 Estantes</button><button class="${VIEW==="map"?"on":""}" data-v="map">🗺️ Mapa de aventura</button>`;
+  $("vt").querySelectorAll("button").forEach(b => b.onclick = () => { VIEW = b.dataset.v; try { localStorage.setItem("efspa0-view", VIEW); } catch(e) {} viewToggle(); VIEW==="map" ? mapView() : shelves(); });
+}
+const ZONES = {u1:["🏝️ Islas del ¡Hola!","#1f6a8a"], u2:["🌳 Bosque de la Familia","#2a6a3a"], u3:["🏙️ Madrid","#7a4a2a"]};
+function mapView(){
+  const units = [...new Set(GRAMMAR.map(g => g.unit))].sort();
+  const L = [];
+  units.forEach(u => { GRAMMAR.filter(g => g.unit === u).forEach(g => L.push({g: ALL.find(x => x.id === g.id), icon: g.icon, u})); const b = ALL.find(x => x.id === "jefe-"+u); if (b) L.push({g:b, icon:b.name==="El Dragón Mudo"?"🐉":b.name==="El Pulpo Gramático"?"🐙":"👹", u, boss:true}); });
+  const PER = 5, W = 1000, rowH = 170; let y = 0, gr = 0; const bands = [];
+  units.forEach(u => { const ns = L.filter(n => n.u === u), rows = Math.ceil(ns.length / PER), y0 = y;
+    ns.forEach((n, i) => { const r = Math.floor(i / PER), c = i % PER, cc = (gr + r) % 2 ? PER - 1 - c : c; n.x = 110 + cc * 195; n.y = y0 + 110 + r * rowH; });
+    gr += rows; y += rows * rowH + 60; bands.push({u, y0, y1: y}); });
+  const H = y;
+  const nextI = L.findIndex(n => !starsOf(n.g.id));
+  const path = L.map((n, i) => (i ? "L" : "M") + n.x + " " + n.y).join(" ");
+  $("shelves").innerHTML = `<div class="map"><svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${W}" height="${H}" fill="#123a5a"/>
+    ${bands.map((b,i) => `<rect x="0" y="${b.y0}" width="${W}" height="${b.y1-b.y0}" fill="${ZONES[b.u]?ZONES[b.u][1]:"#335"}" opacity=".6"/><path d="M0 ${b.y1} L${W} ${b.y1}" stroke="#fff3" stroke-width="2" stroke-dasharray="8 8"/>`).join("")}
+    <path d="${path}" stroke="#f3e6c8" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 22" opacity=".9"/>
+    ${bands.map(b => `<text x="24" y="${b.y0+36}" font-family="Arial Black,Impact,sans-serif" font-size="24" fill="#fff" opacity=".95">${ZONES[b.u]?ZONES[b.u][0]:""} · Unidad ${b.u.slice(1)}</text>`).join("")}
+    ${L.map((n, i) => { const st = starsOf(n.g.id), done = st > 0, nx = i === nextI, r = n.boss ? 52 : 42;
+      return `<g class="nd" data-id="${n.g.id}">
+        ${nx ? `<circle cx="${n.x}" cy="${n.y}" r="${r+12}" fill="none" stroke="#ffd23a" stroke-width="5"><animate attributeName="r" values="${r+8};${r+16};${r+8}" dur="1.6s" repeatCount="indefinite"/></circle>` : ""}
+        <circle class="o" cx="${n.x}" cy="${n.y}" r="${r}" fill="${n.boss ? "#5a0a0a" : done ? "#fff8e6" : "#2a3a4a"}" stroke="${n.boss ? "#ff3a2a" : done ? "#ffd23a" : "#8aa"}" stroke-width="5"/>
+        <text x="${n.x}" y="${n.y+ (n.boss?18:14)}" font-size="${n.boss?50:40}" text-anchor="middle" ${done||nx||n.boss?"":'opacity=".55"'}>${n.icon}</text>
+        ${isMaestro(n.g.id) ? `<text x="${n.x+r-6}" y="${n.y-r+12}" font-size="24" text-anchor="middle">👑</text>` : ""}
+        ${starsOf(n.g.id+"-dificil") ? `<text x="${n.x-r+6}" y="${n.y-r+12}" font-size="22" text-anchor="middle">🔥</text>` : ""}
+        <text x="${n.x}" y="${n.y+r+24}" font-family="system-ui" font-weight="800" font-size="16" fill="#fff" text-anchor="middle">${n.g.name.length>22?n.g.name.slice(0,21)+"…":n.g.name}</text>
+        <text x="${n.x}" y="${n.y+r+44}" font-size="16" fill="#ffd23a" text-anchor="middle">${"★".repeat(st)}${"☆".repeat(3-st)}</text></g>`; }).join("")}
+    ${nextI >= 0 && state() ? `<g transform="translate(${L[nextI].x+30} ${L[nextI].y-100})"><foreignObject width="60" height="60"><div xmlns="http://www.w3.org/1999/xhtml" style="width:60px;height:60px;border-radius:50%;overflow:hidden;background:#fff;border:3px solid #ffd23a">${E8.avatarSVG(state().equipped)}</div></foreignObject><text x="30" y="-6" font-family="system-ui" font-weight="900" font-size="15" fill="#ffd23a" text-anchor="middle">¡AQUÍ!</text></g>` : ""}
+  </svg></div>`;
+  document.querySelectorAll(".map .nd").forEach(el => el.onclick = () => { const g = ALL.find(x => x.id === el.dataset.id); if (g) { select(g); window.scrollTo({top:0, behavior:"smooth"}); } });
+}
+function render(){ topBar(); hero(); feat(); metaBox(); viewToggle(); VIEW==="map" ? mapView() : shelves(); }
 
 /* ===== Navigation ===== */
 document.querySelectorAll(".nav button").forEach(b => b.onclick = () => {
