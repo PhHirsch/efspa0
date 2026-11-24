@@ -437,47 +437,84 @@
   }
   function townSVG(list, meta) {
     const n = list.length + 1, C = Math.max(2, Math.ceil(Math.sqrt(n))), R = Math.max(2, Math.ceil(n / C)), G = 12.5, RW = 2.5;
-    const W = C * G, D = R * G, X0 = -RW, Y0 = -RW;
+    const W = C * G, D = R * G, M = 9;
     const pi = Math.floor((R - 1) / 2) * C + Math.floor((C - 1) / 2);
     const T = (x, y, z) => P(x, y, z || 0);
-    const pp = a => a.map(q => { const p = T(q[0], q[1], q[2]); return f1(p[0]) + "," + f1(p[1]); }).join(" ");
+    const rnd = rng(C * 31 + R * 7 + 3);
     let s = "";
-    // Asphalt + Erdkante
-    s += `<polygon points="${pp([[X0, Y0, 0], [W, Y0, 0], [W, D, 0], [X0, D, 0]])}" fill="#454b54"/>`;
-    s += `<polygon points="${pp([[X0, D, 0], [W, D, 0], [W, D, -1], [X0, D, -1]])}" fill="#4a3a2a"/><polygon points="${pp([[W, Y0, 0], [W, D, 0], [W, D, -1], [W, Y0, -1]])}" fill="#3a2e22"/>`;
-    // Weser rechts
-    s += `<polygon points="${pp([[W, Y0, 0], [W + 5, Y0, 0], [W + 5, D, 0], [W, D, 0]])}" fill="#4a8ec4"/><polygon points="${pp([[W + 5, Y0, 0], [W + 5, D, 0], [W + 5, D, -1], [W + 5, Y0, -1]])}" fill="#356a96"/><polygon points="${pp([[W, D, 0], [W + 5, D, 0], [W + 5, D, -1], [W, D, -1]])}" fill="#3f7aaa"/>`;
-    for (let i = 0; i < 8; i++) { const y = i * D / 8 + 1; s += ln([W + 1, y, .02], [W + 4, y + .8, .02], "#ffffff", 2, 'opacity=".45"'); }
-    const tw = T(W + 2.5, D / 2, 0); s += `<text x="${f1(tw[0])}" y="${f1(tw[1])}" font-size="40" font-weight="800" fill="#ffffff" opacity=".6" text-anchor="middle" font-family="Arial" transform="rotate(30 ${f1(tw[0])} ${f1(tw[1])})">WESER</text>`;
-    // Gehwege um jeden Block
-    for (let i = 0; i < C; i++) for (let j = 0; j < R; j++) s += poly([[i * G - .45, j * G - .45, .02], [i * G + 10.45, j * G - .45, .02], [i * G + 10.45, j * G + 10.45, .02], [i * G - .45, j * G + 10.45, .02]], "#bdb5a3", 'stroke="#a39b88" stroke-width="1"');
-    // Mittelstreifen + Zebrastreifen
-    for (let i = 0; i <= C; i++) { const x = i * G - RW / 2; s += ln([x, Y0, .03], [x, D, .03], "#f3e7b0", 2, 'stroke-dasharray="14 12" opacity=".85"'); }
-    for (let j = 0; j <= R; j++) { const y = j * G - RW / 2; s += ln([X0, y, .03], [W, y, .03], "#f3e7b0", 2, 'stroke-dasharray="14 12" opacity=".85"'); }
-    for (let i = 0; i <= C; i++) for (let j = 0; j < R; j++) { const x = i * G - RW, y = j * G + .3; for (let k = 0; k < 4; k++) s += poly([[x + .25 + k * .55, y, .035], [x + .55 + k * .55, y, .035], [x + .55 + k * .55, y + .9, .035], [x + .25 + k * .55, y + .9, .035]], "#f4f1ea", 'opacity=".8"'); }
-    // Straßennamen
+    // --- Landschaft: unregelmäßiger grüner Rand
+    const cx = (W - RW) / 2, cy = (D - RW) / 2, ax = W / 2 + M, ay = D / 2 + M, blob = [];
+    for (let k = 0; k < 40; k++) { const t = k / 40 * Math.PI * 2, r = 1 + .07 * Math.sin(t * 3 + 1) + .05 * Math.sin(t * 7) + (rnd() - .5) * .05;
+      blob.push([cx + Math.cos(t) * ax * r * 1.08, cy + Math.sin(t) * ay * r * 1.08, 0]); }
+    s += poly(blob.map(q => [q[0] + 1.2, q[1] + 1.2, -1.2]), "#0a1a28", 'opacity=".55"');
+    s += poly(blob, "#6aa84f") + poly(blob.map(q => [cx + (q[0] - cx) * .93, cy + (q[1] - cy) * .93, .005]), "#74b356");
+    // Felder
+    [[-M + 1, D * .25], [W * .35, -M + 1.5], [W * .1, D + 2.5]].forEach(([fx, fy], k) => { const fw = 7, fd = 5;
+      s += poly([[fx, fy, .01], [fx + fw, fy, .01], [fx + fw, fy + fd, .01], [fx, fy + fd, .01]], ["#d8c06a", "#b8a050", "#c9d48a"][k]);
+      for (let r = .6; r < fd; r += .8) s += ln([fx + .2, fy + r, .02], [fx + fw - .2, fy + r, .02], "#a08a3a", 1.2, 'opacity=".5"'); });
+    // --- Weser in Schleifen
+    const rx = y => W + 4.5 + 2.2 * Math.sin(y / 9) + 1.2 * Math.sin(y / 4.3), y0 = -M - 3, y1 = D + M + 3, L = [], Rr = [];
+    for (let y = y0; y <= y1; y += 1.5) { L.push([rx(y) - 2.1, y, .02]); Rr.unshift([rx(y) + 2.1, y, .02]); }
+    s += `<clipPath id="isl"><polygon points="${pts(blob)}"/></clipPath><g clip-path="url(#isl)">` + poly(L.concat(Rr), "#4a8ec4", 'stroke="#c9b98a" stroke-width="4"');
+    for (let y = y0 + 3; y < y1; y += 6) s += ln([rx(y) - .8, y, .03], [rx(y + 1.2) + .6, y + 1.2, .03], "#fff", 2, 'opacity=".45"');
+    s += `</g>`;
+    const tw = T(rx(D * .8) , D * .8, 0); s += `<text x="${f1(tw[0])}" y="${f1(tw[1])}" font-size="34" font-weight="800" fill="#fff" opacity=".55" text-anchor="middle" font-family="Arial" transform="rotate(-30 ${f1(tw[0])} ${f1(tw[1])})">WESER</text>`;
+    // --- Straßen: Segmente einzeln (Asphalt innen, Feldweg außen, manche innen als Fußweg mit Grün)
+    const ASP = "#4b515a", DIRT = "#c2aa7a";
+    const seg = {}; // key -> "road" | "dirt" | "park"
+    for (let i = 0; i <= C; i++) for (let j = 0; j < R; j++) seg["v" + i + "_" + j] = (i === 0 || i === C) ? "dirt" : (rnd() < .28 ? "park" : "road");
+    for (let j = 0; j <= R; j++) for (let i = 0; i < C; i++) seg["h" + i + "_" + j] = (j === 0 || j === R) ? "dirt" : (rnd() < .28 ? "park" : "road");
+    const rect = (x0, y0, x1, y1, c, ex) => poly([[x0, y0, .015], [x1, y0, .015], [x1, y1, .015], [x0, y1, .015]], c, ex);
+    const parkBits = [];
+    Object.keys(seg).forEach(k => { const v = k[0] === "v", a = k.slice(1).split("_").map(Number), typ = seg[k];
+      const x0 = v ? a[0] * G - RW : a[0] * G, y0 = v ? a[1] * G : a[1] * G - RW, x1 = v ? a[0] * G : a[0] * G + 10, y1 = v ? a[1] * G + 10 : a[1] * G;
+      if (typ === "dirt") { s += rect(x0 + (v ? .5 : 0), y0 + (v ? 0 : .5), x1 - (v ? .5 : 0), y1 - (v ? 0 : .5), DIRT); return; }
+      if (typ === "park") { s += rect(x0, y0, x1, y1, "#7cb85a");
+        const mx = (x0 + x1) / 2, my = (y0 + y1) / 2; s += v ? ln([mx, y0, .03], [mx + .3, my, .03], "#d9cba8", 4) + ln([mx + .3, my, .03], [mx, y1, .03], "#d9cba8", 4) : ln([x0, my, .03], [mx, my - .3, .03], "#d9cba8", 4) + ln([mx, my - .3, .03], [x1, my, .03], "#d9cba8", 4);
+        parkBits.push(v ? [mx - .6 + rnd() * .3, y0 + 2 + rnd() * 2] : [x0 + 2 + rnd() * 2, my - .6 + rnd() * .3], v ? [mx + .5, y0 + 6 + rnd() * 2] : [x0 + 6 + rnd() * 2, my + .5]); return; }
+      s += rect(x0, y0, x1, y1, ASP);
+      s += v ? ln([(x0 + x1) / 2, y0, .03], [(x0 + x1) / 2, y1, .03], "#f3e7b0", 2, 'stroke-dasharray="14 12" opacity=".8"') : ln([x0, (y0 + y1) / 2, .03], [x1, (y0 + y1) / 2, .03], "#f3e7b0", 2, 'stroke-dasharray="14 12" opacity=".8"');
+      for (let z = 0; z < 4; z++) s += v ? rect(x0 + .25 + z * .55, y0 + .3, x0 + .55 + z * .55, y0 + 1.1, "#f4f1ea", 'opacity=".75"') : rect(x0 + .3, y0 + .25 + z * .55, x0 + 1.1, y0 + .55 + z * .55, "#f4f1ea", 'opacity=".75"');
+    });
+    // Kreuzungen
+    for (let i = 0; i <= C; i++) for (let j = 0; j <= R; j++) { const ks = ["v" + i + "_" + (j - 1), "v" + i + "_" + j, "h" + (i - 1) + "_" + j, "h" + i + "_" + j].map(k => seg[k]).filter(Boolean);
+      const outer = i === 0 || i === C || j === 0 || j === R;
+      const c = outer ? DIRT : ks.indexOf("road") >= 0 ? ASP : ks.indexOf("dirt") >= 0 ? DIRT : "#7cb85a"; const x = i * G - RW, y = j * G - RW;
+      s += c === DIRT ? rect(x + .5, y + .5, x + RW - .5, y + RW - .5, c) : rect(x, y, x + RW, y + RW, c); }
+    // Brücke über die Weser (mittlere Querstraße)
+    const by = Math.max(1, Math.floor(R / 2)) * G - RW, bx0 = W, bx1 = rx(by + 1.25) + 3;
+    s += rect(bx0, by, bx1, by + RW, DIRT) + blk(rx(by) - 2.6, by - .25, .05, 5.2, RW + .5, .35, "#b08a5a") + ln([rx(by) - 2.6, by - .2, .7], [rx(by) + 2.6, by - .2, .7], "#7a5a3a", 2) + ln([rx(by) - 2.6, by + RW + .2, .7], [rx(by) + 2.6, by + RW + .2, .7], "#7a5a3a", 2);
+    // Gehwege um Blöcke (leicht unregelmäßig)
+    for (let i = 0; i < C; i++) for (let j = 0; j < R; j++) { const e = () => (rnd() - .5) * .25;
+      s += poly([[i * G - .45 + e(), j * G - .45 + e(), .02], [i * G + 10.45 + e(), j * G - .45 + e(), .02], [i * G + 10.45 + e(), j * G + 10.45 + e(), .02], [i * G - .45 + e(), j * G + 10.45 + e(), .02]], "#c4bca8", 'stroke="#a8a08a" stroke-width="1"'); }
+    // Straßennamen (nur an echten Straßen)
     const NR = ["Calle Mayor", "Calle del Sol", "Calle de Olavide", "Calle del Ciervo", "Calle de la Luna", "Calle Real", "Calle de Granada"], NC = ["Avenida de España", "Calle de Cervantes", "Calle de Frida Kahlo", "Paseo del Prado", "Calle de Picasso", "Calle de Goya", "Calle de Sorolla"];
-    for (let j = 1; j < R; j++) { const t = T(G * .5 + 1, j * G - RW / 2, .05); s += `<text x="${f1(t[0])}" y="${f1(t[1]) + 4}" font-family="Arial" font-weight="700" font-size="11" fill="#fff" opacity=".9" text-anchor="middle" transform="rotate(30 ${f1(t[0])} ${f1(t[1])})">${NR[(j - 1) % NR.length]}</text>`; }
-    for (let i = 1; i < C; i++) { const t = T(i * G - RW / 2, G * .5 + 1, .05); s += `<text x="${f1(t[0])}" y="${f1(t[1]) + 4}" font-family="Arial" font-weight="700" font-size="11" fill="#fff" opacity=".9" text-anchor="middle" transform="rotate(-30 ${f1(t[0])} ${f1(t[1])})">${NC[(i - 1) % NC.length]}</text>`; }
-    // Objekte nach Tiefe sortiert zeichnen
+    for (let j = 1; j < R; j++) { const i = [...Array(C).keys()].find(q => seg["h" + q + "_" + j] === "road"); if (i == null) continue; const t = T(i * G + 5, j * G - RW / 2, .05); s += `<text x="${f1(t[0])}" y="${f1(t[1]) + 4}" font-family="Arial" font-weight="700" font-size="11" fill="#fff" opacity=".9" text-anchor="middle" transform="rotate(30 ${f1(t[0])} ${f1(t[1])})">${NR[(j - 1) % NR.length]}</text>`; }
+    for (let i = 1; i < C; i++) { const j = [...Array(R).keys()].find(q => seg["v" + i + "_" + q] === "road"); if (j == null) continue; const t = T(i * G - RW / 2, j * G + 5, .05); s += `<text x="${f1(t[0])}" y="${f1(t[1]) + 4}" font-family="Arial" font-weight="700" font-size="11" fill="#fff" opacity=".9" text-anchor="middle" transform="rotate(-30 ${f1(t[0])} ${f1(t[1])})">${NC[(i - 1) % NC.length]}</text>`; }
+    // --- Objekte nach Tiefe
     const obj = [];
     let k = 0;
     for (let c = 0; c < C * R; c++) {
       const i = c % C, j = Math.floor(c / C), ox = i * G, oy = j * G;
       if (c === pi) { obj.push({ d: ox + oy + 10, s: `<g>${plaza(ox, oy, meta)}</g>` }); continue; }
       if (k < list.length) { const h = list[k], o = T(ox, oy, 0); obj.push({ d: ox + oy + 10, s: `<g class="lot" data-k="${k}" style="cursor:pointer" transform="translate(${f1(o[0])} ${f1(o[1])})">${houseSVG(h.h, h.st, { nr: h.nr, inner: true })}</g>` }); k++; }
-      else obj.push({ d: ox + oy + 10, s: poly([[ox, oy, .03], [ox + 10, oy, .03], [ox + 10, oy + 10, .03], [ox, oy + 10, .03]], "#7cb35a") + tree(ox + 3, oy + 3) + tree(ox + 7, oy + 6) + tree(ox + 4, oy + 8) });
+      else { obj.push({ d: ox + oy + 10, s: poly([[ox, oy, .03], [ox + 10, oy, .03], [ox + 10, oy + 10, .03], [ox, oy + 10, .03]], "#7cb35a") + disc(ox + 5, oy + 5, .04, 1.6, "#4fb3e8", 'stroke="#9ab" stroke-width="2"') });
+        for (let q = 0; q < 5; q++) { const tx = ox + 1 + rnd() * 8, ty = oy + 1 + rnd() * 8; if (Math.hypot(tx - ox - 5, ty - oy - 5) > 2.3) obj.push({ d: tx + ty, s: tree(tx, ty, .8 + rnd() * .5) }); } }
     }
-    const rnd = rng(C * 7 + R);
-    for (let i = 0; i <= C; i++) for (let j = 0; j <= R; j++) { const x = i * G - RW, y = j * G - RW;
-      obj.push({ d: x + y - 1, s: tree(x - .15, y - .15, .8) });
-      if (i < C && j <= R) obj.push({ d: x + 6 + y, s: lamp(i * G + 5, y + RW - .25) });
-      if (rnd() < .22 && i < C) { const cx = i * G + 2 + rnd() * 6, cy = j * G - RW + .35; obj.push({ d: cx + cy + 1, s: car(cx, cy, ["#e63946", "#3a78d8", "#f0c03a", "#f4f1ea", "#3aa06a"][Math.floor(rnd() * 5)], true) }); }
-      if (rnd() < .18 && j < R) { const cx = i * G - RW + .35, cy = j * G + 2 + rnd() * 6; obj.push({ d: cx + cy + 1, s: car(cx, cy, ["#8a2a6a", "#3a78d8", "#e8e8e8", "#ff8a2a"][Math.floor(rnd() * 4)], false) }); }
-    }
+    // Bäume: an Gehwegen unregelmäßig, in Fußweg-Parks, Wäldchen draußen
+    for (let i = 0; i <= C; i++) for (let j = 0; j <= R; j++) { if (rnd() < .6) { const x = i * G - RW - .2 + (rnd() - .5) * .4, y = j * G - RW - .2 + (rnd() - .5) * .4; obj.push({ d: x + y - 1, s: tree(x, y, .65 + rnd() * .35) }); }
+      if (i < C && seg["h" + i + "_" + j] === "road" && rnd() < .7) obj.push({ d: i * G + 5 + j * G, s: lamp(i * G + 3 + rnd() * 4, j * G - .25) });
+      if (i < C && seg["h" + i + "_" + j] === "road" && rnd() < .3) { const x = i * G + 1.5 + rnd() * 6, y = j * G - RW + .35; obj.push({ d: x + y + 1, s: car(x, y, ["#e63946", "#3a78d8", "#f0c03a", "#f4f1ea", "#3aa06a"][Math.floor(rnd() * 5)], true) }); }
+      if (j < R && seg["v" + i + "_" + j] === "road" && rnd() < .25) { const x = i * G - RW + .35, y = j * G + 1.5 + rnd() * 6; obj.push({ d: x + y + 1, s: car(x, y, ["#8a2a6a", "#3a78d8", "#e8e8e8", "#ff8a2a"][Math.floor(rnd() * 4)], false) }); } }
+    parkBits.forEach(([x, y]) => obj.push({ d: x + y, s: tree(x, y, .7 + rnd() * .4) }));
+    const inTown = (x, y) => x > -RW - 1 && x < W + .5 && y > -RW - 1 && y < D + .5, inRiver = (x, y) => Math.abs(x - rx(y)) < 3.2;
+    const inside = (x, y) => { const dx = (x - cx) / (ax * .98), dy = (y - cy) / (ay * .98); return dx * dx + dy * dy < .92; };
+    const groves = [[-M + 2, -M + 3], [W - 3, -M + 1], [-M + 1, D - 2], [W + 9, D * .3], [W * .6, D + M - 2]];
+    groves.forEach(([gx, gy]) => { for (let q = 0; q < 9; q++) { const x = gx + (rnd() - .5) * 7, y = gy + (rnd() - .5) * 5; if (!inTown(x, y) && !inRiver(x, y) && inside(x, y)) obj.push({ d: x + y, s: tree(x, y, .8 + rnd() * .6) }); } });
+    for (let q = 0; q < 26; q++) { const x = cx + (rnd() * 2 - 1) * ax, y = cy + (rnd() * 2 - 1) * ay; if (!inTown(x, y) && !inRiver(x, y) && inside(x, y)) obj.push({ d: x + y, s: tree(x, y, .6 + rnd() * .5) }); }
     obj.sort((a, b) => a.d - b.d).forEach(o => { s += o.s; });
     s += plaza.label || "";
-    const xs = [T(X0, D, 0)[0] - 20, T(W + 5, Y0, 0)[0] + 20], ys = [T(X0, Y0, 0)[1] - 230, T(W + 5, D, -1)[1] + 40];
+    const pb = blob.map(q => T(q[0], q[1], 0)), xs = [Math.min(...pb.map(p => p[0])) - 20, Math.max(...pb.map(p => p[0])) + 20], ys = [Math.min(...pb.map(p => p[1])) - 200, Math.max(...pb.map(p => p[1])) + 40];
     return `<svg viewBox="${f1(xs[0])} ${f1(ys[0])} ${f1(xs[1] - xs[0])} ${f1(ys[1] - ys[0])}" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">${s}</svg>`;
   }
 
