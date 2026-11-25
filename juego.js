@@ -80,6 +80,16 @@
   .hardtag{display:inline-block;background:#ff3a2a;color:#fff;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:800;letter-spacing:.08em}
   .pick{display:grid;gap:10px;margin-top:12px}
   .pick .btn{text-align:left;font-size:18px}
+  .buddy{position:fixed;right:12px;bottom:12px;width:84px;height:84px;z-index:30;pointer-events:none}
+  .buddy .bav{width:84px;height:84px;border-radius:50%;overflow:hidden;border:3px solid var(--accent);box-shadow:0 6px 18px rgba(0,0,0,.45);background:#fff}
+  .buddy.hot .bav{border-color:#ff7a1a;box-shadow:0 0 0 4px rgba(255,122,26,.35),0 0 26px #ff7a1a}
+  .buddy.jump{animation:bjump .6s ease-out} .buddy.sad{animation:bsad .5s}
+  @keyframes bjump{30%{transform:translateY(-26px) rotate(-8deg)}55%{transform:translateY(0)}70%{transform:translateY(-8px)}}
+  @keyframes bsad{20%,60%{transform:translateX(-5px) rotate(-6deg)}40%,80%{transform:translateX(5px) rotate(6deg)}100%{transform:none;filter:none}}
+  .buddy .bub{position:absolute;right:70px;bottom:62px;background:#fff;color:#222;font-weight:800;font-size:16px;padding:6px 12px;border-radius:14px 14px 2px 14px;white-space:nowrap;opacity:0;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+  .buddy .bub.show{animation:bub 1.5s forwards}
+  @keyframes bub{0%{opacity:0;transform:scale(.5)}15%{opacity:1;transform:scale(1.08)}25%{transform:scale(1)}80%{opacity:1}100%{opacity:0}}
+  @media(max-width:560px){.buddy{width:60px;height:60px}.buddy .bav{width:60px;height:60px}.buddy .bub{right:50px;bottom:44px;font-size:14px}}
   @media(max-width:560px){.q{font-size:20px}.opts{grid-template-columns:1fr}}`;
 
   const $ = id => document.getElementById(id);
@@ -94,10 +104,37 @@
   let G = null, S = null, LOCK = false, TMR = null;
   const ALL = () => G.stages.flatMap((st, si) => st.tasks.map((t, ti) => si + "-" + ti));
   const task = id => { const [s, t] = id.split("-").map(Number); return G.stages[s].tasks[t]; };
-  function save() { try { sessionStorage.setItem(G.key, JSON.stringify(S)); } catch (e) { } }
-  function load() { try { const x = JSON.parse(sessionStorage.getItem(G.key)); if (x && x.v === 1) S = x; } catch (e) { } }
+  /* Spielstand: angemeldet → pro Spieler im Gerät (localStorage) + bei „Guardar y salir“ auch auf dem Server
+     (dann geht es auf jedem iPad weiter). Ohne Login wie bisher nur in diesem Tab (sessionStorage). */
   function me() { const s = window.E8 && E8.getSession(); return s ? s.nr : null; }
-  function reset() { S = null; try { sessionStorage.removeItem(G.key); } catch (e) { } }
+  const LKEY = () => G.key + "@" + me(), MAXDAYS = 21;
+  const meta = () => ({ title: G.title.replace(/<[^>]+>/g, ""), icon: G.icon, url: location.pathname.split("/").pop() + location.search, stage: S.stage, stages: G.stages.length, solved: S.solved, total: S.total });
+  function save() {
+    if (!S) return; S.saved = Date.now(); if (!S.done) S.m = meta(); else delete S.m;
+    try { if (me()) localStorage.setItem(LKEY(), JSON.stringify(S)); else sessionStorage.setItem(G.key, JSON.stringify(S)); } catch (e) { }
+  }
+  function parse(t) { try { const x = JSON.parse(t); return x && x.v === 1 && x.total === ALL().length && (!x.saved || Date.now() - x.saved < MAXDAYS * 864e5) ? x : null; } catch (e) { return null; } }
+  function load() {
+    let x = null;
+    try { x = me() ? parse(localStorage.getItem(LKEY())) : null; if (!x) x = parse(sessionStorage.getItem(G.key)); } catch (e) { }
+    if (x) S = x;
+  }
+  function serverSave() { const se = me() && E8.getSession(); return se && se.state && se.state.saves ? se.state.saves[G.key] : null; }
+  function reset() {
+    S = null;
+    try { sessionStorage.removeItem(G.key); if (me()) localStorage.removeItem(LKEY()); } catch (e) { }
+    if (serverSave()) E8.call("delsave", { key: G.key });
+  }
+  function saveExit() {
+    save();
+    const box = (t, de) => { $("ovc").innerHTML = `<div class="center"><div style="font-size:54px">💾</div><h2>${t}</h2><div class="de">${de}</div><div class="row c" style="margin-top:14px"><button class="btn primary" id="ovl">← Todos los juegos</button><button class="btn" id="ovx">Seguir jugando</button></div></div>`; $("ov").classList.add("show"); $("ovl").onclick = () => location.href = "./"; $("ovx").onclick = () => $("ov").classList.remove("show"); };
+    if (!me()) return box("Guardado en esta pestaña", "Ohne Login bleibt der Spielstand nur, solange dieser Tab offen ist. Melde dich an, dann kannst du später auf jedem Gerät weitermachen.");
+    $("ovc").innerHTML = `<div class="center"><div style="font-size:54px">💾</div><h2>Guardando …</h2></div>`; $("ov").classList.add("show");
+    E8.call("savegame", { key: G.key, s: JSON.stringify(S), m: meta() }).then(r => {
+      if (r.ok) box("¡Partida guardada!", `Parte ${S.stage + 1} de ${G.stages.length}. Mañana sigues aquí – también en otro iPad. In der Lobby findest du das Spiel unter „▶ CONTINUAR“.`);
+      else box("Guardado en este aparato", "Kein Internet: Dein Spielstand ist auf diesem Gerät gespeichert. Auf einem anderen Gerät geht er nur weiter, wenn du nochmal online auf 💾 tippst.");
+    });
+  }
 
   function newGame() {
     S = { v: 1, nr: me(), stage: 0, phase: "intro", queue: [], solved: 0, total: ALL().length, mistakes: 0, wrong: [], start: Date.now(), end: 0, done: false, data: {}, picks: {}, combo: 0, bestCombo: 0 };
@@ -116,10 +153,11 @@
   function frame(inner, opts) {
     opts = opts || {};
     return `<div class="top"><a class="back" href="./">← Todos los juegos</a>
-      <div class="row">${G.rules ? `<button class="tbtn" id="rulesBtn">📜 ${G.rulesLabel || "La regla"}</button>` : ""}${opts.mistakes ? `<span class="small">Errores: <span id="errc">${S.mistakes}</span></span>` : ""}</div></div>${inner}`;
+      <div class="row">${G.rules ? `<button class="tbtn" id="rulesBtn">📜 ${G.rulesLabel || "La regla"}</button>` : ""}${opts.mistakes ? `<span class="small">Errores: <span id="errc">${S.mistakes}</span></span>` : ""}${S && !S.done && opts.mistakes ? `<button class="tbtn" id="saveBtn" title="Guardar y seguir más tarde – Speichern und später weiterspielen">💾 Guardar y salir</button>` : ""}</div></div>${inner}${buddy()}`;
   }
   function wire() {
     if ($("rulesBtn")) $("rulesBtn").onclick = showRules;
+    if ($("saveBtn")) $("saveBtn").onclick = saveExit;
   }
   function showRules() {
     $("ovc").innerHTML = `<span class="tag">${G.rulesLabel || "La regla"}</span>${G.rules}<div class="row c" style="margin-top:12px"><button class="btn primary" id="ovx">¡Vale! – Okay</button></div>`;
@@ -137,9 +175,12 @@
     wire(); $("go").onclick = () => { newGame(); render(); };
   }
   function resume() {
+    const pct = Math.round(S.solved / Math.max(1, S.total) * 100);
     $("app").innerHTML = frame(`<div class="panel center"><h1>¡Bienvenido/a otra vez!</h1>
-      <p>Alguien ya empezó este juego en este iPad. <span class="de">– Hier hat schon jemand angefangen.</span></p>
-      <div class="row c"><button class="btn primary" id="c">Continuar – Weiter</button><button class="btn" id="n">Soy otro jugador / otra jugadora</button></div></div>`);
+      ${me() ? `<div class="avbig">${E8.myAvatar()}</div><p>Tienes una partida guardada: <b>Parte ${S.stage + 1} de ${G.stages.length}</b> · ${pct} % hecho. <span class="de">– Du hast hier schon angefangen. Mach einfach weiter!</span></p>
+      <div class="tmr" style="max-width:420px;margin:8px auto"><i style="width:${pct}%;transform:none"></i></div>` :
+      `<p>Alguien ya empezó este juego en este iPad. <span class="de">– Hier hat schon jemand angefangen.</span></p>`}
+      <div class="row c"><button class="btn primary" id="c">Continuar – Weiter</button><button class="btn" id="n">${me() ? "Empezar de nuevo – Neu anfangen" : "Soy otro jugador / otra jugadora"}</button></div></div>`);
     wire(); $("c").onclick = render; $("n").onclick = () => { reset(); intro(); };
   }
   function scene() { return G.scene ? `<div class="panel scene">${G.scene(S, G)}</div>` : ""; }
@@ -187,6 +228,20 @@
     return h;
   }
 
+  /* ---------- Avatar-Begleiter: der eigene Avatar spielt mit und reagiert (nur Optik) ---------- */
+  function buddy() {
+    if (!me() || !S || S.done) return "";
+    const c = S.combo || 0;
+    return `<div class="buddy ${c >= 5 ? "hot" : ""}" id="buddy"><div class="bav">${E8.myAvatar()}</div><div class="bub" id="bub"></div></div>`;
+  }
+  const CHEER = ["¡Bien!", "¡Genial!", "¡Sí!", "¡Toma!", "¡Crack!", "¡Olé!"], CHEER5 = ["¡En llamas! 🔥", "¡Imparable!", "¡Qué máquina!"], SAD = ["¡Uy!", "¡Ánimo!", "No pasa nada", "¡La próxima!"];
+  function react(ok, c) {
+    const b = $("buddy"); if (!b) return;
+    b.classList.remove("jump", "sad"); void b.offsetWidth; b.classList.add(ok ? "jump" : "sad"); b.classList.toggle("hot", ok && c >= 5);
+    const L = ok ? (c >= 5 ? CHEER5 : CHEER) : SAD;
+    $("bub").textContent = L[Math.floor(Math.random() * L.length)]; $("bub").classList.remove("show"); void $("bub").offsetWidth; $("bub").classList.add("show");
+  }
+
   /* ---------- Spielgefühl: Combo + Konfetti (nur Optik) ---------- */
   function juice(c) {
     if ($("cbar")) { $("cbar").textContent = c >= 2 ? "🔥 ×" + c : ""; $("cbar").className = "cbar" + (c >= 5 ? " hot" : ""); }
@@ -208,7 +263,7 @@
     if (LOCK) return; LOCK = true;
     clearInterval(TMR);
     S.queue.shift(); if (S.queue.indexOf(id) < 0) S.solved++;
-    S.combo = (S.combo || 0) + 1; S.bestCombo = Math.max(S.bestCombo || 0, S.combo); juice(S.combo);
+    S.combo = (S.combo || 0) + 1; S.bestCombo = Math.max(S.bestCombo || 0, S.combo); juice(S.combo); react(true, S.combo);
     if (G.onSolve) G.onSolve(S, t);
     $("fb").className = "fb good";
     $("fb").innerHTML = (msg || ["¡Correcto! ✔", "¡Muy bien! ⭐", "¡Genial! 🎉", "¡Perfecto! ✔"][Math.floor(Math.random() * 4)]) + (t.after ? `<span class="hint">${t.after}</span>` : "");
@@ -218,7 +273,7 @@
     if (LOCK) return; LOCK = true;
     clearInterval(TMR);
     const lost = S.combo || 0; S.combo = 0; if ($("cbar")) $("cbar").textContent = lost >= 3 ? "💨 combo ×" + lost + " perdido" : "";
-    S.mistakes++; if (S.wrong.indexOf(id) < 0) S.wrong.push(id); if ($("errc")) $("errc").textContent = S.mistakes;
+    S.mistakes++; if (S.wrong.indexOf(id) < 0) S.wrong.push(id); if ($("errc")) $("errc").textContent = S.mistakes; react(false);
     S.queue.shift(); S.queue.splice(Math.min(3, S.queue.length), 0, id);
     save();
     $("fb").className = "fb bad";
@@ -336,6 +391,7 @@
       <div class="row c"><button class="btn primary" id="again">Otra vez / otro jugador</button><button class="btn" onclick="location.href='./'">← Todos los juegos</button></div></div>`);
     wire();
     E8.reportInto("coinbox", G.id, S, save);
+    if (serverSave()) E8.call("delsave", { key: G.key });
     $("again").onclick = () => { reset(); intro(); };
     if ($("hard")) $("hard").onclick = () => { location.href = location.pathname + "?modo=dificil"; };
     if (S.mistakes === 0) confetti(60);
@@ -363,11 +419,17 @@
       const st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
       document.body.insertAdjacentHTML("beforeend", `<div class="ov" id="ov"><div class="panel" id="ovc"></div></div>`);
       load();
-      if (S && me() && S.nr !== me()) reset();
-      if (S && S.total !== ALL().length) reset();
-      if (S && S.done) finish();
-      else if (S && (S.solved > 0 || S.stage > 0 || S.mistakes > 0)) resume();
-      else { reset(); intro(); }
+      if (S && me() && S.nr !== me()) { S = null; try { sessionStorage.removeItem(G.key); } catch (e) { } }
+      const go = () => {
+        if (S && S.done) finish();
+        else if (S && (S.solved > 0 || S.stage > 0 || S.mistakes > 0)) resume();
+        else { reset(); intro(); }
+      };
+      const sv = serverSave();
+      if (sv && (!S || (S.saved || 0) < sv.t - 1000)) {
+        $("app").innerHTML = `<div class="panel center" style="max-width:520px;margin:40px auto">💾 Cargando tu partida … <div class="de">Dein Spielstand wird geladen.</div></div>`;
+        E8.call("loadgame", { key: G.key }).then(r => { const x = r.ok && r.s ? parse(r.s) : null; if (x && x.nr === me()) { S = x; save(); } go(); });
+      } else go();
     },
     get S() { return S; }, render, esc
   };

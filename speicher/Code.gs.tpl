@@ -12,6 +12,7 @@ const SPERRE_MINUTEN = 5;
 const MUENZEN_WIEDERHOLUNG = 2; // Münzen für eine Wiederholung ohne Verbesserung
 const MAX_BELOHNTE_WDH_PRO_TAG = 3;
 const MUENZEN_DAILY_PRO_STERN = 5; // Tages-Challenge: 1x pro Tag
+const RETO_MUENZEN = 60;           // Belohnung, wenn alle 3 Retos de la semana geschafft sind
 const LEVEL_XP = [0, 50, 120, 220, 350, 500, 700, 950, 1250, 1600, 2000, 2500];
 
 // Shop-Katalog wird automatisch von der Website geladen (keine Änderung hier nötig)
@@ -40,7 +41,8 @@ function loadCat() {
 function katalogTesten() { CacheService.getScriptCache().remove("cat"); loadCat(); Logger.log(Object.keys(ITEMS).length + " Shop-Teile geladen."); }
 
 // Spalten im Blatt "Spieler"
-const C = {NR:0, PIN:1, MUENZEN:2, GEKAUFT:3, AVATAR:4, FEHL:5, GESPERRT:6, LOGIN:7, EIGEN:8, HAUS:9, FEHLER:10};
+const C = {NR:0, PIN:1, MUENZEN:2, GEKAUFT:3, AVATAR:4, FEHL:5, GESPERRT:6, LOGIN:7, EIGEN:8, HAUS:9, FEHLER:10, EXTRA:11, PARTIDAS:12};
+const MAX_PARTIDAS = 3;          // so viele angefangene Spiele werden pro Spieler gespeichert
 const TZ = "Europe/Berlin";
 
 /** Einmal ausführen: legt die Blätter an. */
@@ -114,6 +116,10 @@ function handle(d) {
     case "equip": return equip(p, d);
     case "setpin": return setPin(p, d);
     case "house": return equipHouse(p, d);
+    case "prefs": return prefs(p, d);
+    case "savegame": return saveGame(p, d);
+    case "loadgame": return loadGame(p, d);
+    case "delsave": return delSave(p, d);
   }
   return { ok: false, error: "bad" };
 }
@@ -183,7 +189,69 @@ function equippedOf(v) {
   try { e = JSON.parse(v[C.AVATAR] || "{}"); } catch (x) {}
   const r = Object.assign({}, DEFAULT);
   SLOTS.forEach(s => { if (ITEMS[e[s]] && ITEMS[e[s]].slot === s) r[s] = e[s]; });
+  const n = Math.floor(Number(e.num));
+  if (e.num !== undefined && e.num !== "" && n >= 0 && n <= 99) r.num = n;
   return r;
+}
+function extrasOf(v) { try { const e = JSON.parse(v[C.EXTRA] || "{}"); return e && typeof e === "object" ? e : {}; } catch (x) { return {}; } }
+function setExtras(p, e) {
+  if (p.sh.getRange(1, C.EXTRA + 1).getValue() === "") p.sh.getRange(1, C.EXTRA + 1).setValue("Extras").setFontWeight("bold");
+  p.sh.getRange(p.row, C.EXTRA + 1).setValue(JSON.stringify(e)); p.v[C.EXTRA] = JSON.stringify(e);
+}
+/** Wunsch-Artikel (Mi objetivo) und gewählter Titel speichern. */
+function prefs(p, d) {
+  const e = extrasOf(p.v);
+  if ("wish" in d) { const w = String(d.wish || ""); if (w && !ITEMS[w] && !HITEMS[w]) return { ok: false, error: "bad" }; e.wish = w; }
+  if ("title" in d) { const t = String(d.title || ""); if (!/^[a-z0-9-]{0,24}$/.test(t)) return { ok: false, error: "bad" }; e.title = t; }
+  setExtras(p, e);
+  return { ok: true, state: state(p) };
+}
+
+/* ===== Angefangene Spiele ("Guardar y salir"), max. MAX_PARTIDAS, älteste fliegt raus ===== */
+function partidasOf(v) { try { const e = JSON.parse(v[C.PARTIDAS] || "{}"); return e && typeof e === "object" ? e : {}; } catch (x) { return {}; } }
+function setPartidas(p, e) {
+  if (p.sh.getRange(1, C.PARTIDAS + 1).getValue() === "") p.sh.getRange(1, C.PARTIDAS + 1).setValue("Partidas").setFontWeight("bold");
+  p.sh.getRange(p.row, C.PARTIDAS + 1).setValue(JSON.stringify(e)); p.v[C.PARTIDAS] = JSON.stringify(e);
+}
+function savesList(v) { const e = partidasOf(v), o = {}; Object.keys(e).forEach(k => o[k] = Object.assign({ t: e[k].t }, e[k].m)); return o; }
+function saveGame(p, d) {
+  const key = String(d.key || ""), st = String(d.s || ""), m = d.m || {};
+  if (!/^[a-z0-9-]{1,60}$/.test(key) || !st || st.length > 12000) return { ok: false, error: "bad" };
+  const clip = (x, n) => String(x || "").slice(0, n);
+  const meta = { title: clip(m.title, 60), icon: clip(m.icon, 8), url: clip(m.url, 120), stage: Number(m.stage) || 0, stages: Number(m.stages) || 0, solved: Number(m.solved) || 0, total: Number(m.total) || 0 };
+  if (!/^[a-z0-9-]+\.html(\?[a-z0-9=&-]*)?$/.test(meta.url)) return { ok: false, error: "bad" };
+  const e = partidasOf(p.v); e[key] = { t: Date.now(), m: meta, s: st };
+  const ks = Object.keys(e).sort((a, b) => e[b].t - e[a].t); ks.slice(MAX_PARTIDAS).forEach(k => delete e[k]);
+  setPartidas(p, e);
+  return { ok: true, state: state(p) };
+}
+function loadGame(p, d) { const e = partidasOf(p.v)[String(d.key || "")]; return { ok: true, s: e ? e.s : "", t: e ? e.t : 0 }; }
+function delSave(p, d) { const e = partidasOf(p.v), k = String(d.key || ""); if (e[k]) { delete e[k]; setPartidas(p, e); } return { ok: true, state: state(p) }; }
+
+/* ===== Retos de la semana: jede Woche (Mo–So) 3 Aufgaben, alle geschafft = RETO_MUENZEN ===== */
+const NOPLAY = ["daily", "review", "reto"];
+const RETOS = {
+  jugar3:   { t: "Juega 3 juegos", de: "3 Spiele spielen", n: 3, f: (w, x) => w.filter(r => NOPLAY.indexOf(r[2]) < 0).length },
+  dias3:    { t: "Juega en 3 días distintos", de: "An 3 verschiedenen Tagen spielen", n: 3, f: (w, x) => Object.keys(w.reduce((a, r) => (a[x.day(r)] = 1, a), {})).length },
+  diario:   { t: "Vence 2 veces al Jefe del día", de: "2x den Jefe del día spielen", n: 2, f: (w, x) => w.filter(r => r[2] === "daily").length },
+  perfecto: { t: "1 juego sin ningún error", de: "1 Spiel ganz ohne Fehler", n: 1, f: (w, x) => w.filter(r => NOPLAY.indexOf(r[2]) < 0 && String(r[3]) !== "" && Number(r[3]) === 0).length },
+  tres:     { t: "⭐⭐⭐ en un juego", de: "3 Sterne in einem Spiel", n: 1, f: (w, x) => w.filter(r => NOPLAY.indexOf(r[2]) < 0 && Number(r[4]) >= 3).length },
+  dificil:  { t: "1 juego en modo difícil", de: "1 Spiel im Modo difícil", n: 1, f: (w, x) => w.filter(r => /-dificil$/.test(r[2])).length },
+  errores:  { t: "Vence al Monstruo de los Errores", de: "Die Fehler-Kiste spielen (leer = geschafft)", n: 1, f: (w, x) => x.boxEmpty ? 1 : w.filter(r => r[2] === "review").length },
+  conj:     { t: "Juega a El Conjugador", de: "1x El Conjugador (mind. 10 Antworten)", n: 1, f: (w, x) => w.filter(r => r[2] === "conjugador").length }
+};
+function weekInfo() {
+  const now = new Date(), dow = Number(Utilities.formatDate(now, TZ, "u")); // 1 = Montag
+  const mon = Utilities.formatDate(new Date(now.getTime() - (dow - 1) * 864e5), TZ, "yyyy-MM-dd");
+  const wn = Math.round(new Date(mon + "T12:00:00Z").getTime() / (7 * 864e5));
+  return { key: mon, ids: [["jugar3", "dias3", "diario"][wn % 3], ["perfecto", "tres", "dificil"][wn % 3], ["errores", "conj"][wn % 2]] };
+}
+function retosOf(p, res) {
+  const W = weekInfo(), day = r => r[0] instanceof Date ? Utilities.formatDate(r[0], TZ, "yyyy-MM-dd") : "";
+  const wk = res.filter(r => day(r) >= W.key && r[2] !== "reto");
+  const x = { day: day, boxEmpty: reviewOf(p.v).length === 0 };
+  const list = W.ids.map(id => { const R = RETOS[id], have = Math.min(R.n, R.f(wk, x)); return { id: id, t: R.t, de: R.de, n: R.n, have: have, done: have >= R.n }; });
+  return { week: W.key, list: list, reward: RETO_MUENZEN, claimed: extrasOf(p.v).retoW === W.key };
 }
 function allResults() {
   const er = SpreadsheetApp.getActive().getSheetByName("Ergebnisse");
@@ -207,6 +275,7 @@ function state(p) {
     }
     if (r[0] instanceof Date) days[Utilities.formatDate(r[0], TZ, "yyyy-MM-dd")] = 1;
     if (g.indexOf("adv-") === 0) adv[g] = 1;
+    if (g === "reto") return;
     if (g === "daily") { daily++; return; }
     if (g !== "review" && String(r[3]) !== "" && Number(r[3]) === 0) perfect[g] = 1;
     if (g === "review") return;
@@ -221,8 +290,9 @@ function state(p) {
     adv: Object.keys(adv).length, meta: meta, perfect: Object.keys(perfect), streak: sk.now, streakToday: !!days[today], streakBest: sk.best,
     fresh: !p.v[C.AVATAR], mustSetPin: String(p.v[C.EIGEN] || "").trim() !== "ja", nr: String(p.v[C.NR]), coins: Number(p.v[C.MUENZEN]) || 0,
     owned: owned(p.v), equipped: equippedOf(p.v), stars: stars, house: houseOf(p.v), review: reviewOf(p.v),
+    saves: savesList(p.v), wish: extrasOf(p.v).wish || "", title: extrasOf(p.v).title || "", retos: retosOf(p, res),
     starsTotal: Object.keys(stars).reduce((a, k) => a + stars[k], 0),
-    xp: xp, level: levelOf(xp), stats: { plays: res.length, home: home, improved: improved, daily: daily, dailyToday: dailyToday }
+    xp: xp, level: levelOf(xp), stats: { plays: res.filter(r => r[2] !== "reto").length, home: home, improved: improved, daily: daily, dailyToday: dailyToday }
   };
 }
 
@@ -267,9 +337,18 @@ function result(p, d) {
     p.sh.getRange(p.row, C.FEHLER + 1).setValue(JSON.stringify(list));
     p.v[C.FEHLER] = JSON.stringify(list);
   }
+  let retoNew = false;
+  const rt = retosOf(p, allResults().filter(r => String(r[1]) === String(p.v[C.NR])));
+  if (!rt.claimed && rt.list.every(r => r.done)) {
+    SpreadsheetApp.getActive().getSheetByName("Ergebnisse").appendRow([new Date(), Number(p.v[C.NR]), "reto", "", 0, RETO_MUENZEN, 1, 0, ""]);
+    const c2 = (Number(p.v[C.MUENZEN]) || 0) + RETO_MUENZEN;
+    p.sh.getRange(p.row, C.MUENZEN + 1).setValue(c2); p.v[C.MUENZEN] = c2;
+    const ex = extrasOf(p.v); ex.retoW = rt.week; setExtras(p, ex);
+    retoNew = true;
+  }
   try { uebersicht(); } catch (x) {}
   const perfectNew = mistakes === 0 && game !== "daily" && game !== "review" && !prev.some(r => String(r[3]) !== "" && Number(r[3]) === 0);
-  return { ok: true, perfectNew: perfectNew, earned: earned, stars: stars, first: prev.length === 0, improved: prev.length > 0 && stars > best, daily: game === "daily", review: game === "review", state: state(p) };
+  return { ok: true, retoNew: retoNew, perfectNew: perfectNew, earned: earned, stars: stars, first: prev.length === 0, improved: prev.length > 0 && stars > best, daily: game === "daily", review: game === "review", state: state(p) };
 }
 
 function buy(p, d) {
@@ -302,6 +381,11 @@ function equip(p, d) {
     if (!it || it.slot !== s || (it.price > 0 && o.indexOf(id) < 0)) return { ok: false, error: "bad" };
     e[s] = id;
   }
+  if (want.num !== undefined && want.num !== "" && want.num !== null) {
+    const n = Math.floor(Number(want.num));
+    if (!(n >= 0 && n <= 99)) return { ok: false, error: "bad" };
+    e.num = n;
+  }
   p.sh.getRange(p.row, C.AVATAR + 1).setValue(JSON.stringify(e));
   p.v[C.AVATAR] = JSON.stringify(e);
   return { ok: true, state: state(p) };
@@ -326,7 +410,7 @@ function equipHouse(p, d) {
 /** Nachbarschaft: alle Häuser (nur Nummern). */
 function houses() {
   const stars = {}, P = players(), out = [];
-  allResults().forEach(r => { const g = r[2], nr = String(r[1]); if (!g || g === "daily" || g === "review") return; stars[nr] = stars[nr] || {}; stars[nr][g] = Math.max(stars[nr][g] || 0, Number(r[4]) || 0); });
+  allResults().forEach(r => { const g = r[2], nr = String(r[1]); if (!g || NOPLAY.indexOf(g) >= 0) return; stars[nr] = stars[nr] || {}; stars[nr][g] = Math.max(stars[nr][g] || 0, Number(r[4]) || 0); });
   for (let i = 1; i < P.v.length; i++) {
     const v = P.v[i], nr = String(v[C.NR]); if (!nr || (!v[C.AVATAR] && !stars[nr])) continue;
     const st = Object.keys(stars[nr] || {}).reduce((a, k) => a + stars[nr][k], 0);
@@ -342,7 +426,7 @@ function scores() {
   res.forEach(r => {
     const g = r[2], nr = String(r[1]);
     xp[nr] = (xp[nr] || 0) + (Number(r[5]) || 0);
-    if (!g || g === "daily" || g === "review") return;
+    if (!g || NOPLAY.indexOf(g) >= 0) return;
     const m = Number(r[3]) || 0, t = Number(r[7]) || 99999;
     best[g] = best[g] || {};
     const b = best[g][nr];
@@ -364,12 +448,13 @@ function uebersicht() {
   ensureSheets();
   const ss = SpreadsheetApp.getActive(), sh = ss.getSheetByName("Übersicht");
   const P = players(), res = allResults();
-  const games = [...new Set(res.map(r => r[2]).filter(g => g && g !== "daily" && g !== "review"))].sort();
+  const games = [...new Set(res.map(r => r[2]).filter(g => g && NOPLAY.indexOf(g) < 0))].sort();
   const data = {};
   res.forEach(r => {
     const nr = String(r[1]); data[nr] = data[nr] || { xp: 0, g: {}, last: null, daily: 0 };
     const d = data[nr]; d.xp += Number(r[5]) || 0;
     if (r[0] instanceof Date && (!d.last || r[0] > d.last)) d.last = r[0];
+    if (r[2] === "reto") return;
     if (r[2] === "daily") d.daily++; else d.g[r[2]] = Math.max(d.g[r[2]] || 0, Number(r[4]) || 0);
   });
   const rows = [["Nr", "Level", "XP", "Münzen", "Zuletzt gespielt", "Tages-Challenges"].concat(games)];

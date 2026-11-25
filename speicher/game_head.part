@@ -87,6 +87,57 @@
     })[e] || ("Error: " + e);
   }
 
+  /* ----- Belohnungs-Effekte (nur Optik) ----- */
+  function fxCss() {
+    if (document.getElementById("e8fx")) return;
+    const st = document.createElement("style"); st.id = "e8fx";
+    st.textContent = `.e8coin{position:fixed;z-index:90;font-size:26px;pointer-events:none;animation:e8c 1.1s cubic-bezier(.3,.7,.4,1) forwards}
+      @keyframes e8c{0%{transform:translate(0,0) scale(.4);opacity:0}20%{opacity:1;transform:translate(calc(var(--x)*.3),-40px) scale(1.2)}100%{transform:translate(var(--x),var(--y)) scale(.6);opacity:0}}
+      .e8lv{position:fixed;inset:0;z-index:95;background:radial-gradient(circle at 50% 40%,rgba(255,210,58,.35),rgba(5,6,12,.92) 60%);display:flex;align-items:center;justify-content:center;padding:16px;animation:e8in .3s}
+      .e8lv .c{max-width:520px;width:100%;text-align:center;color:#fff;font-family:inherit}
+      .e8lv .n{font-size:96px;font-weight:900;line-height:1;color:#ffd23a;text-shadow:0 0 30px #ff9a2a,0 6px 0 #a05a00;animation:e8pop .7s cubic-bezier(.2,1.6,.4,1)}
+      .e8lv .av{width:150px;height:150px;margin:10px auto;border-radius:50%;overflow:hidden;border:5px solid #ffd23a;box-shadow:0 0 40px #ffd23a}
+      .e8lv .it{display:inline-block;width:86px;margin:5px;vertical-align:top;font-size:12px;font-weight:700}
+      .e8lv .it div{width:86px;height:86px;border-radius:12px;overflow:hidden;border:2px solid #ffd23a}
+      .e8lv button{font-size:22px;font-weight:900;padding:12px 34px;border-radius:12px;border:0;background:#ffd23a;color:#2a1600;margin-top:14px;cursor:pointer}
+      .e8cf{position:fixed;width:10px;height:14px;top:35%;left:50%;z-index:96;pointer-events:none;border-radius:2px;animation:e8cf 1.6s ease-out forwards}
+      @keyframes e8cf{to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
+      @keyframes e8pop{0%{transform:scale(.2)}100%{transform:scale(1)}} @keyframes e8in{from{opacity:0}}`;
+    document.head.appendChild(st);
+  }
+  function rewardFx(box, earned) {
+    fxCss();
+    const el = box.querySelector(".e8earn"); if (!el) return;
+    const t0 = performance.now(), dur = Math.min(1200, 300 + earned * 25);
+    const tick = t => { const f = Math.min(1, (t - t0) / dur); el.textContent = Math.round(earned * f); if (f < 1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+    if (!earned) return;
+    const r = box.getBoundingClientRect(), n = Math.min(14, 4 + Math.round(earned / 5));
+    for (let i = 0; i < n; i++) setTimeout(() => {
+      const c = document.createElement("div"); c.className = "e8coin"; c.textContent = "🪙";
+      c.style.left = (r.left + r.width / 2 - 13) + "px"; c.style.top = (r.top + 10) + "px";
+      c.style.setProperty("--x", ((Math.random() * 2 - 1) * 160) + "px"); c.style.setProperty("--y", (-120 - Math.random() * 160) + "px");
+      document.body.appendChild(c); setTimeout(() => c.remove(), 1200);
+    }, i * 60);
+  }
+  function confettiFx(n) {
+    const C = ["#ffd23a", "#ff4f8b", "#3ab0ff", "#3fd27a", "#ff8a2a", "#a05cf0"];
+    for (let i = 0; i < n; i++) { const e = document.createElement("i"); e.className = "e8cf";
+      e.style.cssText = `background:${C[i % 6]};--x:${(Math.random() * 2 - 1) * 48}vw;--y:${(Math.random() * 1.3 - .2) * 55}vh;--r:${Math.random() * 900}deg;left:${44 + Math.random() * 12}%`;
+      document.body.appendChild(e); setTimeout(() => e.remove(), 1700); }
+  }
+  function levelUp(from, st) {
+    fxCss();
+    const lv = st.level, nu = CATALOG.filter(i => i.lvl && i.lvl > from && i.lvl <= lv && (!i.unit || ACTIVE_UNITS.indexOf(i.unit) >= 0));
+    const d = document.createElement("div"); d.className = "e8lv";
+    d.innerHTML = `<div class="c"><div style="font-size:18px;font-weight:800;letter-spacing:.2em">¡SUBES DE NIVEL!</div><div class="n">${lv}</div>
+      <div style="font-size:24px;font-weight:900">${(LEVEL_NAMES[lv] || "Leyenda+").toUpperCase()}</div><div class="av">${avatarSVG(st.equipped)}</div>
+      ${nu.length ? `<div style="font-weight:800;margin-top:6px">🔓 ¡Nuevo en la tienda! <span style="opacity:.7;font-weight:500">– Neu freigeschaltet:</span></div><div>${nu.slice(0, 6).map(i => `<span class="it"><div>${avatarSVG(Object.assign({}, st.equipped, { [i.slot]: i.id }))}</div>${i.name}</span>`).join("")}</div>` : ""}
+      <button>¡GENIAL! ▶</button></div>`;
+    document.body.appendChild(d); confettiFx(80); setTimeout(() => confettiFx(50), 500);
+    d.querySelector("button").onclick = () => d.remove();
+  }
+
   /* Ergebnis am Ende eines Spiels melden und anzeigen */
   function reportInto(elId, game, S, save) {
     const box = document.getElementById(elId);
@@ -95,9 +146,10 @@
     const se = getSession();
     const prevLevel = se && se.state ? se.state.level : 0;
     const prevStreakToday = se && se.state ? !!se.state.streakToday : true;
+    const prevCoins = se && se.state ? se.state.coins : 0;
     const show = r => {
       if (r.queued) { box.innerHTML = "📡 Ahora no hay internet. Tu resultado está guardado en este aparato y se envía automáticamente cuando estés online con tu sesión iniciada.<div style='font-size:14px;opacity:.75'>Kein Internet: Dein Ergebnis ist gespeichert und wird später automatisch gesendet.</div>"; return; }
-      let t = `<div style="font-size:24px;font-weight:700">+${r.earned} 🪙</div>`;
+      let t = `<div style="font-size:30px;font-weight:900">+<span class="e8earn">0</span> 🪙</div>`;
       t += `<div>${"⭐".repeat(r.stars)}${"☆".repeat(3 - r.stars)} · Ahora tienes <b>${r.state.coins} 🪙</b>.</div>`;
       if (!r.first && !r.improved && !r.daily) t += `<div style="font-size:14px;opacity:.75">Ya lo jugaste: menos monedas. ¡Más estrellas = más monedas! – Wiederholung: weniger Münzen, mehr Sterne bringen mehr.</div>`;
       if (r.improved) t += `<div style="font-size:14px;opacity:.75">¡Nuevo récord! – Neuer Rekord!</div>`;
@@ -106,7 +158,12 @@
       if (r.perfectNew) t += `<div style="font-size:22px;font-weight:800;margin-top:6px">👑 ¡MAESTRO/A! Sin ningún error. – Ohne einen einzigen Fehler!</div>`;
       if ("streak" in r.state && !prevStreakToday && r.state.streak > 0) t += `<div style="font-size:20px;font-weight:800;margin-top:6px;color:#ff9a2a">🔥 ¡Racha de ${r.state.streak} día${r.state.streak > 1 ? "s" : ""}!</div><div style="font-size:14px;opacity:.75">Juega mañana otra vez para no perderla. – Spiel morgen wieder, sonst ist die Serie weg.</div>`;
       if (prevLevel && r.state.level > prevLevel) t += `<div style="font-size:22px;font-weight:800;margin-top:6px">🎉 ¡SUBES DE NIVEL! Nivel ${r.state.level}</div>`;
+      if (r.retoNew) t += `<div style="font-size:20px;font-weight:800;margin-top:6px;color:#3fd27a">🏅 ¡Retos de la semana completados! +${(r.state.retos && r.state.retos.reward) || 60} 🪙</div><div style="font-size:14px;opacity:.75">Alle 3 Wochen-Aufgaben geschafft!</div>`;
+      const wish = r.state.wish && byId[r.state.wish];
+      if (wish && wish.price && prevCoins < wish.price && r.state.coins >= wish.price && r.state.owned.indexOf(wish.id) < 0) t += `<div style="font-size:20px;font-weight:800;margin-top:6px;color:#ffd23a">🎯 ¡Ya puedes comprar tu objetivo: ${wish.name}!</div><div style="font-size:14px;opacity:.75">Du hast genug Münzen für dein Ziel – ab in die Tienda!</div>`;
       box.innerHTML = t;
+      rewardFx(box, r.earned);
+      if (prevLevel && r.state.level > prevLevel) setTimeout(() => levelUp(prevLevel, r.state), 1300);
     };
     if (!se) { box.innerHTML = "🪙 Inicia sesión en la página principal para ganar monedas. <div style='font-size:14px;opacity:.75'>Melde dich auf der Startseite an, um Münzen zu sammeln.</div>"; return; }
     if (S.reportedResult) { show(S.reportedResult); return; }

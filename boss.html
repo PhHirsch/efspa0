@@ -57,7 +57,7 @@
 </head>
 <body>
 <main id="app"></main>
-<script src="game.js?v=14"></script>
+<script src="game.js?v=15"></script>
 <script src="bosses.js?v=1"></script>
 <script src="vocab-u1.js?v=1"></script>
 <script src="vocab-u2.js?v=1"></script>
@@ -148,7 +148,8 @@ function intro() {
   if (REVIEW) {
     $("app").innerHTML = `<div class="top"><a class="back" href="./">← Todos los juegos</a><span class="small">Caja de errores</span></div>
     <div class="panel center"><div class="small">Tu propio jefe – ¡hecho de tus errores!</div><h1>${SEC.bossName}</h1>
-    <div style="max-width:240px;margin:0 auto">${BOSSART[SEC.boss]}</div>
+    ${(() => { const se = E8.getSession(), n = se && se.state && se.state.review ? se.state.review.length : 0, Z = [[0,130,"bebé"],[6,160,"pequeño"],[16,200,"grande"],[31,250,"gigante"],[51,300,"MEGA"]].filter(z => n >= z[0]).pop();
+      return `<div style="max-width:${Z[1]}px;margin:0 auto;transition:max-width .5s">${BOSSART[SEC.boss]}</div><div style="display:inline-block;background:#3fae5a;color:#fff;font-weight:900;padding:3px 12px;border-radius:12px">Tamaño: ${Z[2].toUpperCase()} · ${n} palabras en tu caja</div><p class="de">Je mehr Fehler in deiner Kiste, desto größer wird dein Monster. Jedes richtige Wort lässt es schrumpfen!</p>`; })()}
     <p><b>${SEC.words.length} palabras</b> que tenías mal en las luchas contra los jefes.<br>¡Si aciertas una palabra, sale de la caja!</p>
     <p class="de">Das sind Wörter, die du in Boss-Kämpfen falsch hattest. Wenn du ein Wort richtig hast, verschwindet es aus der Kiste.</p>
     <p class="small">🪙 Monedas 1 vez al día · Münzen 1x pro Tag</p>

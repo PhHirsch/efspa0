@@ -152,6 +152,47 @@
   .mc .ms{display:flex;flex-wrap:wrap;gap:5px;font-size:12px}
   .mc .ms span{background:rgba(255,255,255,.12);padding:2px 8px;border-radius:10px}
   .mc .ms span.ok{background:#3fd27a;color:#032}
+  .mine{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:12px;margin:8px 0 14px;align-items:stretch}
+  .mine:empty{display:none}
+  @media(max-width:900px){.mine{grid-template-columns:1fr}#mine2{margin-top:18px}}
+  .tile{border-radius:16px;padding:14px 16px;background:linear-gradient(135deg,#1b2a4a,#2a2160);border:1px solid rgba(255,255,255,.15);position:relative;overflow:hidden}
+  .tile h3{margin:0 0 6px;font-size:20px;letter-spacing:.04em}
+  .tile .de{font-size:13px;opacity:.85}
+  .cont{display:flex;align-items:center;gap:14px;text-decoration:none;color:#2a1600;background:linear-gradient(135deg,#ffd23a,#ff9a2a);border:0;box-shadow:0 7px 0 #b8640b;cursor:pointer;transition:transform .1s}
+  .cont:active{transform:translateY(4px);box-shadow:0 3px 0 #b8640b}
+  .cont .ic{font-size:54px;line-height:1;flex:none;animation:cbob 1.8s ease-in-out infinite}
+  @keyframes cbob{50%{transform:translateY(-5px) rotate(-4deg)}}
+  .cont .k{font-size:13px;font-weight:900;letter-spacing:.18em}
+  .cont .n{font-size:26px;font-weight:900;line-height:1.1;font-style:italic}
+  .cont .sub{font-size:14px;font-weight:700;opacity:.8}
+  .cont .pb{height:8px;border-radius:5px;background:rgba(0,0,0,.2);margin-top:6px;overflow:hidden;max-width:260px}
+  .cont .pb i{display:block;height:100%;background:#2a1600}
+  .reto{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:15px}
+  .reto .ck{width:24px;height:24px;border-radius:7px;border:2px solid rgba(255,255,255,.4);display:grid;place-items:center;flex:none;font-size:14px}
+  .reto.ok .ck{background:#3fd27a;border-color:#3fd27a;color:#032}
+  .reto.ok .tx{opacity:.7;text-decoration:line-through}
+  .reto .nn{margin-left:auto;font-weight:800;font-size:13px;opacity:.8}
+  .rbar{height:10px;border-radius:6px;background:rgba(0,0,0,.35);overflow:hidden;margin:6px 0}
+  .rbar i{display:block;height:100%;background:linear-gradient(90deg,#3fd27a,#b8ff5a)}
+  .goal{display:flex;gap:12px;align-items:center}
+  .goal .gv{width:86px;height:86px;border-radius:14px;overflow:hidden;flex:none;border:3px solid #ffd23a}
+  .goal .gb{height:12px;border-radius:7px;background:rgba(0,0,0,.35);overflow:hidden;margin:6px 0}
+  .goal .gb i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff6a2a)}
+  .goal.ready .gv{animation:gglow 1.2s ease-in-out infinite}
+  @keyframes gglow{50%{box-shadow:0 0 22px #ffd23a}}
+  .tbtn2{display:inline-block;margin-top:6px;background:#ffd23a;color:#2a1600;font-weight:900;border:0;border-radius:10px;padding:7px 14px;font-size:15px;cursor:pointer}
+  .titulo{display:inline-block;margin-top:4px;background:linear-gradient(135deg,#6a3cff,#ff3bd4);color:#fff;font-weight:900;font-size:14px;letter-spacing:.06em;padding:4px 14px;border-radius:6px;transform:skewX(-8deg);cursor:pointer;border:0;box-shadow:0 4px 0 #3a1a80}
+  .titulo span{display:inline-block;transform:skewX(8deg)}
+  .tlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+  .tlist button{text-align:left;background:#0f1322;border:2px solid #2a3350;border-radius:12px;padding:10px;color:#fff;cursor:pointer;font:inherit}
+  .tlist button b{display:block;font-size:16px}
+  .tlist button small{opacity:.7}
+  .tlist button.on{border-color:#ffd23a;background:#2a2410}
+  .tlist button:disabled{opacity:.35;filter:grayscale(1);cursor:default}
+  .dorsal{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .dorsal input{width:70px;font-size:20px;font-weight:900;text-align:center;padding:6px;border-radius:10px;border:2px solid #ffd23a;background:#0f1322;color:#fff}
+  .item .goalmark{position:absolute;left:6px;top:6px;font-size:18px}
+  .mbadge{position:absolute;right:8px;top:8px;background:#3fae5a;color:#fff;font-weight:900;font-size:12px;padding:2px 8px;border-radius:10px;z-index:2}
   .vt{display:flex;gap:8px;justify-content:center;margin:0 0 12px}
   .vt button{font-size:16px;padding:8px 18px;border-radius:24px;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.35);color:#fff;cursor:pointer;font-weight:700}
   .vt button.on{background:#fff;color:#111}
@@ -170,10 +211,12 @@
 <div class="bgart" id="bgart"></div>
 <div class="wrap">
   <div class="top" id="top"></div>
+  <div class="mine" id="mine"></div>
   <div class="lobby">
     <div class="hero" id="hero"></div>
     <div class="feat" id="feat"></div>
   </div>
+  <div class="mine" id="mine2"></div>
   <div id="meta"></div>
   <div class="vt" id="vt"></div>
   <div id="shelves"></div>
@@ -183,7 +226,7 @@
 <div class="ov" id="pinov" style="z-index:40"><div class="sheet pinbox" id="pinbox"></div></div>
 <div class="tour" id="tour"><div class="hole" id="hole"></div><div class="tip" id="tip"></div></div>
 
-<script src="game.js?v=14"></script>
+<script src="game.js?v=15"></script>
 <script src="bosses.js?v=9"></script>
 <script src="cromos.js?v=1"></script>
 <script src="covers.js?v=18"></script>
@@ -302,7 +345,7 @@ function hero(){
   const nCrown = s && s.perfect ? s.perfect.length : 0;
   let h = `<div class="ava ${nCrown?"maestro":""}" id="ava">${E8.avatarSVG(s?s.equipped:null)}</div><div class="podium"></div>`;
   if (s) {
-    h += `<div class="pname D">JUGADOR/A #${s.nr}</div>${nCrown?`<div class="crowns" title="Juegos sin ningún error – Spiele ohne Fehler">👑 Maestro/a × ${nCrown}</div>`:""}${s && window.CROMOS?`<a class="albumlink" href="album.html">📒 Álbum ${CROMOS.filter(c=>cromoState(s,c.id).got).length}/${CROMOS.length}</a>`:""}<div class="psub">${SITE.sub}</div><div class="badges">${ACH.map(a=>`<span class="${s.stats&&a[3](s)?"":"off"}" title="${a[1]}: ${a[2]}">${a[0]}</span>`).join("")}</div>${"mustSetPin" in s ? `<button class="pinlink" onclick="pinDialog(false)">🔑 Cambiar PIN</button>` : ""}`;
+    h += `<div class="pname D">JUGADOR/A #${s.nr}</div>${"title" in s ? `<button class="titulo D" onclick="titlePicker()" title="Elige tu título – Titel wählen"><span>${titleOf(s)[1]}</span></button><br>` : ""}${nCrown?`<div class="crowns" title="Juegos sin ningún error – Spiele ohne Fehler">👑 Maestro/a × ${nCrown}</div>`:""}${s && window.CROMOS?`<a class="albumlink" href="album.html">📒 Álbum ${CROMOS.filter(c=>cromoState(s,c.id).got).length}/${CROMOS.length}</a>`:""}<div class="psub">${SITE.sub}</div><div class="badges">${ACH.map(a=>`<span class="${s.stats&&a[3](s)?"":"off"}" title="${a[1]}: ${a[2]}">${a[0]}</span>`).join("")}</div>${"mustSetPin" in s ? `<button class="pinlink" onclick="pinDialog(false)">🔑 Cambiar PIN</button>` : ""}`;
   } else if (E8.online()) {
     h += `<div class="login"><div class="D" style="font-size:22px">INICIAR SESIÓN</div><div class="de" style="margin-bottom:8px">¡Gana monedas y viste a tu avatar! – Melde dich an.</div>
       <div class="row" style="align-items:flex-end"><div><label>NÚMERO</label><input id="nr" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></div>
@@ -339,7 +382,7 @@ function shelves(){
     const games = ALL.filter(g => g.shelf === sh.key && (!g.only || g.only()));
     return `<div class="shelf"><h3 class="D">${sh.title.toUpperCase()}${sh.sub?`<small>${sh.sub}</small>`:""}</h3><div class="strip">${games.map(g => {
       const n = starsOf(g.id);
-      return `<div class="card ${SEL&&SEL.id===g.id?"sel":""}" data-id="${g.id}" style="background:${g.color}">${g.isNew?`<span class="new">NUEVO</span>`:""}${isMaestro(g.id)?`<span class="crown" title="¡Sin errores! – Ohne Fehler">👑</span>`:""}${starsOf(g.id+"-dificil")?`<span class="hard" title="Modo difícil">🔥</span>`:""}<div class="art">${g.art}</div>
+      return `<div class="card ${SEL&&SEL.id===g.id?"sel":""}" data-id="${g.id}" style="background:${g.color}">${g.isNew?`<span class="new">NUEVO</span>`:""}${isMaestro(g.id)?`<span class="crown" title="¡Sin errores! – Ohne Fehler">👑</span>`:""}${starsOf(g.id+"-dificil")?`<span class="hard" title="Modo difícil">🔥</span>`:""}${g.id==="review"?`<span class="mbadge">${monster().n} · ${monster().label}</span>`:""}<div class="art" ${g.id==="review"?`style="transform:scale(${monster().scale});transform-origin:50% 80%"`:""}>${g.art}</div>
         <div class="lab"><small>${g.topic.toUpperCase()}</small>${g.name}${state()&&NOSTAR.indexOf(g.id)<0?` <span style="color:#ffd23a;font-size:12px">${stStr(n)}</span>`:""}</div>${n?`<div class="prog" style="width:${n*33.4}%"></div>`:""}</div>`;
     }).join("")}</div></div>`;
   }).join("");
@@ -355,6 +398,109 @@ function select(g){
   document.querySelectorAll(".card").forEach(c => c.classList.toggle("sel", c.dataset.id === g.id));
   if ($("ava")) $("ava").style.setProperty("--glow", g.accent+"cc");
 }
+/* ===== Monstruo de los Errores: wächst mit der Fehler-Kiste ===== */
+function monster(){
+  const s = state(), n = s && s.review ? s.review.length : 0;
+  const S = [[0,.55,"bebé"],[6,.7,"pequeño"],[16,.85,"grande"],[31,1,"gigante"],[51,1.12,"MEGA"]];
+  const x = S.filter(z => n >= z[0]).pop();
+  return {n:n, scale:x[1], label:x[2]};
+}
+
+/* ===== Mi panel: Continuar · Retos de la semana · Mi objetivo ===== */
+function localSaves(nr){
+  const out = {};
+  try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i);
+    if (!k || k.indexOf("efspa0-") !== 0 || !k.endsWith("@" + nr)) continue;
+    const x = JSON.parse(localStorage.getItem(k));
+    if (x && !x.done && x.m && x.saved && Date.now() - x.saved < 21*864e5) out[k.slice(0, -(nr.length + 1))] = Object.assign({t:x.saved}, x.m);
+  } } catch(e) {}
+  return out;
+}
+function contTarget(){
+  const s = state(); if (!s) return null;
+  const sv = Object.assign({}, localSaves(s.nr));
+  Object.entries(s.saves||{}).forEach(([k,v]) => { if (!sv[k] || sv[k].t < v.t) sv[k] = v; });
+  const last = Object.values(sv).sort((a,b) => b.t - a.t)[0];
+  if (last) { const pct = Math.round(last.solved / Math.max(1,last.total) * 100);
+    return {k:"CONTINUAR", ic:last.icon||"🎮", n:last.title, sub:`Parte ${last.stage+1} de ${last.stages} · ${pct} % – mach weiter, wo du aufgehört hast`, href:last.url, pct:pct}; }
+  const m = monster();
+  if (m.n >= 8) return {k:"¡TU MONSTRUO CRECE!", ic:"👾", n:"El Monstruo de los Errores", sub:`${m.n} palabras en tu caja – ¡hazlo pequeño! · Deine Fehler-Kiste ist voll`, href:"boss.html?id=review"};
+  const order = [];
+  [...new Set(GRAMMAR.map(g => g.unit))].sort().forEach(u => { GRAMMAR.filter(g => g.unit === u).forEach(g => order.push(ALL.find(x => x.id === g.id))); const b = ALL.find(x => x.id === "jefe-"+u); if (b) order.push(b); });
+  const nx = order.find(g => g && !starsOf(g.id));
+  if (nx) return {k:"SIGUIENTE MISIÓN", ic:(GRAMMAR.find(g=>g.id===nx.id)||{}).icon||"⚔️", n:nx.name, sub:"Noch nicht gespielt – los geht's!", href:nx.href};
+  if (s.stats && !s.stats.dailyToday) return {k:"RETO DEL DÍA", ic:"📅", n:"Jefe del día", sub:"Heute noch nicht gespielt", href:"boss.html?id=daily"};
+  if (m.n) return {k:"CAJA DE ERRORES", ic:"👾", n:"El Monstruo de los Errores", sub:`${m.n} palabras – ¡a por ellas!`, href:"boss.html?id=review"};
+  const low = order.filter(g => g && starsOf(g.id) < 3).sort((a,b) => starsOf(a.id) - starsOf(b.id))[0];
+  if (low) return {k:"¡A POR 3 ESTRELLAS!", ic:"⭐", n:low.name, sub:`${stStr(starsOf(low.id))} – hol dir alle 3 Sterne`, href:low.href};
+  return {k:"MODO DIFÍCIL", ic:"🔥", n:"¿Te atreves?", sub:"Alles mit 3 Sternen! Probier den Modo difícil.", href:null};
+}
+function mineBox(){
+  const s = state(), el = $("mine");
+  $("mine2").innerHTML = "";
+  if (!s) { el.innerHTML = ""; return; }
+  const c = contTarget();
+  let h = "", h0 = c ? `<${c.href?"a":"div"} class="tile cont" ${c.href?`href="${c.href}"`:""}><div class="ic">${c.ic}</div><div><div class="k">▶ ${c.k}</div><div class="n D">${c.n}</div><div class="sub">${c.sub}</div>${c.pct!==undefined?`<div class="pb"><i style="width:${c.pct}%"></i></div>`:""}</div></${c.href?"a":"div"}>` : "";
+  const R = s.retos;
+  if (R && R.list) {
+    const done = R.list.filter(x => x.done).length;
+    h += `<div class="tile"><h3 class="D">🏅 RETOS DE LA SEMANA</h3>${R.list.map(x => `<div class="reto ${x.done?"ok":""}"><span class="ck">${x.done?"✔":""}</span><span class="tx">${x.t}<br><span class="de">${x.de}</span></span><span class="nn">${x.have}/${x.n}</span></div>`).join("")}
+      <div class="rbar"><i style="width:${Math.round(done/3*100)}%"></i></div><div style="font-weight:800;font-size:14px">${R.claimed?"✔ ¡Conseguido! Nuevos retos el lunes. – Neue Aufgaben am Montag.":`Premio: ${R.reward} 🪙 · ${done}/3`}</div></div>`;
+  }
+  if ("wish" in s) {
+    const w = s.wish && E8.item(s.wish), own = w && s.owned.indexOf(w.id) >= 0;
+    if (w && !own) {
+      const pct = Math.min(100, Math.round(s.coins / w.price * 100)), ready = s.coins >= w.price, lvOk = !w.lvl || (s.level||1) >= w.lvl;
+      h += `<div class="tile"><h3 class="D">🎯 MI OBJETIVO</h3><div class="goal ${ready&&lvOk?"ready":""}"><div class="gv">${E8.avatarSVG(Object.assign({}, s.equipped, {[w.slot]: w.id}))}</div><div style="flex:1"><b>${w.name}</b>
+        <div class="gb"><i style="width:${pct}%"></i></div><div style="font-size:14px;font-weight:700">${ready?(lvOk?"¡Ya puedes comprarlo! 🎉":`🔒 Necesitas el nivel ${w.lvl}`):`🪙 ${s.coins} / ${w.price} · faltan ${w.price - s.coins}`}</div>
+        <button class="tbtn2" onclick="openGoal()">${ready&&lvOk?"🛒 ¡Comprar!":"Ver en la tienda"}</button></div></div></div>`;
+    } else h += `<div class="tile"><h3 class="D">🎯 MI OBJETIVO</h3><p style="margin:4px 0">¿Para qué ahorras? Elige algo en la tienda y mira cuánto te falta.</p><div class="de">Wähle in der Tienda ein Teil als Ziel (🎯) – hier siehst du dann, wie viele Münzen noch fehlen.</div><button class="tbtn2" onclick="tab=0;openShop('shop')">🛒 Ir a la tienda</button></div>`;
+  }
+  if (innerWidth <= 900) { el.innerHTML = h0; $("mine2").innerHTML = h; }
+  else el.innerHTML = h0 + h;
+}
+let MW = innerWidth; addEventListener("resize", () => { if ((MW <= 900) !== (innerWidth <= 900)) { MW = innerWidth; mineBox(); } });
+function openGoal(){
+  const s = state(), w = s && E8.item(s.wish); if (!w) return;
+  tab = Math.max(0, E8.TABS.findIndex(t => t[1].indexOf(w.slot) >= 0)); openShop("shop"); trying[w.slot] = w.id; drawShop();
+}
+
+/* ===== Títulos (aus den Erfolgen, frei wählbar) ===== */
+const TITULOS = [
+  ["novato","Novato/a del Ciervo","Para todos – Für alle", s => true],
+  ["abeja","Abeja trabajadora","5 juegos diferentes", s => Object.keys(s.stars||{}).length >= 5],
+  ["estrella","Estrella del curso","25 estrellas", s => Object.values(s.stars||{}).reduce((a,b)=>a+b,0) >= 25],
+  ["casa","Héroe de los deberes","Practica en casa", s => s.stats && s.stats.home],
+  ["racha","Llama eterna 🔥","Racha de 7 días", s => (s.streakBest||0) >= 7],
+  ["maestro","Maestro/a 👑","1 juego sin errores", s => (s.perfect||[]).length >= 1],
+  ["granmaestro","Gran Maestro/a 👑","5 juegos sin errores", s => (s.perfect||[]).length >= 5],
+  ["cazajefes","Cazajefes ⚔️","Derrota a un jefe de vocabulario", s => Object.keys(s.stars||{}).some(g => g.indexOf("boss-") === 0)],
+  ["cazadragones","Cazadragones 🐉","Vence a un jefe final", s => Object.keys(s.stars||{}).some(g => g.indexOf("jefe-u") === 0)],
+  ["valiente","Valiente 🔥","Un juego en modo difícil", s => Object.keys(s.stars||{}).some(g => /-dificil$/.test(g))],
+  ["coleccionista","Coleccionista 📒","8 cromos", s => window.CROMOS && CROMOS.filter(c => cromoState(s, c.id).got).length >= 8],
+  ["pro","Pro 💎","Nivel 5", s => (s.level||0) >= 5],
+  ["elfo","Elfo/a de Navidad 🎄","24 puertas del calendario", s => (s.adv||0) >= 24],
+  ["leyenda","Leyenda ✨","Nivel 9", s => (s.level||0) >= 9]
+];
+function titleOf(s){
+  const ok = TITULOS.filter(t => t[3](s)), pick = ok.find(t => t[0] === s.title);
+  return pick || ok[ok.length - 1];
+}
+function titlePicker(){
+  const s = state(); if (!s) return;
+  const cur = titleOf(s)[0];
+  $("ov").classList.add("show");
+  $("shop").innerHTML = `<div class="row" style="justify-content:space-between"><div class="D" style="font-size:30px">TU TÍTULO</div><button class="btn small" onclick="closeShop()">✕ Cerrar</button></div>
+    <p>Elige el título que aparece debajo de tu nombre. Los grises todavía no los tienes. <span class="de">– Wähle deinen Titel. Graue Titel musst du dir noch verdienen.</span></p>
+    <div class="tlist">${TITULOS.map(t => `<button data-t="${t[0]}" class="${t[0]===cur?"on":""}" ${t[3](s)?"":"disabled"}><b>${t[1]}</b><small>${t[3](s)?"✔ ":"🔒 "}${t[2]}</small></button>`).join("")}</div><div class="msg" id="tmsg"></div>`;
+  document.querySelectorAll(".tlist button").forEach(b => b.onclick = async () => {
+    $("tmsg").className = "msg ok"; $("tmsg").textContent = "…";
+    const r = await E8.call("prefs", {title: b.dataset.t});
+    if (!r.ok) { $("tmsg").className = "msg"; $("tmsg").textContent = E8.errText(r.error); return; }
+    titlePicker(); hero();
+  });
+}
+
 /* ===== Meta común (Kursziel, ohne Namen) ===== */
 const METAS = [[2000,"⛲","Fuente"],[5000,"🌳","Árboles y bancos"],[10000,"🎪","Quiosco de música"],[20000,"🦌","Estatua del Ciervo"],[35000,"🏟️","Estadio del curso"],[50000,"🎆","Fiesta de fuegos artificiales"]];
 function plaza(m){
@@ -419,7 +565,7 @@ function mapView(){
   </svg></div>`;
   document.querySelectorAll(".map .nd").forEach(el => el.onclick = () => { const g = ALL.find(x => x.id === el.dataset.id); if (g) { select(g); window.scrollTo({top:0, behavior:"smooth"}); } });
 }
-function render(){ topBar(); hero(); feat(); metaBox(); viewToggle(); VIEW==="map" ? mapView() : shelves(); }
+function render(){ topBar(); hero(); feat(); mineBox(); metaBox(); viewToggle(); VIEW==="map" ? mapView() : shelves(); }
 
 /* ===== Navigation ===== */
 document.querySelectorAll(".nav button").forEach(b => b.onclick = () => {
@@ -462,13 +608,16 @@ function drawShop(msg, ok){
   } else if(notMine.length>1){ msg=msg||"Te estás probando varias cosas que no tienes. Cómpralas una a una. – Mehrere Teile sind noch nicht gekauft."; }
   else if(changed) action=`<button class="btn primary" id="wear">✔ Guardar mi look</button>`;
   if(changed) action+=` <button class="btn small" id="reset">Deshacer</button>`;
+  if(notMine.length===1 && "wish" in s && MODE==="shop"){ const wid=trying[notMine[0]]; action+=` <button class="btn small" id="goal">${s.wish===wid?"🎯 Es tu objetivo ✔ (quitar)":"🎯 Mi objetivo"}</button>`; }
+  const topIt=E8.item(trying.top), isClub=topIt&&topIt.kind==="club";
+  const dorsal=isClub?`<div class="dorsal"><b>⚽ Dorsal – Rückennummer:</b><input id="num" type="number" inputmode="numeric" min="0" max="99" value="${trying.num===undefined?10:trying.num}"><span class="de">0–99</span></div>`:"";
   const slots=E8.TABS[tab][1];
   const sections=slots.map(slot=>{
     const items=E8.CATALOG.filter(i=>i.slot===slot && (MODE==="locker" ? isMine(i.id) : ((E8.inSeason(i)&&E8.available(i))||isMine(i.id))));
     return (slots.length>1?`<h3 class="sec">${E8.SLOTNAME[slot]}</h3>`:"")+`<div class="items">`+items.map(i=>{
       const t=Object.assign({},trying,{[slot]:i.id}), r=E8.rarity(i.price), mine=isMine(i.id), locked=((i.lvl&&lv<i.lvl)||(i.adv&&(s.adv||0)<i.adv))&&!mine;
       return `<div class="item ${trying[slot]===i.id?"sel":""} ${worn[slot]===i.id?"wear":""}" data-slot="${slot}" data-id="${i.id}" style="border-top:4px solid ${r.color}">
-        ${locked?`<span class="lock">${i.adv?"🎄 "+(s.adv||0)+"/"+i.adv:"🔒 Nivel "+i.lvl}</span>`:""}
+        ${s.wish===i.id&&!mine?`<span class="goalmark" title="Mi objetivo">🎯</span>`:""}${locked?`<span class="lock">${i.adv?"🎄 "+(s.adv||0)+"/"+i.adv:"🔒 Nivel "+i.lvl}</span>`:""}
         <div class="mini">${E8.avatarSVG(t)}</div><div class="iname">${i.name}</div>
         <div class="rar" style="color:${r.color}">${i.price?r.name:"&nbsp;"}${i.unit?" · Unidad "+i.unit:""}${i.months?" · "+seasonText(i):""}</div>
         <div class="price ${mine?"own":""}">${i.price===0?"gratis":mine?"✔ tuyo":i.price+" 🪙"}</div></div>`;
@@ -480,7 +629,7 @@ function drawShop(msg, ok){
       <div style="flex:1;min-width:220px">
         <div class="row" style="justify-content:space-between"><div><span class="D" style="font-size:30px">${MODE==="locker"?"TAQUILLA":"TIENDA"}</span> &nbsp;<span class="coins D">🪙 ${s.coins}</span> <span class="lvl">Nivel ${lv}</span></div><button class="btn small" id="close">✕ Cerrar</button></div>
         <p style="margin:8px 0">${MODE==="locker"?"Tus cosas – toca para ponértelas. – Deine Sachen, tippe zum Anziehen.":"Toca algo para probártelo. – Tippe auf ein Teil, um es anzuprobieren."}</p>
-        <div class="row">${action}</div>
+        <div class="row">${action}</div>${dorsal}
         <div class="msg ${ok?"ok":""}" id="smsg">${msg||""}</div>
       </div>
     </div>
@@ -490,10 +639,19 @@ function drawShop(msg, ok){
   if($("reset")) $("reset").onclick=()=>{trying=E8.clean(s.equipped);drawShop();};
   document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{tab=+b.dataset.i;drawShop();});
   document.querySelectorAll(".item").forEach(b=>b.onclick=()=>{trying[b.dataset.slot]=b.dataset.id;drawShop();});
+  if($("num")) $("num").onchange=()=>{ let n=Math.floor(+$("num").value); if(!(n>=0&&n<=99)) n=10; trying.num=n; drawShop(); };
+  if($("goal")) $("goal").onclick=async()=>{
+    if(busy) return; busy=true; const wid=trying[notMine[0]];
+    const r=await E8.call("prefs",{wish: s.wish===wid?"":wid}); busy=false;
+    if(!r.ok){ if(!state()) return closeShop(); return drawShop(E8.errText(r.error)); }
+    drawShop(state().wish?"🎯 ¡Objetivo guardado! En la página principal ves cuánto te falta. – Ziel gespeichert.":"Objetivo quitado. – Ziel entfernt.", true);
+  };
   if($("buy")) $("buy").onclick=async()=>{
     if(busy) return; busy=true; $("buy").disabled=true; $("smsg").className="msg ok"; $("smsg").textContent="…";
-    const r=await E8.call("buy",{item:trying[notMine[0]]}); busy=false;
+    const bought=trying[notMine[0]];
+    const r=await E8.call("buy",{item:bought}); busy=false;
     if(!r.ok){ if(!state()) return closeShop(); return drawShop(E8.errText(r.error)); }
+    if(state().wish===bought){ await E8.call("prefs",{wish:""}); E8.confetti(60); }
     const r2=await E8.call("equip",{equipped:trying});
     drawShop(r2.ok?"🎉 ¡Comprado y guardado!":E8.errText(r2.error), r2.ok);
   };
@@ -586,7 +744,7 @@ function tourStep(){
   SEL = ALL.find(g => g.id === pre) || ALL.find(g => g.id === START) || ALL.find(g => g.isNew) || ALL[0];
   render(); setBg(SEL);
   if (E8.online()) E8.api("scores",{}).then(r => { if (r.ok) { SCORES = r.scores; feat(); if (state()) hero(); } });
-  if (state()) E8.call("login").then(() => { topBar(); hero(); feat(); VIEW==="map" ? mapView() : shelves(); const s = state(); if (s && s.mustSetPin) pinDialog(true); });
+  if (state()) E8.call("login").then(() => { topBar(); hero(); feat(); mineBox(); VIEW==="map" ? mapView() : shelves(); const s = state(); if (s && s.mustSetPin) pinDialog(true); });
   if (location.hash === "#tour") setTimeout(tour, 600);
 })();
 </script>

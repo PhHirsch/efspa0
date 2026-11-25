@@ -253,6 +253,19 @@
       case "hoodie": s += `<path d="${sh}" ${F}/>${hood(topd)}` + (it.text ? `<text x="148" y="191" font-family="Arial Black,Arial" font-weight="900" font-size="${it.text.length > 6 ? 10 : 11}" fill="#f2c230" text-anchor="middle" transform="rotate(-8 148 191)">${it.text}</text>` : ""); break;
       case "football": s += `<path d="${sh}" ${F}/><path d="M78 154 L100 178 L122 154" stroke="#fff" stroke-width="5" fill="none"/><path d="M30 186 L50 172 M170 186 L150 172" stroke="#fff" stroke-width="4"/><text x="146" y="196" font-family="Arial Black,Arial" font-weight="900" font-size="18" fill="#fff" text-anchor="middle">8</text>`; break;
       case "uvas": s += `<path d="${sh}" ${F}/><path d="M76 154 Q100 170 124 154" stroke="#e8e0c8" stroke-width="6" fill="none"/><g fill="#9b4fc4">${[[60,176],[70,170],[80,176],[68,182],[78,186],[88,182],[112,182],[122,186],[132,182],[120,176],[130,170],[140,176]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4.6"/>`).join("")}</g><path d="M70 166 l4 -6 M130 166 l-4 -6" stroke="#2a7a2a" stroke-width="2"/><circle cx="100" cy="184" r="9" fill="#fff8e0" stroke="#c9a24a" stroke-width="2"/><path d="M100 184 L100 177 M100 184 L105 184" stroke="#333" stroke-width="1.6"/><path d="M22 196 L178 196" stroke="#e8e0c8" stroke-width="4" stroke-dasharray="6 5"/>`; break;
+      case "club": {
+        const c2 = it.c2 || "#fff", tr = it.trim || "#fff", nc = it.numc || "#fff", cl = `${id}cl`;
+        let pat = "";
+        if (it.pat === "halves") pat = `<rect x="100" y="140" width="90" height="60" fill="${c2}"/>`;
+        if (it.pat === "pin") pat = [40, 56, 72, 88, 104, 120, 136, 152].map(x => `<rect x="${x}" y="140" width="3" height="60" fill="${c2}" opacity=".85"/>`).join("");
+        if (it.pat === "band") pat = (it.band || [c2]).map((c, i) => `<rect x="0" y="${170 + i * 4}" width="200" height="4" fill="${c}"/>`).join("");
+        if (it.pat === "side") pat = `<path d="M22 200 C26 180 40 168 56 162 L62 168 C48 174 36 186 32 200 Z" fill="${c2}"/><path d="M178 200 C174 180 160 168 144 162 L138 168 C152 174 164 186 168 200 Z" fill="${c2}"/><path d="M32 200 C36 186 48 174 62 168 L66 172 C54 178 44 188 40 200 Z M168 200 C164 186 152 174 138 168 L134 172 C146 178 156 188 160 200 Z" fill="${it.c3 || tr}"/>`;
+        const num = it.num === undefined || it.num === null || it.num === "" ? 10 : it.num;
+        s += `<clipPath id="${cl}"><path d="${sh}"/></clipPath><path d="${sh}" ${F}/><g clip-path="url(#${cl})">${pat}<path d="M18 200 L18 140 L60 140 Q30 170 26 200 Z M182 200 L182 140 L140 140 Q170 170 174 200 Z" fill="#000" opacity=".08"/></g>` +
+          `<path d="M80 154 L100 172 L120 154" stroke="${tr}" stroke-width="5" fill="none" stroke-linejoin="round"/>` +
+          (it.collar ? `<path d="M85 157 L100 170 L115 157" stroke="${it.collar}" stroke-width="2" fill="none"/>` : "") +
+          `<text x="144" y="195" font-family="Arial Black,Arial" font-weight="900" font-size="${String(num).length > 1 ? 16 : 18}" fill="${nc}" stroke="${it.nums || "none"}" stroke-width="${it.nums ? 1.2 : 0}" paint-order="stroke" text-anchor="middle">${num}</text>`;
+        break; }
       case "espana": s += `<path d="${sh}" ${F}/><path d="M78 154 L100 174 L122 154" stroke="#f1bf00" stroke-width="5" fill="none"/><path d="M24 186 C40 176 60 170 70 168 M176 186 C160 176 140 170 130 168" stroke="#f1bf00" stroke-width="4" fill="none"/><text x="100" y="194" font-family="Arial Black,Arial" font-weight="900" font-size="14" fill="#f1bf00" text-anchor="middle" letter-spacing="1">ESPAÑA</text>`; break;
       case "poncho": s += `<path d="${sh}" fill="#5a4a3a"/><path d="M10 200 L66 150 Q100 170 134 150 L190 200 Z" fill="${top}"/><path d="M26 186 L174 186" stroke="#f1bf00" stroke-width="5"/><path d="M38 176 L162 176" stroke="#2ab0a0" stroke-width="4"/><path d="M48 167 L152 167" stroke="#e63946" stroke-width="3"/><path d="M20 194 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6" stroke="#fff" stroke-width="2" fill="none"/><path d="M84 158 Q100 168 116 158" stroke="${topd}" stroke-width="3" fill="none"/>`; break;
       case "moda": s += `<path d="${sh}" ${F}/><path d="M76 154 Q100 170 124 154 L120 162 Q100 176 80 162 Z" fill="#1d1d22"/><path d="M100 168 L100 200" stroke="#cfcfd4" stroke-width="2.4"/><path d="M28 186 L40 166 M34 190 L46 168 M172 186 L160 166 M166 190 L154 168" stroke="#1d1d22" stroke-width="3"/><rect x="62" y="180" width="18" height="3" rx="1.5" fill="#1d1d22"/><rect x="120" y="180" width="18" height="3" rx="1.5" fill="#1d1d22"/><path d="M18 200 L182 200 L181 194 L19 194 Z" fill="#1d1d22"/>`; break;
@@ -309,6 +322,7 @@
   function clean(eq) {
     const e = Object.assign({}, DEFAULT);
     if (eq) for (const k of SLOTS) if (eq[k] && byId[eq[k]] && byId[eq[k]].slot === k) e[k] = eq[k];
+    if (eq && eq.num !== undefined && eq.num !== null && eq.num !== "" && +eq.num >= 0 && +eq.num <= 99) e.num = Math.floor(+eq.num);
     return e;
   }
   function avatarSVG(eq) {
@@ -332,7 +346,7 @@
     const H = s => `<g transform="translate(100 96) scale(1.15)">${s}</g>`;
     let s = `<defs>${defs}</defs>` + background(it("bg"), id) + auraSVG(it("aura"), id);
     s += H(glowBack + hair.back);
-    s += topSVG(it("top"), id, sk) + chestJewel(it("jewellery"));
+    s += topSVG(Object.assign({}, it("top"), { num: e.num }), id, sk) + chestJewel(it("jewellery"));
     s += H(face(sk, it("eyes"), e.lashes === "lash-on", browC, id) + facePaint(it("face"), sk) + jewellery(it("jewellery")) + glowFront + hair.front + hairExtras(hcIt, style) + glassesSVG(it("glasses"), id) + hatSVG(it("hat"), id));
     s += extraSVG(it("extra"));
     return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">${s}</svg>`;

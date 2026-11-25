@@ -1182,6 +1182,81 @@
 "unit": 8
 },
 {
+"id": "top-club-fck",
+"slot": "top",
+"name": "Camiseta 1. FC Kaiserslautern ⚽",
+"price": 200,
+"kind": "club",
+"color": "#c8102e",
+"trim": "#fff",
+"numc": "#fff"
+},
+{
+"id": "top-club-ger",
+"slot": "top",
+"name": "Camiseta de Alemania ⚽",
+"price": 200,
+"kind": "club",
+"color": "#f4f4f2",
+"pat": "band",
+"band": [
+"#1d1d1d",
+"#dd0000",
+"#ffce00"
+],
+"trim": "#1d1d1d",
+"numc": "#1d1d1d"
+},
+{
+"id": "top-club-esp",
+"slot": "top",
+"name": "Camiseta de España (selección) ⚽",
+"price": 200,
+"kind": "club",
+"color": "#c60b1e",
+"trim": "#f1bf00",
+"collar": "#1f2a5a",
+"numc": "#f1bf00"
+},
+{
+"id": "top-club-bmg",
+"slot": "top",
+"name": "Camiseta Borussia Mönchengladbach ⚽",
+"price": 200,
+"kind": "club",
+"color": "#f6f6f4",
+"pat": "side",
+"c2": "#1d1d1d",
+"c3": "#2a9a4a",
+"trim": "#2a9a4a",
+"numc": "#1d1d1d"
+},
+{
+"id": "top-club-gs",
+"slot": "top",
+"name": "Camiseta Galatasaray ⚽",
+"price": 200,
+"kind": "club",
+"color": "#fdb912",
+"pat": "halves",
+"c2": "#a90432",
+"trim": "#a90432",
+"numc": "#fff",
+"nums": "#5a0018"
+},
+{
+"id": "top-club-scp",
+"slot": "top",
+"name": "Camiseta SC Paderborn 07 ⚽",
+"price": 200,
+"kind": "club",
+"color": "#0057a8",
+"pat": "pin",
+"c2": "#14161c",
+"trim": "#fff",
+"numc": "#fff"
+},
+{
 "id": "hat-reno",
 "slot": "hat",
 "name": "Cuernos de reno 🦌",
