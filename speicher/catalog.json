@@ -1189,7 +1189,8 @@
 "kind": "club",
 "color": "#c8102e",
 "trim": "#fff",
-"numc": "#fff"
+"numc": "#fff",
+"shoulder": "#fff"
 },
 {
 "id": "top-club-ger",
@@ -1205,7 +1206,9 @@
 "#ffce00"
 ],
 "trim": "#1d1d1d",
-"numc": "#1d1d1d"
+"numc": "#1d1d1d",
+"stars": 4,
+"starc": "#d4a93a"
 },
 {
 "id": "top-club-esp",
@@ -1216,7 +1219,10 @@
 "color": "#c60b1e",
 "trim": "#f1bf00",
 "collar": "#1f2a5a",
-"numc": "#f1bf00"
+"numc": "#f1bf00",
+"shoulder": "#f1bf00",
+"stars": 1,
+"starc": "#f1bf00"
 },
 {
 "id": "top-club-bmg",
@@ -1229,7 +1235,9 @@
 "c2": "#1d1d1d",
 "c3": "#2a9a4a",
 "trim": "#2a9a4a",
-"numc": "#1d1d1d"
+"numc": "#1d1d1d",
+"stars": 2,
+"starc": "#1d1d1d"
 },
 {
 "id": "top-club-gs",
@@ -1242,7 +1250,8 @@
 "c2": "#a90432",
 "trim": "#a90432",
 "numc": "#fff",
-"nums": "#5a0018"
+"nums": "#5a0018",
+"collar": "#fdb912"
 },
 {
 "id": "top-club-scp",
@@ -1253,8 +1262,10 @@
 "color": "#0057a8",
 "pat": "pin",
 "c2": "#14161c",
-"trim": "#fff",
-"numc": "#fff"
+"trim": "#14161c",
+"collar": "#fff",
+"numc": "#fff",
+"shoulder": "#14161c"
 },
 {
 "id": "hat-reno",
