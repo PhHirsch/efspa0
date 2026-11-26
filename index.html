@@ -229,7 +229,7 @@
 <script src="game.js?v=16"></script>
 <script src="bosses.js?v=9"></script>
 <script src="cromos.js?v=1"></script>
-<script src="covers.js?v=18"></script>
+<script src="covers.js?v=19"></script>
 <script src="vocab-u1.js?v=9"></script>
 <script src="vocab-u2.js?v=9"></script>
 <script src="vocab-u3.js?v=11"></script>
@@ -239,6 +239,8 @@ const SITE = { title: "ESPAÑOL EF", sub: "ESPAÑOL · EF" };
 window.VOCAB = window.VOCAB || {}; window.COVERS = window.COVERS || {};
 
 /* ===== Spiele (neueste oben). icon = Emoji fürs Cover, falls es in covers.js kein eigenes Cover gibt. Vokabel-Bosse kommen automatisch aus vocab-*.js ===== */
+/* Spiele mit from:"JJJJ-MM-TT" erscheinen erst ab diesem Tag (lokal testen: ?hoy=2026-12-04) */
+const HOY = (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && new URLSearchParams(location.search).get("hoy")) || new Date().toLocaleDateString("sv-SE", {timeZone:"Europe/Berlin"});
 const GRAMMAR = [
   {id:"numeros", unit:"u1", file:"mision-marte.html", icon:"🚀", topic:"Los números 0–100", name:"Misión Marte", info:"Vuela a Marte: cuenta atrás, códigos y combustible – ¡solo con números en español!", color:"linear-gradient(135deg,#1a1540,#c4421c)", accent:"#ff6b3d", isNew:true},
   {id:"pronombres", unit:"u2", file:"zombis-madrid.html", icon:"🧟", topic:"yo, tú… · ser · verbos en -ar", name:"Doblaje: ¡Zombis en Madrid!", info:"Doblas una película de zombis: pronombres, ser y verbos en -ar – ¡y por qué el pronombre casi siempre desaparece!", color:"linear-gradient(135deg,#1d2a12,#6a9a2a)", accent:"#9be33a", isNew:true},
@@ -252,8 +254,10 @@ const GRAMMAR = [
   */
   {id:"adjetivos", unit:"u3", file:"reformas-locas.html", icon:"🛠️", topic:"Los adjetivos", name:"¡Reformas Locas!", info:"Reforma un piso en Chamberí en 9 capítulos – solo con adjetivos correctos. ¡Misión larga (ca. 45 min)!", color:"linear-gradient(135deg,#0f4a44,#2aa08a)", accent:"#ffb02e", isNew:true},
   {id:"verbos-cafe", unit:"u3", file:"cafe-robot.html", icon:"🤖", topic:"Verbos en presente", name:"Café Robot", info:"Repara el robot con verbos correctos.", color:"linear-gradient(135deg,#5a1e3a,#c0407a)"},
+  {id:"estar", unit:"u3", file:"donde-esta-pelusa.html", icon:"🐱", topic:"estar · ¿dónde?", name:"¿Dónde está Pelusa?", info:"La gata de Lucía no está. Busca a Pelusa en el piso nuevo – con estar, encima de, debajo de …", color:"linear-gradient(135deg,#4a1e4a,#c0508a)", from:"2026-12-04"},
+  {id:"ser-estar-hay", unit:"u3", file:"agencia-ciervo.html", icon:"🏠", topic:"ser · estar · hay", name:"Agencia Ciervo", info:"Trabajas en una agencia de pisos en Chamberí: anuncios con es, hay y está. ¡Alquila cuatro pisos!", color:"linear-gradient(135deg,#0e4a40,#2aa88a)", from:"2026-12-04"},
   {id:"ser-estar", unit:"u3", file:"tren-nocturno.html", icon:"🚂", topic:"BONUS · ser · estar", name:"El tren nocturno a Granada", info:"⭐ Bonus – am besten als letztes Spiel. Paso a paso: descubre cuándo se usa ser y cuándo estar.", color:"linear-gradient(135deg,#1e1650,#5a3cb0)"}
-];
+].filter(g => !g.from || HOY >= g.from);
 /* Überschriften der Units ohne Vokabeldatei (Schlüssel wie GRAMMAR.unit) */
 const UNITS = {u3:"Unidad 3"};
 const BOSSCOL = {"tornado":["#3a4256","#6a7a96"],"robot":["#2a3a4a","#4a6a8a"],"ghost":["#2a2a5a","#5a5aa0"],"bossy":["#5a1e1a","#a0402a"],"slime":["#1e4a24","#3f8a2a"],"manager":["#2e1d5a","#6a3cb0"],"locker":["#12305a","#2a68b8"]};

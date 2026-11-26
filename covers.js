@@ -114,6 +114,27 @@ window.COVERS = {
     <g fill="#fff" opacity=".85"><rect x="40" y="78" width="6" height="6"/><rect x="50" y="78" width="6" height="6"/><rect x="40" y="92" width="6" height="6"/><rect x="50" y="92" width="6" height="6"/><rect x="124" y="70" width="6" height="6"/><rect x="134" y="70" width="6" height="6"/><rect x="124" y="84" width="6" height="6"/><rect x="134" y="84" width="6" height="6"/><rect x="98" y="86" width="10" height="8"/></g>
     <circle cx="170" cy="100" r="10" fill="#3a9a4a"/><rect x="168" y="104" width="4" height="10" fill="#6a4a2a"/>
     <rect x="20" y="112" width="180" height="10" rx="2" fill="#6cb05a"/></svg>`,
+  "estar": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+    <rect width="220" height="140" fill="#3a1a3a"/><rect y="104" width="220" height="36" fill="#6a3a5a"/>
+    <rect x="18" y="26" width="44" height="34" fill="#9ad0ff" stroke="#d9a0c0" stroke-width="4"/><path d="M40 26 V60 M18 43 H62" stroke="#d9a0c0" stroke-width="3"/>
+    <rect x="128" y="28" width="58" height="80" rx="3" fill="#a8743e" stroke="#5a3a18" stroke-width="3"/><path d="M157 30 V106" stroke="#5a3a18" stroke-width="2"/><circle cx="152" cy="70" r="2.5" fill="#5a3a18"/><circle cx="162" cy="70" r="2.5" fill="#5a3a18"/>
+    <g transform="translate(-92 56)"><g><animateTransform attributeName="transform" type="translate" values="0 4;0 -4;0 4" dur="1.6s" repeatCount="indefinite"/>
+      <path d="M142 28 Q140 12 150 16 L156 22 L166 22 L172 16 Q182 12 180 28 Q184 34 172 34 L150 34 Q138 34 142 28 Z" fill="#f4f0ea" stroke="#5a4a40" stroke-width="2"/>
+      <circle cx="154" cy="26" r="2.4" fill="#2a2a2a"/><circle cx="168" cy="26" r="2.4" fill="#2a2a2a"/><path d="M158 30 Q161 32 164 30" stroke="#d07090" stroke-width="2" fill="none"/>
+      <path d="M180 30 Q196 22 192 8" stroke="#f4f0ea" stroke-width="5" fill="none" stroke-linecap="round"><animate attributeName="d" values="M180 30 Q196 22 192 8;M180 30 Q200 30 198 14;M180 30 Q196 22 192 8" dur="1.4s" repeatCount="indefinite"/></path></g></g>
+    <rect x="40" y="96" width="76" height="34" fill="#c8a06a" stroke="#7a5a2a" stroke-width="3"/><path d="M40 96 L56 86 L132 86 L116 96 Z M116 96 L132 86 V120 L116 130 Z" fill="#b08a54" stroke="#7a5a2a" stroke-width="3" stroke-linejoin="round"/>
+    <text x="150" y="132" font-size="14">🐾</text><text x="178" y="124" font-size="14">🐾</text>
+    <text x="196" y="66" font-size="26" font-weight="900" fill="#ffd23a" font-family="Arial">?</text></svg>`,
+  "ser-estar-hay": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+    <rect width="220" height="140" fill="#0e3a34"/><rect y="112" width="220" height="28" fill="#1a5a4e"/>
+    <rect x="22" y="40" width="70" height="74" fill="#e8d9c0" stroke="#7a5a3a" stroke-width="3"/><path d="M18 42 L57 14 L96 42 Z" fill="#c0503a" stroke="#7a2a1a" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="34" y="54" width="16" height="16" fill="#9ad0ff" stroke="#7a5a3a" stroke-width="2"/><rect x="64" y="54" width="16" height="16" fill="#9ad0ff" stroke="#7a5a3a" stroke-width="2"/><rect x="48" y="84" width="18" height="30" fill="#7a4a2a"/>
+    <g transform="rotate(-8 160 64)"><rect x="112" y="40" width="96" height="50" rx="6" fill="#ffd23a" stroke="#8a6a00" stroke-width="3"/>
+      <text x="160" y="62" font-size="15" font-weight="900" text-anchor="middle" fill="#3a2a00" font-family="Arial">SE ALQUILA</text>
+      <text x="160" y="80" font-size="11" font-weight="700" text-anchor="middle" fill="#3a2a00" font-family="Arial">es · hay · está</text></g>
+    <path d="M160 92 V122" stroke="#8a6a3a" stroke-width="5"/>
+    <g><animateTransform attributeName="transform" type="rotate" values="-12 120 118;12 120 118;-12 120 118" dur="1.8s" repeatCount="indefinite"/>
+      <circle cx="120" cy="104" r="9" fill="none" stroke="#ffd23a" stroke-width="4"/><path d="M120 113 V130 M120 124 H127 M120 129 H126" stroke="#ffd23a" stroke-width="4"/></g></svg>`,
   "ser-estar": `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="cvTN" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d0b24"/><stop offset="1" stop-color="#2c1f6a"/></linearGradient></defs>
     <rect x="14" y="8" width="192" height="122" rx="14" fill="url(#cvTN)"/>
     <g fill="#fff"><circle cx="40" cy="26" r="1.5"/><circle cx="80" cy="40" r="1"/><circle cx="120" cy="20" r="1.5"/><circle cx="60" cy="56" r="1"/><circle cx="100" cy="50" r="1"><animate attributeName="opacity" values="1;.2;1" dur="1.6s" repeatCount="indefinite"/></circle></g>

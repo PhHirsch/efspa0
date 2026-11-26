@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Agencia Ciervo · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#123a3a 0%,#0a1716 65%);--panel:#132826;--txt:#eafaf6;--muted:#9ec8be;--line:#2c4c48;--btn:#1c3a36;--accent:#3fd2a8;--accentTxt:#03281e;--accent2:#a8f0dc;--bubble:#1c3a36;--input:#0d1d1b;--ok:#6fe59a;--bad:#ff7a7a}
+  .ad{background:#fffdf4;color:#2a2a2a;border-radius:12px;padding:10px 14px;margin:8px 0;border-left:6px solid #3fd2a8;font-size:17px;line-height:1.45;text-align:left}
+  .ad b.h{display:block;font-size:13px;letter-spacing:.12em;color:#1a7a60}
+  .board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px;background:linear-gradient(#1c3a36,#132826)}
+  .flat{background:#fffdf4;border-radius:10px;padding:6px 4px;text-align:center;color:#2a2a2a;position:relative;overflow:hidden;min-height:92px}
+  .flat .e{font-size:30px}.flat small{display:block;font-size:11px;font-weight:700;line-height:1.15}
+  .flat .st{position:absolute;left:-4px;right:-4px;top:38px;transform:rotate(-14deg);font-weight:900;font-size:13px;letter-spacing:.05em;padding:2px 0}
+  .flat .st.se{background:#ffd23a;color:#3a2a00}.flat .st.ok{background:#e23a3a;color:#fff;animation:pop .5s}
+  .cap{display:flex;justify-content:space-between;padding:6px 12px;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=16"></script>
+<script src="juego.js?v=8"></script>
+<script>
+/* Freischaltung: ab 4.12.2026 (lokal zum Testen: ?hoy=2026-12-04) */
+const DESDE = "2026-12-04";
+const HOY = (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && new URLSearchParams(location.search).get("hoy")) || new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" });
+
+const E = { face: "👩🏽‍💼", name: "Doña Elena, la jefa" }, J = { face: "🧑🏼", name: "Javi, el becario" }, Y = { av: true, name: "Tú" };
+const F = { face: "👨‍👩‍👧", name: "La familia García" }, R = { face: "👴🏻", name: "El señor Ruiz" }, U = { face: "👩🏾‍🎓", name: "Ana y Leo, estudiantes" };
+const REGLA = `📌 <b>es / son</b> → ¿Cómo es? (Eigenschaft: grande, moderno …) · <b>hay</b> → ¿Qué hay? (+ un / una / dos / muchos …) · <b>está / están</b> → ¿Dónde está? (+ el / la / mi … bestimmt) · de + el = <b>del</b>`;
+const AD1 = `<div class="ad"><b class="h">SE ALQUILA · CHAMBERÍ</b>El piso <u>es</u> grande y moderno. <u>Hay</u> tres habitaciones y un balcón. <u>Está</u> en el tercer piso, cerca del metro.</div>`;
+
+const GAME = {
+  id: "ser-estar-hay", key: "efspa0-agencia", icon: "🏠", topic: "ser · estar · hay", title: "Agencia Ciervo", time: "ca. 15 minutos",
+  intro: `<p>¡Bienvenido/a a la <b>Agencia Ciervo</b> 🦌, la agencia de pisos número 1 de Chamberí! Hoy es tu primer día de trabajo.</p>
+    <p>Escribes anuncios, hablas con clientes … y alquilas cuatro pisos. ¡Pero cuidado: un buen anuncio necesita <b>es</b>, <b>hay</b> y <b>está</b>! 🔑</p>
+    <p class="de">Du arbeitest als Makler/in in Madrid. Jede richtige Antwort bringt dich einem vermieteten Piso näher. Dabei lernst du, wann man <b>ser</b>, <b>hay</b> und <b>estar</b> benutzt.</p>`,
+  rulesLabel: "La regla",
+  rules: `<h2>es · hay · está</h2>
+    <div class="rule"><b>ser (es / son)</b> → <b>Wie ist etwas?</b> Eigenschaften: grande, pequeño, moderno, antiguo, bonito …<br><span class="ex">El piso es moderno. · Las habitaciones son pequeñas.</span></div>
+    <div class="rule"><b>hay</b> → <b>Was gibt es?</b> Immer <i>hay</i>, auch im Plural. Danach: un, una, dos, tres, muchos … (unbestimmt)<br><span class="ex">Hay un balcón. · Hay tres habitaciones. · No hay jardín.</span></div>
+    <div class="rule"><b>estar (está / están)</b> → <b>Wo ist etwas?</b> Davor: el, la, mi … (bestimmt)<br><span class="ex">El piso está en Chamberí. · La cocina está al lado del salón.</span></div>
+    <table class="t"><tr><td>¿Cómo es?</td><td>→ es / son</td></tr><tr><td>¿Qué hay?</td><td>→ hay</td></tr><tr><td>¿Dónde está?</td><td>→ está / están</td></tr></table>
+    <div class="rule">primero (1.) · segundo (2.) · tercero (3.) · cuarto (4.) · quinto (5.) – vor einem Nomen: el <b>primer</b> piso, el <b>tercer</b> piso</div>`,
+  stages: [
+    { label: "Parte 1", title: "Tu primer anuncio", go: "¡A trabajar!", memo: AD1,
+      intro: `<div class="who"><div class="face">👩🏽‍💼</div><div><b class="n">Doña Elena</b>¡Hola! Mira, este es un anuncio perfecto: 👇</div></div>${AD1}
+        <p class="de">Lies die Anzeige. Wann steht <u>es</u>, wann <u>hay</u>, wann <u>está</u>? Finde die Regel selbst heraus! Die Anzeige bleibt oben in der Merk-Box.</p>`,
+      tasks: [
+        { t: "choice", task: "Schau auf die Anzeige:", q: "„El piso <u>es</u> grande y moderno.“ – Was beschreibt <b>es</b>?", keep: true, opts: ["Wie die Wohnung ist (Eigenschaft)", "Wo die Wohnung ist (Ort)", "Was es in der Wohnung gibt"], a: "Wie die Wohnung ist (Eigenschaft)", hint: "grande, moderno = Eigenschaften → ser: es." },
+        { t: "choice", q: "„<u>Hay</u> tres habitaciones y un balcón.“ – Was sagt <b>hay</b>?", keep: true, opts: ["Wie die Wohnung ist (Eigenschaft)", "Wo die Wohnung ist (Ort)", "Was es in der Wohnung gibt"], a: "Was es in der Wohnung gibt", hint: "hay = es gibt: tres habitaciones, un balcón." },
+        { t: "choice", q: "„<u>Está</u> en el tercer piso, cerca del metro.“ – Was sagt <b>está</b>?", keep: true, opts: ["Wie die Wohnung ist (Eigenschaft)", "Wo die Wohnung ist (Ort)", "Was es in der Wohnung gibt"], a: "Wo die Wohnung ist (Ort)", hint: "en el tercer piso, cerca del metro = Ort → estar: está." },
+        { t: "choice", q: "Was steht nach <b>hay</b>?", keep: true, opts: ["un / tres … (unbestimmt)", "el / la … (bestimmt)"], a: "un / tres … (unbestimmt)", hint: "Hay <u>tres</u> habitaciones y <u>un</u> balcón → unbestimmt." }
+      ] },
+    { label: "Parte 2", title: "Ordena las frases", memo: REGLA,
+      intro: `<div class="who"><div class="face">👩🏽‍💼</div><div><b class="n">Doña Elena</b>Tengo frases para tres anuncios nuevos. ¿Qué verbo va con qué frase?</div></div>
+        <p class="de">Sortiere die Satzteile: Welches Verb passt? Frag dich: Wie ist es? – Was gibt es? – Wo ist es?</p>`,
+      tasks: [
+        { t: "sort", task: "Ordena:", taskDe: "Welches Verb passt vor den Satzteil?", buckets: ["El piso es …", "Hay …", "El piso está …"], items: [["… pequeño", 0], ["… un jardín", 1], ["… en Chamberí", 2], ["… antiguo", 0], ["… dos baños", 1], ["… cerca del parque", 2]], show: "El piso es pequeño / antiguo · Hay un jardín / dos baños · El piso está en Chamberí / cerca del parque" },
+        { t: "sort", task: "Ordena:", taskDe: "Noch einmal – jetzt etwas schwieriger.", buckets: ["La cocina es …", "Hay …", "La cocina está …"], items: [["… moderna", 0], ["… una mesa grande", 1], ["… al lado del salón", 2], ["… bonita", 0], ["… muchos muebles", 1], ["… en el primer piso", 2]], show: "La cocina es moderna / bonita · Hay una mesa grande / muchos muebles · La cocina está al lado del salón / en el primer piso" }
+      ] },
+    { label: "Parte 3", title: "Los clientes llaman", shuffle: true, memo: REGLA,
+      pista: "Frag dich: Wie ist es? → es/son · Was gibt es? → hay · Wo ist es? → está/están. Einzahl oder Mehrzahl?",
+      pick: { q: "¡Riiing! 📞 ¿Qué cliente atiendes primero?", qDe: "Welchen Kunden nimmst du zuerst dran?", opts: [
+        { t: "👨‍👩‍👧 La familia García – busca un piso grande", intro: `<p>📞 Hablas con la <b>familia García</b>. Tienen dos hijos y un perro.</p>`, first: [0] },
+        { t: "👴🏻 El señor Ruiz – busca un piso pequeño", intro: `<p>📞 Hablas con el <b>señor Ruiz</b>. Vive solo y no quiere escaleras.</p><p class="de">Er wohnt allein und will keine Treppen.</p>`, first: [3] },
+        { t: "👩🏾‍🎓 Ana y Leo – estudiantes", intro: `<p>📞 Hablas con <b>Ana y Leo</b>. Son estudiantes y no tienen mucho dinero.</p>`, first: [5] }] },
+      intro: `<p>Escribe <b>es, son, hay, está</b> o <b>están</b>.</p><p class="de">Tippe das fehlende Wort. Die Regel steht in der Merk-Box.</p>`,
+      tasks: [
+        { t: "type", who: F, q: "¿El piso ___ grande?", a: "es", tips: { "está": "grande = Eigenschaft (wie?) → es.", hay: "grande = Eigenschaft → es." } },
+        { t: "type", who: F, q: "¿___ un balcón para el perro? 🐶", a: "hay", tips: { "está": "un balcón → unbestimmt (gibt es …?) → hay.", es: "Gibt es …? → hay." } },
+        { t: "type", who: Y, q: "Las habitaciones del piso ___ muy bonitas.", a: "son", tips: { es: "las habitaciones = mehrere → son.", "están": "bonitas = Eigenschaft → ser: son." } },
+        { t: "type", who: R, q: "¿Dónde ___ el piso pequeño?", a: "está", tips: { es: "Wo? → estar: está.", hay: "Wo? + el piso (bestimmt) → está." } },
+        { t: "type", who: Y, q: "El supermercado ___ al lado del piso. 🛒", a: "está", tips: { hay: "<i>el</i> supermercado → bestimmt → está.", es: "al lado = Ort → está." } },
+        { t: "type", who: U, q: "¿___ dos habitaciones?", a: "hay", tips: { "están": "dos habitaciones → unbestimmt → hay.", son: "Gibt es …? → hay." } },
+        { t: "type", who: Y, q: "Las dos habitaciones ___ al lado del baño.", a: "están", tips: { "está": "las habitaciones = mehrere → están.", son: "al lado del baño = Ort → están." } }
+      ] },
+    { label: "Parte 4", title: "¡Ay, Javi!", shuffle: true, memo: REGLA,
+      intro: `<div class="who"><div class="face">🧑🏼</div><div><b class="n">Javi, el becario</b>¡Hola! Yo también escribo anuncios. ¡Son perfectos! 😎</div></div><p>Mmm … ¿perfectos? Toca la palabra falsa y corrígela.</p><p class="de">Javi (der Praktikant) macht Fehler. Tippe auf das falsche Wort und wähle die richtige Form.</p>`,
+      tasks: [
+        { t: "error", who: J, words: ["El", "piso", "está", "muy", "moderno."], bad: 2, fix: "es", opts: ["es", "hay", "son"], hint: "moderno = Eigenschaft → es." },
+        { t: "error", who: J, words: ["Está", "un", "jardín", "muy", "bonito."], bad: 0, fix: "Hay", opts: ["Hay", "Es", "Están"], hint: "un jardín → unbestimmt (es gibt) → hay." },
+        { t: "error", who: J, words: ["La", "cocina", "es", "al", "lado", "del", "salón."], bad: 2, fix: "está", opts: ["está", "hay", "están"], hint: "al lado del salón = Ort → está." },
+        { t: "error", who: J, words: ["En", "el", "piso", "están", "dos", "baños."], bad: 3, fix: "hay", opts: ["hay", "son", "está"], hint: "dos baños → unbestimmt → hay (auch im Plural)." }
+      ] },
+    { label: "Parte 5", title: "¡Ahora escribes tú!", memo: REGLA,
+      intro: `<div class="who"><div class="face">👩🏽‍💼</div><div><b class="n">Doña Elena</b>Muy bien. Ahora tú escribes un anuncio para el piso de la calle Trafalgar. ✍️</div></div>
+        <p class="de">Tippe die Wörter in der richtigen Reihenfolge an. Antippen in der Zeile = zurücklegen.</p>`,
+      tasks: [
+        { t: "order", who: Y, task: "Escribe:", taskDe: "Die Wohnung ist klein, aber schön.", words: ["El", "piso", "es", "pequeño", "pero", "bonito."], a: "El piso es pequeño pero bonito." },
+        { t: "order", who: Y, task: "Escribe:", taskDe: "Es gibt eine moderne Küche.", words: ["Hay", "una", "cocina", "moderna."], a: "Hay una cocina moderna." },
+        { t: "choice", who: Y, task: "Der wievielte Stock? (2.)", q: "Está en el ___ piso.", opts: ["segundo", "dos", "segunda"], a: "segundo", hint: "2. = segundo (el piso → männlich: el segundo piso)." },
+        { t: "order", who: Y, task: "Escribe:", taskDe: "Sie (die Wohnung) ist im zweiten Stock, neben dem Park.", words: ["Está", "en", "el", "segundo", "piso,", "al", "lado", "del", "parque."], a: ["Está en el segundo piso, al lado del parque.", "Está al lado del parque, en el segundo piso."] }
+      ] },
+    { label: "Final", title: "El cliente perfecto", go: "¡Último cliente!", memo: REGLA,
+      pista: "Prüfe jede Anzeige: groß? Balkon? nah an der Metro?",
+      intro: `<div class="who"><div class="face">👨‍👩‍👧</div><div><b class="n">La familia García</b>Buscamos un piso <b>grande</b>, con <b>balcón</b> y <b>cerca del metro</b>. 🙏</div></div>
+        <div class="ad"><b class="h">PISO A</b>El piso es grande. Hay un jardín, pero no hay balcón. Está lejos del metro.</div>
+        <div class="ad"><b class="h">PISO B</b>El piso es pequeño y antiguo. Hay un balcón. Está al lado del metro.</div>
+        <div class="ad"><b class="h">PISO C</b>El piso es grande y moderno. Hay dos balcones. Está cerca del metro.</div>
+        <p class="de">Welche Wohnung passt zur Familie García?</p>`,
+      tasks: [
+        { t: "choice", task: "Lee los anuncios:", taskDe: "Welche Wohnung passt?", q: "El piso perfecto para la familia García es ___.", keep: true, opts: ["el piso A", "el piso B", "el piso C"], a: "el piso C", hint: "Piso C: grande ✔ · hay dos balcones ✔ · está cerca del metro ✔" },
+        { t: "type", who: F, task: "¡Último mensaje! Escribe el verbo:", q: "¡Perfecto! ¿Y dónde ___ el piso C exactamente?", a: "está", tips: { es: "¿Dónde? → estar: está.", hay: "¿Dónde? + el piso (bestimmt) → está." } }
+      ] }
+  ],
+  scene: (S) => {
+    const n = S.done ? 4 : Math.min(3, Math.floor(S.solved / Math.max(1, S.total) * 4));
+    const F4 = [["🏢", "Calle Trafalgar"], ["🏠", "Plaza de Olavide"], ["🏬", "Calle Fuencarral"], ["🏡", "Calle Ponzano"]];
+    return `<div class="board">${F4.map((f, i) => `<div class="flat"><div class="e">${f[0]}</div><small>${f[1]}</small><div class="st ${i < n ? "ok" : "se"}">${i < n ? "¡ALQUILADO!" : "SE ALQUILA"}</div></div>`).join("")}</div>
+      <div class="cap"><span>🦌 Agencia Ciervo · Chamberí</span><span>🔑 ${n} / 4 alquilados</span></div>`;
+  },
+  outro: `<div style="font-size:60px">🔑🎉</div><h1>¡Cuatro pisos alquilados!</h1>
+    <div class="who" style="text-align:left"><div class="face">👩🏽‍💼</div><div><b class="n">Doña Elena</b>¡Increíble! El piso C está en la calle Ponzano – y la familia García está muy contenta. ¡Eres el/la mejor agente de Chamberí! 🦌</div></div>
+    <div class="avbig">${E8.myAvatar()}</div>`
+};
+
+if (HOY < DESDE) {
+  document.getElementById("app").innerHTML = `<div style="max-width:520px;margin:60px auto;padding:24px;border-radius:16px;background:#132826;color:#eafaf6;font-family:system-ui;text-align:center"><div style="font-size:60px">🏠🔒</div><h1>Agencia Ciervo</h1><p>Este juego empieza el <b>4 de diciembre</b>.</p><p style="opacity:.8"><i>Dieses Spiel wird am 4. Dezember freigeschaltet.</i></p><p><a href="./" style="color:#3fd2a8">← Todos los juegos</a></p></div>`;
+} else JUEGO.start(GAME);
+</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>¿Dónde está Pelusa? · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#3a2448 0%,#160f1c 65%);--panel:#251a2e;--txt:#f8eefc;--muted:#c4aed0;--line:#4e3a5c;--btn:#33253e;--accent:#ff9ec4;--accentTxt:#3a0a20;--accent2:#ffd2e4;--bubble:#33253e;--input:#1a1220;--ok:#6fe59a;--bad:#ff7a7a}
+  .pic{display:flex;justify-content:center;margin:6px 0 2px}
+  .pic svg{width:230px;max-width:70vw;background:#fff6e8;border-radius:14px;border:3px solid #e6cfa8}
+  .room{display:block;width:100%;background:#f6e9d4}
+  .cap{display:flex;justify-content:space-between;padding:6px 12px;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=16"></script>
+<script src="juego.js?v=8"></script>
+<script>
+/* Freischaltung: ab 4.12.2026 (lokal zum Testen: ?hoy=2026-12-04) */
+const DESDE = "2026-12-04";
+const HOY = (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && new URLSearchParams(location.search).get("hoy")) || new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" });
+
+const L = { face: "👩🏽", name: "Lucía" }, P = { face: "👦🏻", name: "Pablo" }, A = { face: "👵🏼", name: "La abuela" }, M = { face: "👩🏻", name: "Mamá" }, Y = { av: true, name: "Tú" };
+
+/* Kleine Bilder für die Präpositionen: Tisch (mit Vorderwand) + Katze */
+function pic(pos) {
+  const cat = (x, y, s) => `<text x="${x}" y="${y}" font-size="${s || 34}" text-anchor="middle">🐱</text>`;
+  const desk = `<rect x="70" y="58" width="90" height="10" rx="2" fill="#b07a44"/><rect x="74" y="68" width="8" height="44" fill="#8a5a2a"/><rect x="148" y="68" width="8" height="44" fill="#8a5a2a"/>`;
+  const front = `<rect x="70" y="58" width="90" height="34" rx="3" fill="#c48a50" stroke="#8a5a2a" stroke-width="2"/><rect x="74" y="92" width="8" height="20" fill="#8a5a2a"/><rect x="148" y="92" width="8" height="20" fill="#8a5a2a"/>`;
+  const chair = x => `<rect x="${x}" y="70" width="26" height="6" fill="#5a7ab0"/><rect x="${x}" y="40" width="5" height="72" fill="#3a5a90"/><rect x="${x + 21}" y="76" width="5" height="36" fill="#3a5a90"/>`;
+  const floor = `<rect x="0" y="112" width="230" height="28" fill="#e6cfa8"/>`;
+  const S = {
+    encima: floor + desk + cat(115, 54),
+    debajo: floor + desk + cat(115, 106),
+    delante: floor + front + cat(115, 126, 40),
+    detras: floor + cat(115, 66, 30) + front,
+    lado: floor + desk + cat(190, 108),
+    izquierda: floor + desk + cat(36, 108),
+    derecha: floor + desk + cat(194, 108),
+    entre: floor + chair(40) + chair(160) + cat(115, 108)
+  };
+  return `<div class="pic"><svg viewBox="0 0 230 140" xmlns="http://www.w3.org/2000/svg">${S[pos]}</svg></div>`;
+}
+const ESTAR = `📌 <b>estar</b>: yo estoy · tú estás · él/ella está · nosotros estamos · vosotros estáis · ellos/ellas están`;
+const PREP = `📌 encima de (auf) · debajo de (unter) · delante de (vor) · detrás de (hinter) · al lado de (neben) · entre … y … (zwischen) · a la derecha / a la izquierda de (rechts / links von) · de + el = <b>del</b>`;
+
+const GAME = {
+  id: "estar", key: "efspa0-pelusa", icon: "🐱", topic: "estar · ¿dónde?", title: "¿Dónde está Pelusa?", time: "ca. 15 minutos",
+  intro: `<p>Lucía y su familia viven en un piso nuevo en Chamberí. ¡Qué emoción! Pero la mudanza es un desastre … y <b>Pelusa</b>, la gata de Lucía, no está. 😿</p>
+    <p>Ayuda a Lucía: cada respuesta correcta es una huella 🐾 más. ¿Dónde está Pelusa?</p>
+    <p class="de">Lucías Katze Pelusa ist nach dem Umzug verschwunden. Jede richtige Antwort bringt eine Spur 🐾. Am Ende findest du heraus, wo Pelusa steckt.</p>`,
+  rulesLabel: "estar",
+  rules: `<h2>estar = sein / sich befinden</h2>
+    <table class="t"><tr><td>yo</td><td><b>estoy</b></td><td>nosotros/-as</td><td><b>estamos</b></td></tr><tr><td>tú</td><td><b>estás</b></td><td>vosotros/-as</td><td><b>estáis</b></td></tr><tr><td>él / ella</td><td><b>está</b></td><td>ellos / ellas</td><td><b>están</b></td></tr></table>
+    <div class="rule"><b>¿Dónde está …?</b> – Wo ist …? <span class="ex">Pelusa está debajo de la cama.</span><br><b>¿Qué tal estás?</b> – Wie geht's? <span class="ex">Estoy bien. · Estoy fatal.</span></div>
+    <table class="t"><tr><td>encima de</td><td>auf</td></tr><tr><td>debajo de</td><td>unter</td></tr><tr><td>delante de</td><td>vor</td></tr><tr><td>detrás de</td><td>hinter</td></tr><tr><td>al lado de</td><td>neben</td></tr><tr><td>entre … y …</td><td>zwischen … und …</td></tr><tr><td>a la derecha de</td><td>rechts von</td></tr><tr><td>a la izquierda de</td><td>links von</td></tr></table>
+    <div class="rule"><b>de + el = del</b> &nbsp;(aber: de la, de los, de las)<br><span class="ex">encima del armario · debajo de la cama</span></div>`,
+  stages: [
+    { label: "Parte 1", title: "El chat de la familia", go: "¡Vamos!",
+      memo: `💬 <b>Lucía:</b> ¿Dónde <u>estáis</u>? Yo <u>estoy</u> en mi habitación. · <b>Pablo:</b> <u>Estoy</u> en el baño. · <b>Mamá:</b> Papá y yo <u>estamos</u> en la cocina. Los muebles <u>están</u> en el pasillo. · <b>Lucía:</b> ¿Y Pelusa? ¿Dónde <u>está</u>? 😿`,
+      intro: `<div class="who"><div class="face">👩🏽</div><div><b class="n">Lucía</b>¿Dónde <u>estáis</u>? Yo <u>estoy</u> en mi habitación.</div></div>
+        <div class="who"><div class="face">👦🏻</div><div><b class="n">Pablo</b><u>Estoy</u> en el baño. 🚿</div></div>
+        <div class="who"><div class="face">👩🏻</div><div><b class="n">Mamá</b>Papá y yo <u>estamos</u> en la cocina. Los muebles <u>están</u> en el pasillo. 📦</div></div>
+        <div class="who"><div class="face">👩🏽</div><div><b class="n">Lucía</b>¿Y Pelusa? ¿Dónde <u>está</u>? 😿</div></div>
+        <p class="de">Im Chat stecken alle Formen von <b>estar</b> (unterstrichen). Finde heraus, welche Form zu wem gehört. Der Chat bleibt oben in der Merk-Box.</p>`,
+      tasks: [
+        { t: "choice", task: "Schau in den Chat:", q: "Lucía: Yo ___ en mi habitación.", opts: ["estoy", "está", "estamos"], a: "estoy", hint: "yo → estoy (wie: yo soy, yo voy … auf -oy)." },
+        { t: "choice", q: "Pelusa (= ella): ¿Dónde ___ Pelusa?", opts: ["estás", "está", "están"], a: "está", hint: "él / ella / Pelusa → está." },
+        { t: "choice", q: "Papá y yo (= nosotros) ___ en la cocina.", opts: ["estamos", "estáis", "están"], a: "estamos", hint: "nosotros → estamos (-amos wie bei hablamos)." },
+        { t: "choice", q: "Los muebles (= ellos) ___ en el pasillo.", opts: ["está", "estamos", "están"], a: "están", hint: "ellos / los muebles → están." },
+        { t: "choice", q: "Lucía fragt alle: ¿Dónde ___ (vosotros)?", opts: ["estáis", "estás", "estamos"], a: "estáis", hint: "vosotros → estáis (mit Akzent!)." },
+        { t: "type", task: "Und jetzt du – die letzte Form fehlt noch:", q: "Lucía a Pablo: Pablo, ¿dónde ___ tú?", qDe: "Pablo, wo bist du?", a: "estás", tips: { estas: "Akzent nicht vergessen: estás.", está: "tú → estás (mit s am Ende).", estoy: "estoy = ich. Für tú: estás." } }
+      ] },
+    { label: "Parte 2", title: "¿Dónde está el gato?", shuffle: true, memo: ESTAR + "<br>" + PREP,
+      pista: "Schau auf das Bild: Wo ist die Katze – auf, unter, vor, hinter, neben …?",
+      intro: `<p>Pablo dibuja para Lucía. Mira el dibujo: ¿dónde está el gato?</p><p class="de">Schau dir das Bild an und wähle die passende Ortsangabe. Die Wörter stehen auch in der Merk-Box.</p>`,
+      tasks: [
+        { t: "choice", say: pic("encima"), q: "El gato está ___.", opts: ["encima de la mesa", "debajo de la mesa", "delante de la mesa"], a: "encima de la mesa", hint: "Die Katze sitzt <b>auf</b> dem Tisch → encima de." },
+        { t: "choice", say: pic("debajo"), q: "El gato está ___.", opts: ["encima de la mesa", "debajo de la mesa", "detrás de la mesa"], a: "debajo de la mesa", hint: "Die Katze ist <b>unter</b> dem Tisch → debajo de." },
+        { t: "choice", say: pic("delante"), q: "El gato está ___.", opts: ["detrás de la mesa", "delante de la mesa", "encima de la mesa"], a: "delante de la mesa", hint: "Die Katze ist <b>vor</b> dem Tisch (ganz vorne, groß) → delante de." },
+        { t: "choice", say: pic("detras"), q: "El gato está ___.", opts: ["delante de la mesa", "detrás de la mesa", "debajo de la mesa"], a: "detrás de la mesa", hint: "Man sieht nur den Kopf – die Katze ist <b>hinter</b> dem Tisch → detrás de." },
+        { t: "choice", say: pic("entre"), q: "El gato está ___.", opts: ["entre las sillas", "encima de las sillas", "delante de las sillas"], a: "entre las sillas", hint: "Die Katze ist <b>zwischen</b> den Stühlen → entre." },
+        { t: "choice", say: pic("izquierda"), q: "El gato está ___.", opts: ["a la izquierda de la mesa", "a la derecha de la mesa", "debajo de la mesa"], a: "a la izquierda de la mesa", hint: "Die Katze ist <b>links</b> vom Tisch → a la izquierda de." },
+        { t: "choice", say: pic("derecha"), q: "El gato está ___.", opts: ["a la izquierda de la mesa", "a la derecha de la mesa", "encima de la mesa"], a: "a la derecha de la mesa", hint: "Die Katze ist <b>rechts</b> vom Tisch → a la derecha de." }
+      ] },
+    { label: "Parte 3", title: "¿del o de la?", memo: PREP + "<br>📌 <b>el</b> armario → encima <b>del</b> armario · <b>la</b> cama → debajo <b>de la</b> cama",
+      pista: "Ist das Wort männlich (el) → del. Weiblich (la) → de la.",
+      intro: `<div class="who"><div class="face">👦🏻</div><div><b class="n">Pablo</b>Busco a Pelusa en tu habitación, Lucía. 🔦</div></div>
+        <p>Escribe <b>del</b> o <b>de la</b>.</p><p class="de">de + el = <b>del</b> (wird zusammengezogen). de + la bleibt <b>de la</b>. Tipp: el armario, el ordenador, la cama, la puerta, la silla.</p>`,
+      tasks: [
+        { t: "type", who: P, task: "del o de la?", q: "Pelusa no está debajo ___ cama.", qDe: "la cama", a: "de la", tips: { del: "cama ist weiblich (la cama) → de la.", de: "Es fehlt der Artikel: de la cama." } },
+        { t: "type", who: P, task: "del o de la?", q: "No está delante ___ armario.", qDe: "el armario", a: "del", tips: { "de el": "de + el wird zusammengezogen: del.", "de la": "armario ist männlich (el armario) → del." } },
+        { t: "type", who: P, task: "del o de la?", q: "Y no está al lado ___ ordenador.", qDe: "el ordenador", a: "del", tips: { "de el": "de + el = del.", "de la": "el ordenador → del." } },
+        { t: "type", who: P, task: "del o de la?", q: "¿Está detrás ___ puerta? No. 😕", qDe: "la puerta", a: "de la", tips: { del: "la puerta → de la." } },
+        { t: "type", who: P, task: "del o de la?", q: "¡Aquí hay pelos de gato! A la derecha ___ silla … 🐾", qDe: "Hier sind Katzenhaare (pelos de gato)! … rechts vom Stuhl (la silla)", a: "de la", tips: { del: "la silla → de la." } }
+      ] },
+    { label: "Parte 4", title: "¿Qué tal estás?", memo: ESTAR + "<br>📌 <b>¿Qué tal estás?</b> – Wie geht's dir? → Estoy bien / fatal.",
+      pista: "Wie es jemandem geht → auch estar! Wer spricht: yo, tú, nosotros …?",
+      intro: `<p>La abuela llama por teléfono. 📞</p><p class="de">Auch für das Befinden (wie geht's?) benutzt man <b>estar</b>. Tippe die richtige Form.</p>`,
+      tasks: [
+        { t: "type", who: A, q: "¡Hola, Lucía! ¿Qué tal ___ (tú)?", a: "estás", tips: { estas: "Akzent: estás.", está: "tú → estás." } },
+        { t: "type", who: L, q: "Abuela, ___ fatal. ¡Pelusa no está! 😭", qDe: "Mir geht's schlecht.", a: "estoy", tips: { está: "Lucía spricht über sich: yo → estoy.", soy: "Wie es mir geht → estar: estoy." } },
+        { t: "type", who: A, q: "¿Y Pablo y tú? ¿___ bien?", qDe: "Seid ihr okay?", a: "Estáis", tips: { "estais": "Akzent: estáis.", "estamos": "Die Abuela fragt „ihr“ (vosotros) → estáis." } }
+      ] },
+    { label: "Parte 5", title: "La búsqueda", shuffle: true, memo: ESTAR + "<br>" + PREP,
+      pick: { q: "¿Dónde buscas primero?", qDe: "Wo suchst du zuerst?", opts: [
+        { t: "🍳 en la cocina", intro: `<p>🔦 Buscas en la <b>cocina</b>. Hay muchas cajas … pero no hay gata.</p><p class="de">Viele Kartons (cajas), aber keine Katze.</p>`, first: [0] },
+        { t: "🛋️ en el salón", intro: `<p>🔦 Buscas en el <b>salón</b>. ¡Qué desastre! Los muebles están en todas partes.</p><p class="de">Die Möbel stehen überall herum.</p>`, first: [1] },
+        { t: "🛏️ en la habitación de Lucía", intro: `<p>🔦 Buscas en la <b>habitación de Lucía</b>. Hay pelos de gato en la silla … 🐾</p><p class="de">Katzenhaare auf dem Stuhl!</p>`, first: [2] }] },
+      intro: `<p>Escribe tus mensajes para Lucía: toca las palabras en el orden correcto.</p><p class="de">Tippe die Wörter in der richtigen Reihenfolge an. Antippen in der Zeile = zurücklegen.</p>`,
+      tasks: [
+        { t: "order", who: Y, task: "Escribe:", taskDe: "Pelusa ist nicht in der Küche.", words: ["Pelusa", "no", "está", "en", "la", "cocina."], a: "Pelusa no está en la cocina." },
+        { t: "order", who: Y, task: "Escribe:", taskDe: "Die Kartons sind im Wohnzimmer.", words: ["Las", "cajas", "están", "en", "el", "salón."], a: "Las cajas están en el salón." },
+        { t: "order", who: Y, task: "Escribe:", taskDe: "Es gibt Katzenhaare auf dem Stuhl.", words: ["Hay", "pelos", "de", "gato", "encima", "de", "la", "silla."], a: "Hay pelos de gato encima de la silla." },
+        { t: "error", who: P, task: "Pablo escribe rápido. Toca la palabra falsa.", words: ["Yo", "está", "en", "el", "pasillo."], bad: 1, fix: "estoy", opts: ["estoy", "estás", "están"], hint: "yo → estoy." },
+        { t: "error", who: P, words: ["Mamá", "y", "papá", "estamos", "en", "la", "cocina."], bad: 3, fix: "están", opts: ["están", "está", "estáis"], hint: "Mamá y papá = ellos → están." },
+        { t: "error", who: P, words: ["Las", "cajas", "están", "debajo", "de", "el", "armario."], bad: 5, fix: "del", opts: ["del", "la", "los"], hint: "de + el = del: debajo del armario." }
+      ] },
+    { label: "Final", title: "¡Las pistas!", go: "¡Encontrar a Pelusa!", memo: PREP,
+      pista: "Streiche alles, was die Hinweise ausschließen. Welcher Ort bleibt übrig?",
+      intro: `<div class="rule">🐾 <b>Las pistas:</b><br>1. Pelusa está en la habitación de Lucía.<br>2. No está debajo de la cama.<br>3. No está detrás de la puerta.<br>4. Está encima de un mueble.<br>5. El mueble no es la mesa – es muy grande. 🚪🚪</div>
+        <p class="de">Lies die Hinweise. Wo kann Pelusa nur noch sein?</p>`,
+      tasks: [
+        { t: "choice", task: "Lee las pistas:", taskDe: "Wo ist Pelusa?", q: "Pelusa está ___.", opts: ["encima del armario", "debajo de la cama", "encima de la mesa", "detrás de la puerta"], a: "encima del armario", hint: "Auf einem großen Möbelstück, das nicht der Tisch ist → encima del armario." },
+        { t: "type", who: L, task: "¡Último mensaje! Escribe la forma de estar:", q: "¡Pelusa! ¡Aquí ___! 😻", qDe: "Hier bist du!", a: "estás", tips: { está: "Lucía spricht direkt mit Pelusa: tú → estás.", estas: "Akzent: estás." } }
+      ] }
+  ],
+  scene: (S) => {
+    const n = S.done ? 12 : Math.min(8, Math.floor(S.solved / Math.max(1, S.total) * 9));
+    const paws = S.done ? [[30, 128], [52, 120], [74, 128], [96, 120], [118, 128], [140, 120], [162, 128], [182, 116], [196, 100], [204, 82], [208, 64], [212, 46]] : [[30, 128], [56, 120], [84, 128], [110, 136], [138, 128], [100, 120], [60, 136], [130, 140]];
+    const cat = S.done ? `<text x="225" y="30" font-size="30" text-anchor="middle">😻</text>` : `<text x="150" y="96" font-size="22" text-anchor="middle" opacity=".7">❓</text>`;
+    return `<svg class="room" viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="300" height="110" fill="#f6e9d4"/><rect x="0" y="110" width="300" height="40" fill="#d9b88a"/>
+      <rect x="120" y="14" width="56" height="40" fill="#bfe3ff" stroke="#8a6a3a" stroke-width="4"/><path d="M148 14 V54 M120 34 H176" stroke="#8a6a3a" stroke-width="3"/>
+      <rect x="196" y="36" width="58" height="80" rx="3" fill="#a8743e" stroke="#6a4420" stroke-width="3"/><path d="M225 38 V114" stroke="#6a4420" stroke-width="2"/><circle cx="220" cy="78" r="2.5" fill="#6a4420"/><circle cx="230" cy="78" r="2.5" fill="#6a4420"/>
+      <rect x="16" y="82" width="86" height="22" rx="4" fill="#ff9ec4"/><rect x="16" y="74" width="24" height="12" rx="4" fill="#fff"/><rect x="16" y="104" width="6" height="10" fill="#8a5a2a"/><rect x="96" y="104" width="6" height="10" fill="#8a5a2a"/>
+      <rect x="264" y="40" width="30" height="76" fill="#c48a50" stroke="#8a5a2a" stroke-width="2"/><circle cx="270" cy="80" r="2.5" fill="#6a4420"/>
+      <rect x="40" y="118" width="22" height="16" fill="#c8a06a" stroke="#8a6a3a"/><rect x="150" y="122" width="26" height="18" fill="#c8a06a" stroke="#8a6a3a"/>
+      ${paws.slice(0, n).map((p, i) => `<text x="${p[0]}" y="${p[1]}" font-size="13" text-anchor="middle" transform="rotate(${S.done && i > 7 ? -60 : 0} ${p[0]} ${p[1]})">🐾</text>`).join("")}
+      ${cat}</svg><div class="cap"><span>🏠 La habitación de Lucía</span><span>🐾 ${S.done ? "¡Encontrada!" : n + " huellas"}</span></div>`;
+  },
+  outro: `<div style="font-size:60px">😻🎉</div><h1>¡Pelusa está encima del armario!</h1>
+    <div class="who" style="text-align:left"><div class="face">👩🏽</div><div><b class="n">Lucía</b>¡Pelusa! ¡Por fin! Ahora estoy muy bien. ¡Muchas gracias! 😄</div></div>
+    <div class="avbig">${E8.myAvatar()}</div>`
+};
+
+if (HOY < DESDE) {
+  document.getElementById("app").innerHTML = `<div class="panel center" style="max-width:520px;margin:60px auto;padding:24px;border-radius:16px;background:#251a2e;color:#f8eefc;font-family:system-ui"><div style="font-size:60px">🐱🔒</div><h1>¿Dónde está Pelusa?</h1><p>Este juego empieza el <b>4 de diciembre</b>.</p><p style="opacity:.8"><i>Dieses Spiel wird am 4. Dezember freigeschaltet.</i></p><p><a href="./" style="color:#ff9ec4">← Todos los juegos</a></p></div>`;
+} else JUEGO.start(GAME);
+</script>
+</body>
+</html>
