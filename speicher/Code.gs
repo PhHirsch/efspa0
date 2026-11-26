@@ -419,6 +419,9 @@ function houses() {
   return out;
 }
 
+/** Accounts der Lehrkräfte: erscheinen nicht in den Top-3-Listen (Haus, Münzen usw. bleiben). */
+const NOSCORE = ["29", "30"];
+
 /** Top 3 pro Spiel: wenigste Fehler, bei Gleichstand schnellste Zeit. */
 function scores() {
   const best = {}, xp = {};
@@ -426,7 +429,7 @@ function scores() {
   res.forEach(r => {
     const g = r[2], nr = String(r[1]);
     xp[nr] = (xp[nr] || 0) + (Number(r[5]) || 0);
-    if (!g || NOPLAY.indexOf(g) >= 0) return;
+    if (!g || NOPLAY.indexOf(g) >= 0 || NOSCORE.indexOf(nr) >= 0) return;
     const m = Number(r[3]) || 0, t = Number(r[7]) || 99999;
     best[g] = best[g] || {};
     const b = best[g][nr];
