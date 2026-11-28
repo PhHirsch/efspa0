@@ -1240,21 +1240,6 @@
 "starc": "#1d1d1d"
 },
 {
-"id": "top-club-gs",
-"slot": "top",
-"name": "Camiseta Galatasaray ⚽",
-"price": 200,
-"kind": "club",
-"color": "#fdb912",
-"pat": "halves",
-"c2": "#a90432",
-"trim": "#a90432",
-"numc": "#fff",
-"nums": "#5a0018",
-"collar": "#fdb912",
-"months": []
-},
-{
 "id": "top-club-fb",
 "slot": "top",
 "name": "Camiseta Fenerbahçe ⚽",
